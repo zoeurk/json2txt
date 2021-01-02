@@ -400,26 +400,14 @@ void parse_args(int argc, char **argv, struct arguments *args){
 				case '?':
 					usage();
 					break;
-				case 0: if(file == 1){
-						fprintf(stderr, "Mismatch arguments\n");
-						fprintf(stderr, "Regardez l'usage en tapant -[?|h]\n");
-						exit(EXIT_FAILURE);
-					}
-					file = 1;
-					break;
+				case 0: break;
 				default:
 					if(*a_ == '-'){
 						fprintf(stderr,"L'option -%c est inconnue\n",*a);
 						fprintf(stderr,"essayer %s -[?|h]\n",argv[0]);
 						exit(EXIT_FAILURE);
-					}else{
-						if(file == 1){
-							fprintf(stderr, "Mismatch arguments\n");
-							fprintf(stderr, "Regardez l'usage en tapant -[?|h]\n");
-							exit(EXIT_FAILURE);
-						}
+					}else
 						args->filename = a;
-					}
 					break;
 			}
 		}
