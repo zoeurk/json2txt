@@ -275,7 +275,7 @@ void json_to_string(struct json *j,char **string, unsigned long int string_len, 
 			json_to_string(pj->sub, string, string_len + len + inc, total);
 			if(string_len)
 				(*string)[string_len] = 0;
-			else **string = 0;
+			else	**string = 0;
 		}else{
 			if(pj->name){
 				if(pj->value){
@@ -307,7 +307,8 @@ void json_to_string(struct json *j,char **string, unsigned long int string_len, 
 					}
 					
 				}
-			}
+			}else	if(*string && strlen(*string) > 0)
+					printf("%s:\n", *string);
 		}
 		pj = pj->next;
 	}
