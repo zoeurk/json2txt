@@ -307,7 +307,7 @@ void json_to_string(struct json *j,char **string, unsigned long int string_len, 
 					}
 					
 				}
-			}else	if(*string && strlen(*string) > 0)
+			}else	if(!pj->sub && *string && strlen(*string) > 0)
 					printf("%s:\n", *string);
 		}
 		pj = pj->next;
@@ -400,14 +400,26 @@ void parse_args(int argc, char **argv, struct arguments *args){
 				case '?':
 					usage();
 					break;
-				case 0: break;
+				case 0: if(file == 1){
+						fprintf(stderr, "Mismatch arguments\n");
+						fprintf(stderr, "Regardez l'usage en tapant -[?|h]\n");
+						exit(EXIT_FAILURE);
+					}
+					file = 1;
+					break;
 				default:
 					if(*a_ == '-'){
 						fprintf(stderr,"L'option -%c est inconnue\n",*a);
 						fprintf(stderr,"essayer %s -[?|h]\n",argv[0]);
 						exit(EXIT_FAILURE);
-					}else
+					}else{
+						if(file == 1){
+							fprintf(stderr, "Mismatch arguments\n");
+							fprintf(stderr, "Regardez l'usage en tapant -[?|h]\n");
+							exit(EXIT_FAILURE);
+						}
 						args->filename = a;
+					}
 					break;
 			}
 		}
