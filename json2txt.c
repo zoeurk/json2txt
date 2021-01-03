@@ -246,6 +246,7 @@ struct json *to_json(int fd){
 void json_to_string(struct json *j,char **string, unsigned long int string_len, unsigned long int *total){
 	struct json *pj = j;
 	unsigned long int len = 0;
+	int inc = 0;
 	while(pj){
  		if(pj->sub){
 			if(pj->name){
@@ -258,19 +259,20 @@ void json_to_string(struct json *j,char **string, unsigned long int string_len, 
 					*total = string_len + len + 2;
 					if(string_len == 0)
 						**string = 0;
-					else{	
+					else{	inc = 1;
 						strcat(*string, ".");
 					}
 					strcat(*string,pj->name);
 				}else
 					if(string_len > 0){
+						inc = 1;
 						strcat(*string, ".");
 						strcat(*string,pj->name);
 					}else{
 						strcat((*string),pj->name);
 					}
 			}
-			json_to_string(pj->sub, string, string_len + len, total);
+			json_to_string(pj->sub, string, string_len + len + inc, total);
 			if(string_len)
 				(*string)[string_len] = 0;
 			else	**string = 0;
