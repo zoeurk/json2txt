@@ -418,6 +418,7 @@ void parse_args(int argc, char **argv, struct arguments *args){
 							fprintf(stderr, "Regardez l'usage en tapant -[?|h]\n");
 							exit(EXIT_FAILURE);
 						}
+						file = 1;
 						args->filename = a;
 					}
 					break;
