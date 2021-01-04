@@ -86,7 +86,7 @@ void destroy_json(struct json **j){
 }
 struct json *to_json(int fd){
 	struct json *j = NULL, *pj = NULL, *ppj;
-	char buffer[BUFFERLEN],tampon[ALLOC],___tampon___[ALLOC], *pbuf = buffer, type = 0, quote = 0, erreur = 0, virgule = 0;
+	char buffer[BUFFERLEN],tampon[ALLOC],___tampon___[ALLOC], *pbuf = buffer, type = 0, quote = 0, quoted = 0, erreur = 0, virgule = 0;
 	long int r, i;
 	unsigned long int bufsize = BUFFERLEN, len = 0, array = 0, tamp = 0;
 	memset(buffer, 0, BUFFERLEN);
@@ -117,7 +117,8 @@ struct json *to_json(int fd){
 							strcpy(___tampon___, tampon);
 							memset(tampon, 0, ALLOC);
 							tamp = 0;
-						}else{	if((pj->type&UNKNOW) == UNKNOW){
+						}else{
+							if((pj->type&UNKNOW) == UNKNOW){
 								pj->type -= UNKNOW;
 								pj->type |= VALUE;
 								pj->value = ___calloc___(1, strlen(tampon) + 1);
@@ -176,6 +177,7 @@ struct json *to_json(int fd){
 					break;
 				case '"':
 					quote = !quote;
+					quoted = 1;
 					ppj = pj;
 					while(ppj->prev)
 						ppj = ppj->prev;
@@ -194,9 +196,15 @@ struct json *to_json(int fd){
 						destroy_json(&j);
 						exit(EXIT_FAILURE);
 					}
+					if(quoted == 0){
+						 printf("Erreur de syntax vers: %s\n", tampon);
+						 destroy_json(&j);
+						 exit(EXIT_FAILURE);
+					}
 					pj->key = ___calloc___(1, strlen(tampon) + 1);
 					strcpy(pj->key, tampon);
 					memset(tampon, 0, ALLOC);
+					quoted = 0;
 					tamp = 0;
 					break;
 				case '/':
@@ -212,6 +220,7 @@ struct json *to_json(int fd){
 					}
 					tampon[tamp] = *pbuf;
 					tamp++;
+					quoted = 0;
 					break;
 			}
 			end:
