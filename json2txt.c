@@ -110,6 +110,7 @@ struct json *to_json(int fd){
 				continue;
 			switch(*pbuf){
 				case ',':
+					
 					if(tampon[0] != 0){
 						if(!pj->name){
 							if(!pj->key && ((pj->type&(KEY|ARRAY)) == 0) && pj->type != 0){
@@ -136,6 +137,8 @@ struct json *to_json(int fd){
 							}
 
 						}
+					}else{
+						virgule = 1;
 					}
 					pj = add_json_entry(&pj);
 					break;
