@@ -112,11 +112,6 @@ struct json *to_json(int fd){
 				case ',':
 					if(tampon[0] != 0){
 						if(!pj->name){
-							if(!pj->key && ((pj->type&(KEY|ARRAY)) == 0) && pj->type != 0){
-								fprintf(stderr, "Erreur de syntax vers: %s\n", tampon);
-								destroy_json(&j);
-								exit(EXIT_FAILURE);
-							}
 							pj->name = ___calloc___(1, strlen(tampon) + 1);
 							strcpy(pj->name, tampon);
 							strcpy(___tampon___, tampon);
