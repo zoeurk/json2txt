@@ -218,8 +218,11 @@ struct json *to_json(int fd){
 					break;
 				default:
 					character:
-					if(tamp+1 > 4094)
+					if(tamp > 4094){
 						fprintf(stderr, "Chaine de charactere trop longue: %s...\n", tampon);
+						destroy_json(&j);
+						exit(EXIT_FAILURE);
+					}
 					tampon[tamp] = *pbuf;
 					tamp++;
 					break;
