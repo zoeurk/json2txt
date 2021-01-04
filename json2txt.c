@@ -86,7 +86,7 @@ void destroy_json(struct json **j){
 }
 struct json *to_json(int fd){
 	struct json *j = NULL, *pj = NULL, *ppj;
-	char buffer[BUFFERLEN],tampon[ALLOC],___tampon___[ALLOC], *pbuf = buffer, type = 0, quote = 0, erreur = 0;
+	char buffer[BUFFERLEN],tampon[ALLOC],___tampon___[ALLOC], *pbuf = buffer, type = 0, quote = 0, erreur = 0, virgule = 0;
 	long int r, i;
 	unsigned long int bufsize = BUFFERLEN, len = 0, array = 0, tamp = 0;
 	memset(buffer, 0, BUFFERLEN);
@@ -132,6 +132,7 @@ struct json *to_json(int fd){
 							}
 
 						}
+						virgule = 1;
 					}
 					pj = add_json_entry(&pj);
 					break;
@@ -158,6 +159,13 @@ struct json *to_json(int fd){
 						}else{
 							pj->value = ___calloc___(1, strlen(tampon) +1);
 							strcpy(pj->value, tampon);
+						}
+						virgule = 0;
+					}else{
+						if(virgule){
+							fprintf(stderr, "Erreur de syntax vers trop de ','\n");
+							destroy_json(&j);
+							exit(EXIT_FAILURE);
 						}
 					}
 					len--;
