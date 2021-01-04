@@ -117,8 +117,7 @@ struct json *to_json(int fd){
 							strcpy(___tampon___, tampon);
 							memset(tampon, 0, ALLOC);
 							tamp = 0;
-						}else{
-							if((pj->type&UNKNOW) == UNKNOW){
+						}else{	if((pj->type&UNKNOW) == UNKNOW){
 								pj->type -= UNKNOW;
 								pj->type |= VALUE;
 								pj->value = ___calloc___(1, strlen(tampon) + 1);
@@ -176,11 +175,6 @@ struct json *to_json(int fd){
 					type = 0;
 					break;
 				case '"':
-					if(strlen(tampon) && quote == 0){
-						fprintf(stderr, "Erreur de syntax vers: %s\n", tampon);
-						destroy_json(&j);
-						exit(EXIT_FAILURE);
-					}
 					quote = !quote;
 					ppj = pj;
 					while(ppj->prev)
