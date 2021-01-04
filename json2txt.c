@@ -122,7 +122,6 @@ struct json *to_json(int fd){
 							strcpy(___tampon___, tampon);
 							memset(tampon, 0, ALLOC);
 							tamp = 0;
-							//virgule = 1; 
 						}else{
 							if((pj->type&UNKNOW) == UNKNOW){
 								pj->type -= UNKNOW;
@@ -132,7 +131,6 @@ struct json *to_json(int fd){
 								strcpy(___tampon___, tampon);
 								memset(tampon, 0, ALLOC);
 								tamp = 0;
-								//virgule = 1;
 							}
 
 						}
