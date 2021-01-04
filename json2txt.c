@@ -121,6 +121,7 @@ struct json *to_json(int fd){
 							strcpy(pj->name, tampon);
 							memset(tampon, 0, ALLOC);
 							tamp = 0;
+							virgule = 1; 
 						}else{
 							if((pj->type&UNKNOW) == UNKNOW){
 								pj->type -= UNKNOW;
@@ -129,6 +130,7 @@ struct json *to_json(int fd){
 								strcpy(pj->value, tampon);
 								memset(tampon, 0, ALLOC);
 								tamp = 0;
+								virgule = 1;
 							}
 
 						}
@@ -146,6 +148,7 @@ struct json *to_json(int fd){
 					}else
 						pj = add_to_struct_json(&pj,&type);
 					type = 0;
+					virgule = 0;
 					break;
 				case ']':
 					array--;
@@ -160,6 +163,10 @@ struct json *to_json(int fd){
 							strcpy(pj->value, tampon);
 						}
 						virgule = 0;
+					}
+					if(virgule == 1){
+						printf("Erreur de syntax trop de ','\n");
+						exit(EXIT_FAILURE);
 					}
 					len--;
 					type = (type == ARRAY) ? type : LIST;
