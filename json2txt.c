@@ -132,7 +132,6 @@ struct json *to_json(int fd){
 							}
 
 						}
-						virgule = 1;
 					}
 					pj = add_json_entry(&pj);
 					break;
@@ -161,12 +160,6 @@ struct json *to_json(int fd){
 							strcpy(pj->value, tampon);
 						}
 						virgule = 0;
-					}else{
-						if(virgule){
-							fprintf(stderr, "Erreur de syntax vers trop de ','\n");
-							destroy_json(&j);
-							exit(EXIT_FAILURE);
-						}
 					}
 					len--;
 					type = (type == ARRAY) ? type : LIST;
