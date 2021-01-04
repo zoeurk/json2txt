@@ -197,7 +197,7 @@ struct json *to_json(int fd){
 						exit(EXIT_FAILURE);
 					}
 					if(quoted == 0){
-						 printf("Erreur de syntax vers: %s\n", tampon);
+						 fprintf(stderr, "Erreur de syntax vers: %s\n", tampon);
 						 destroy_json(&j);
 						 exit(EXIT_FAILURE);
 					}
