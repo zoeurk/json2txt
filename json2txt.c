@@ -191,15 +191,10 @@ struct json *to_json(int fd){
 					break;
 				case ':':
 					pj->type |= (KEY|UNKNOW);
-					if(pj->key){
+					if(pj->key || quoted == 0){
 						fprintf(stderr, "Erreur de syntax vers: %s\n", tampon);
 						destroy_json(&j);
 						exit(EXIT_FAILURE);
-					}
-					if(quoted == 0){
-						 fprintf(stderr, "Erreur de syntax vers: %s\n", tampon);
-						 destroy_json(&j);
-						 exit(EXIT_FAILURE);
 					}
 					pj->key = ___calloc___(1, strlen(tampon) + 1);
 					strcpy(pj->key, tampon);
