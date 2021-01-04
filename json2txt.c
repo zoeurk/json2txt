@@ -122,7 +122,7 @@ struct json *to_json(int fd){
 							strcpy(___tampon___, tampon);
 							memset(tampon, 0, ALLOC);
 							tamp = 0;
-							virgule = 1; 
+							//virgule = 1; 
 						}else{
 							if((pj->type&UNKNOW) == UNKNOW){
 								pj->type -= UNKNOW;
@@ -132,9 +132,11 @@ struct json *to_json(int fd){
 								strcpy(___tampon___, tampon);
 								memset(tampon, 0, ALLOC);
 								tamp = 0;
-								virgule = 1;
+								//virgule = 1;
 							}
+
 						}
+						virgule = 1;
 					}
 					pj = add_json_entry(&pj);
 					break;
@@ -165,11 +167,10 @@ struct json *to_json(int fd){
 						}
 						virgule = 0;
 					}
-					if(virgule > 0){
+					if(virgule != 0){
 						printf("Erreur de syntax trop de ',' vers: %s\n", ___tampon___);
 						exit(EXIT_FAILURE);
 					}
-					virgule = 0;
 					memset(___tampon___, 0, ALLOC);
 					len--;
 					type = (type == ARRAY) ? type : LIST;
