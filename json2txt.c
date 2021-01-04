@@ -119,6 +119,7 @@ struct json *to_json(int fd){
 							}
 							pj->name = ___calloc___(1, strlen(tampon) + 1);
 							strcpy(pj->name, tampon);
+							strcpy(___tampon___, tampon);
 							memset(tampon, 0, ALLOC);
 							tamp = 0;
 							virgule = 1; 
@@ -128,6 +129,7 @@ struct json *to_json(int fd){
 								pj->type |= VALUE;
 								pj->value = ___calloc___(1, strlen(tampon) + 1);
 								strcpy(pj->value, tampon);
+								strcpy(___tampon___, tampon);
 								memset(tampon, 0, ALLOC);
 								tamp = 0;
 								virgule = 1;
@@ -164,10 +166,12 @@ struct json *to_json(int fd){
 						}
 						virgule = 0;
 					}
-					if(virgule == 1){
-						printf("Erreur de syntax trop de ','\n");
+					if(virgule > 0){
+						printf("Erreur de syntax trop de ',' vers: %s\n", ___tampon___);
 						exit(EXIT_FAILURE);
 					}
+					virgule = 0;
+					memset(___tampon___, 0, ALLOC);
 					len--;
 					type = (type == ARRAY) ? type : LIST;
 					while(pj->prev)
@@ -215,7 +219,7 @@ struct json *to_json(int fd){
 				default:
 					character:
 					tampon[tamp] = *pbuf;
-					strcpy(___tampon___, tampon);
+					//strcpy(___tampon___, tampon);
 					tamp++;
 					if(tamp > 4094)
 						fprintf(stderr, "Chaine de charactere trop longue: %s...\n", tampon);
