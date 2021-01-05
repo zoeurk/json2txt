@@ -87,7 +87,7 @@ void destroy_json(struct json **j){
 struct json *to_json(int fd){
 	struct json *j = NULL, *pj = NULL, *ppj;
 	char buffer[BUFFERLEN],tampon[ALLOC],___tampon___[ALLOC], *pbuf = buffer, buferror[1024],
-		type = 0, quote = 0, quoted = 0, virgule = 0, erreur = 0;
+		type = 0, quote = 0, quoted = 0, *q = NULL, virgule = 0, erreur = 0;
 	long int r, i;
 	unsigned long int bufsize = BUFFERLEN,
 				len = 0, array = 0, tamp = 0;
@@ -192,6 +192,8 @@ struct json *to_json(int fd){
 					break;
 				case '"':
 					quote = !quote;
+					if(quote == 1)
+						q = pbuf;
 					quoted = 1;
 					ppj = pj;
 					while(ppj->prev)
@@ -262,7 +264,8 @@ struct json *to_json(int fd){
 						fprintf(stderr, "Trop de '}' fermées\n");
 					else	/*ne sera jamais vu :)*/
 						fprintf(stderr, "Fichier JSON invalide\n");
-
+		if(q)
+			fprintf(stderr, "Derniere double quote: %s\n", q);
 		destroy_json(&j);
 		exit(EXIT_FAILURE);
 	}
@@ -389,7 +392,7 @@ void json_print(struct json *j, unsigned long int space){
 							printf(",\n");
 						else	printf("\n");
 					}else{	if((pj->type&(STR|UNKNOW|KEY)) == (STR|UNKNOW|KEY))
-							printf("==> \"%s\":\"\",\n", pj->name);
+							printf(" \"%s\":\"\",\n", pj->name);
 						else	printf(" \"%s\":", pj->name);
 					}
 				}
