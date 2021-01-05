@@ -152,7 +152,7 @@ struct json *to_json(int fd){
 						exit(EXIT_FAILURE);
 					}
 					break;
-				case '[':virgule = 0;
+				case '[':
 					array++;
 					type = ARRAY;
 				case '{':
