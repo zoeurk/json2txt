@@ -19,6 +19,10 @@ enum TYPE{
 	UNKNOW = 16,
 	STR = 32,
 };
+/*
+56 = 32+16+8 STR|UNKNOW|8
+24 = 16+8
+*/
 enum ARGS{
 	JSON = 1,
 	TXT = 2
@@ -120,8 +124,6 @@ struct json *to_json(int fd){
 						destroy_json(&j);
 						exit(EXIT_FAILURE);
 					}
-					if(virgule == 3)
-						virgule = 0;
 					if(tampon[0] != 0){
 						if(!pj->name){
 							pj->name = ___calloc___(1, strlen(tampon) + 1);
@@ -154,12 +156,6 @@ struct json *to_json(int fd){
 					array++;
 					type = ARRAY;
 				case '{':
-					if(virgule == 3){
-						printf("Erreur de syntax vers: %s (virgule mal placee)\n", 
-							(___tampon___[0])? ___tampon___: buferror);
-						destroy_json(&j);
-						exit(EXIT_FAILURE);
-					}
 					virgule = 0;
 					len++;
 					if(j == NULL){
@@ -173,7 +169,7 @@ struct json *to_json(int fd){
 					array--;
 					type = ARRAY;
 				case '}':
-					virgule = 3;
+					virgule = 0;
 					len--;
 					if(tampon[0] != 0){
 						if(pj->key == NULL){
@@ -183,9 +179,9 @@ struct json *to_json(int fd){
 							pj->value = ___calloc___(1, strlen(tampon) +1);
 							strcpy(pj->value, tampon);
 						}
-						virgule = (virgule == 3) ? virgule : 2;
+						virgule = 2;
 					}
-					if(virgule != 0 && virgule != 2 && virgule != 3){
+					if(virgule != 0 && virgule != 2){
 						fprintf(stderr, "Erreur de syntax vers: %s (virgule mal placee)\n",
 							(___tampon___[0])?___tampon___: buferror);
 						destroy_json(&j);
@@ -202,7 +198,7 @@ struct json *to_json(int fd){
 					memset(tampon , 0, ALLOC);
 					tamp = 0;
 					type = 0;
-					virgule = (virgule != 3) ? virgule = 0: 3;
+					virgule = 0;
 					break;
 				case '"':
 					quote = !quote;
@@ -392,7 +388,10 @@ void json_print(struct json *j, unsigned long int space){
 						if(pj->next)
 							printf(",\n");
 						else	printf("\n");
-					}else	printf(" \"%s\":", pj->name);
+					}else{	if((pj->type&(STR|UNKNOW|KEY)) == (STR|UNKNOW|KEY))
+							printf(" \"%s\":\"\",\n", pj->name);
+						else	printf(" \"%s\":", pj->name);
+					}
 				}
 				if(pj->sub){
 					json_print(pj->sub, space+1);
