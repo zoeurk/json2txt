@@ -20,7 +20,7 @@ enum TYPE{
 	STR = 32,
 };
 /*
-56 = 32+16+8 STR|UNKNOW|8
+56 = 32+16+8 STR|UNKNOW|KEY
 24 = 16+8
 */
 enum ARGS{
@@ -313,15 +313,25 @@ void json_to_string(struct json *j,char **string, unsigned long int string_len, 
 			else	**string = 0;
 		}else{
 			if(pj->name){
-				if(pj->value){
+				if(pj->value || (pj->type&(STR|UNKNOW|KEY)) == (STR|UNKNOW|KEY)){
 					if(*string && strlen(*string) > 0){
 						if(**string == '.'){
-							if((pj->type&STR) == STR)
-								printf("%s.%s:\"%s\"\n",&(*string)[1], pj->name, pj->value);
-							else	printf("%s.%s:%s\n",&(*string)[1], pj->name, pj->value);
-						}else{	if((pj->type&STR) == STR)
-								printf("%s.%s:\"%s\"\n",*string, pj->name, pj->value);
-							else	printf("%s.%s:%s\n",*string, pj->name, pj->value);
+							if((pj->type&STR) == STR){
+								if(pj->value)
+									printf("%s.%s:\"%s\"\n",&(*string)[1], pj->name, pj->value);
+								else	printf("%s.%s:\"\"\n",&(*string)[1], pj->name);
+							}else{	if(pj->value)
+									printf("%s.%s:%s\n",&(*string)[1], pj->name, pj->value);
+								else	printf("%s.%s:\n",&(*string)[1], pj->name);
+							}
+						}else{	if((pj->type&STR) == STR){
+								if(pj->value)
+									printf("%s.%s:\"%s\"\n",*string, pj->name, pj->value);
+								else	printf("%s.%s:\"\"\n",*string, pj->name);
+							}else{	if(pj->value)
+									printf("%s.%s:%s\n",*string, pj->name, pj->value);
+								else	printf("%s.%s:\n",*string, pj->name);
+							}
 						}
 					}else{
 						if((pj->type&STR) == STR)
