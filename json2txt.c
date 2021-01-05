@@ -118,6 +118,7 @@ struct json *to_json(int fd){
 						printf("Erreur de syntax vers: %s (virgule mal placee)\n", 
 							(___tampon___[0])? ___tampon___: buferror);
 						destroy_json(&j);
+						if(q)free(q);
 						exit(EXIT_FAILURE);
 					}
 					if(tampon[0] != 0){
@@ -177,6 +178,7 @@ struct json *to_json(int fd){
 						fprintf(stderr, "Erreur de syntax vers: %s (virgule mal placee)\n",
 							(___tampon___[0])?___tampon___: buferror);
 						destroy_json(&j);
+						if(q)free(q);
 						exit(EXIT_FAILURE);
 					}
 					memset(___tampon___, 0, ALLOC);
@@ -192,8 +194,11 @@ struct json *to_json(int fd){
 					break;
 				case '"':
 					quote = !quote;
-					if(quote == 1)
-						q = pbuf;
+					if(quote == 1){
+						if(q = NULL)
+						q = realloc((q, ,strlen(pbuf)+1);
+
+					}
 					quoted = 1;
 					ppj = pj;
 					while(ppj->prev)
@@ -212,6 +217,7 @@ struct json *to_json(int fd){
 					if(pj->key || quoted == 0){
 						fprintf(stderr, "Erreur de syntax vers: %s\n", tampon);
 						destroy_json(&j);
+						if(q)free(q);
 						exit(EXIT_FAILURE);
 					}
 					pj->key = ___calloc___(1, strlen(tampon) + 1);
@@ -229,6 +235,7 @@ struct json *to_json(int fd){
 					if(tamp > 4094){
 						fprintf(stderr, "Chaine de charactere trop longue: %s...\n", tampon);
 						destroy_json(&j);
+						if(q) free(q);
 						exit(EXIT_FAILURE);
 					}
 					tampon[tamp] = *pbuf;
@@ -264,8 +271,10 @@ struct json *to_json(int fd){
 						fprintf(stderr, "Trop de '}' fermées\n");
 					else	/*ne sera jamais vu :)*/
 						fprintf(stderr, "Fichier JSON invalide\n");
-		if(q)
+		if(q){
 			fprintf(stderr, "Derniere double quote: %s\n", q);
+			free(q);
+		}
 		destroy_json(&j);
 		exit(EXIT_FAILURE);
 	}
