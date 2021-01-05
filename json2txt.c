@@ -389,8 +389,8 @@ void json_print(struct json *j, unsigned long int space){
 							printf(",\n");
 						else	printf("\n");
 					}else{	if((pj->type&(STR|UNKNOW|KEY)) == (STR|UNKNOW|KEY))
-							printf(" \"%s\":\"\",\n", pj->name);
-						//else	printf(" \"%s\":", pj->name);
+							printf("==> \"%s\":\"\",\n", pj->name);
+						else	printf(" \"%s\":", pj->name);
 					}
 				}
 				if(pj->sub){
