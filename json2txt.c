@@ -137,9 +137,9 @@ struct json *to_json(int fd){
 								memset(tampon, 0, ALLOC);
 								tamp = 0;
 							}
-							strncpy(buferror, pbuf, 1020);
-							strcat(buferror, "...");
 						}
+						strncpy(buferror, pbuf, 1020);
+						strcat(buferror, "...");
 					}
 					virgule = 1;
 					if(pj)
