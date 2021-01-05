@@ -19,10 +19,6 @@ enum TYPE{
 	UNKNOW = 16,
 	STR = 32,
 };
-/*
-56 = 32+16+8 STR|UNKNOW|KEY
-24 = 16+8
-*/
 enum ARGS{
 	JSON = 1,
 	TXT = 2
@@ -218,8 +214,6 @@ struct json *to_json(int fd){
 					}
 					pj->key = ___calloc___(1, strlen(tampon) + 1);
 					strcpy(pj->key, tampon);
-					//strncpy(buferror, tampon,1020);
-					//strcat(buferror, "...");
 					memset(tampon, 0, ALLOC);
 					quoted = 0;
 					tamp = 0;
