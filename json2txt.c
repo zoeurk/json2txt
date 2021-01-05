@@ -142,8 +142,6 @@ struct json *to_json(int fd){
 								tamp = 0;
 							}
 						}
-						strncpy(buferror, pbuf, 1020);
-						strcat(buferror, "...");
 					}
 					virgule = 1;
 					if(pj)
@@ -156,7 +154,6 @@ struct json *to_json(int fd){
 					array++;
 					type = ARRAY;
 				case '{':
-					virgule = 0;
 					len++;
 					if(j == NULL){
 						pj =  j = calloc(1,sizeof(struct json));
@@ -169,7 +166,6 @@ struct json *to_json(int fd){
 					array--;
 					type = ARRAY;
 				case '}':
-					virgule = 0;
 					len--;
 					if(tampon[0] != 0){
 						if(pj->key == NULL){
@@ -187,9 +183,8 @@ struct json *to_json(int fd){
 						destroy_json(&j);
 						exit(EXIT_FAILURE);
 					}
-					//strncpy(buferror, pbuf, 1020);
-					//strcat(buferror, "...");
 					memset(___tampon___, 0, ALLOC);
+					//memset(buferror, 0, 1024);
 					type = (type == ARRAY) ? type : LIST;
 					while(pj->prev)
 						pj = pj->prev;
@@ -242,8 +237,10 @@ struct json *to_json(int fd){
 						exit(EXIT_FAILURE);
 					}
 					tampon[tamp] = *pbuf;
-					strncpy(buferror,pbuf,1020);
-					strcat(buferror,"...");
+					if(tamp == 0){
+						strncpy(buferror,pbuf,1020);
+						strcat(buferror,"...");
+					}
 					tamp++;
 					quoted = 0;
 					break;
