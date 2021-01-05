@@ -184,7 +184,6 @@ struct json *to_json(int fd){
 						exit(EXIT_FAILURE);
 					}
 					memset(___tampon___, 0, ALLOC);
-					//memset(buferror, 0, 1024);
 					type = (type == ARRAY) ? type : LIST;
 					while(pj->prev)
 						pj = pj->prev;
@@ -219,8 +218,8 @@ struct json *to_json(int fd){
 					}
 					pj->key = ___calloc___(1, strlen(tampon) + 1);
 					strcpy(pj->key, tampon);
-					strncpy(buferror, tampon,1020);
-					strcat(buferror, "...");
+					//strncpy(buferror, tampon,1020);
+					//strcat(buferror, "...");
 					memset(tampon, 0, ALLOC);
 					quoted = 0;
 					tamp = 0;
@@ -237,8 +236,8 @@ struct json *to_json(int fd){
 						exit(EXIT_FAILURE);
 					}
 					tampon[tamp] = *pbuf;
-					if(tamp == 0){
-						strncpy(buferror,pbuf,1020);
+					if(tamp == 0 && pj->key == NULL){
+						strncpy(buferror,pbuf-1,1020);
 						strcat(buferror,"...");
 					}
 					tamp++;
