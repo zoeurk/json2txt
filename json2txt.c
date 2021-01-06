@@ -116,7 +116,7 @@ struct json *to_json(int fd){
 			switch(*pbuf){
 				case ',':
 					if(virgule == 1 && tampon[0] == 0){
-						printf("Erreur de syntax vers: %s (virgule mal placee)\n", &buferror[1]);
+						printf("Erreur de syntax vers:\n%s (virgule mal placee)\n", &buferror[1]);
 						destroy_json(&j);
 						exit(EXIT_FAILURE);
 					}
@@ -176,7 +176,7 @@ struct json *to_json(int fd){
 						virgule = 2;
 					}
 					if(virgule != 0 && virgule != 2){
-						fprintf(stderr, "Erreur de syntax vers: %s (virgule mal placee)\n", buferror);
+						fprintf(stderr, "Erreur de syntax vers:\n%s (virgule mal placee)\n", buferror);
 						destroy_json(&j);
 						exit(EXIT_FAILURE);
 					}
@@ -196,7 +196,7 @@ struct json *to_json(int fd){
 					buferr++;
 					quote = !quote;
 					if(tamp && quote == 1){
-						fprintf(stderr, "=>Erreur de syntax vers: %s\n", buferror);
+						fprintf(stderr, "Erreur de syntax vers:\n%s\n", buferror);
 						exit(EXIT_FAILURE);
 					}
 					quoted = 1;
@@ -216,7 +216,7 @@ struct json *to_json(int fd){
 					virgule = 0;
 					pj->type |= (KEY|UNKNOW);
 					if(pj->key || quoted == 0){
-						fprintf(stderr, "Erreur de syntax vers: %s\n", buferror);
+						fprintf(stderr, "Erreur de syntax vers:\n%s\n", buferror);
 						destroy_json(&j);
 						exit(EXIT_FAILURE);
 					}
@@ -231,7 +231,7 @@ struct json *to_json(int fd){
 						erreur = 1;
 					break;
 				default:if(virgule == 4){
-						fprintf(stderr, "=>Erreur de syntax vers: %s\n", buferror);
+						fprintf(stderr, "Erreur de syntax vers:\n%s\n", buferror);
 						exit(EXIT_FAILURE);
 					}
 					character:
