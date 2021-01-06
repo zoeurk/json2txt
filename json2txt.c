@@ -12,7 +12,7 @@
 #define SMALLBUF 1024
 
 #define ERROR(buferror,j)\
-fprintf(stderr, "Erreur de syntaxe:\n%s\n", buferror);\
+fprintf(stderr, "Erreur de syntaxe vers:\n%s\n", buferror);\
 json_destroy(&j);\
 exit(EXIT_FAILURE);
 
@@ -202,6 +202,7 @@ struct json *to_json(int fd){
 					if(pj->up)
 						pj = pj->up;
 					memset(tampon , 0, ALLOC);
+					buferr = 0;
 					tamp = 0;
 					type = 0;
 					virgule = 0;
@@ -232,8 +233,10 @@ struct json *to_json(int fd){
 					pj->key = ___calloc___(1, strlen(tampon) + 1);
 					strcpy(pj->key, tampon);
 					memset(tampon, 0, ALLOC);
+					memset(buferror, 0, SMALLBUF);
 					quoted = 0;
 					tamp = 0;
+					buferr = 0;
 					break;
 				case '/':
 					if(quote == 0)
