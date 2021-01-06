@@ -87,7 +87,7 @@ void destroy_json(struct json **j){
 struct json *to_json(int fd){
 	struct json *j = NULL, *pj = NULL, *ppj;
 	char buffer[BUFFERLEN],tampon[ALLOC],___tampon___[ALLOC], *pbuf = buffer, buferror[1024],
-		type = 0, quote = 0, quoted = 0, *q = NULL, virgule = 0, erreur = 0;
+		type = 0, quote = 0, quoted = 0, virgule = 0, erreur = 0;
 	long int r, i;
 	unsigned long int bufsize = BUFFERLEN,
 				len = 0, array = 0, tamp = 0;
@@ -95,6 +95,7 @@ struct json *to_json(int fd){
 	memset(tampon, 0, ALLOC);
 	memset(___tampon___, 0, ALLOC);
 	memset(buferror, 0, 1024);
+	//memset(bufquote, 0, 1024);
 	while((r = (long int)read(fd,pbuf,bufsize)) > 0)
 	{
 		for(i = 0 ,pbuf = buffer; i < r; i++,pbuf++){
@@ -118,7 +119,6 @@ struct json *to_json(int fd){
 						printf("Erreur de syntax vers: %s (virgule mal placee)\n", 
 							(___tampon___[0])? ___tampon___: buferror);
 						destroy_json(&j);
-						if(q)free(q);
 						exit(EXIT_FAILURE);
 					}
 					if(tampon[0] != 0){
@@ -178,7 +178,6 @@ struct json *to_json(int fd){
 						fprintf(stderr, "Erreur de syntax vers: %s (virgule mal placee)\n",
 							(___tampon___[0])?___tampon___: buferror);
 						destroy_json(&j);
-						if(q)free(q);
 						exit(EXIT_FAILURE);
 					}
 					memset(___tampon___, 0, ALLOC);
@@ -194,11 +193,6 @@ struct json *to_json(int fd){
 					break;
 				case '"':
 					quote = !quote;
-					if(quote == 1){
-						if(q = NULL)
-						q = realloc((q, ,strlen(pbuf)+1);
-
-					}
 					quoted = 1;
 					ppj = pj;
 					while(ppj->prev)
@@ -217,7 +211,6 @@ struct json *to_json(int fd){
 					if(pj->key || quoted == 0){
 						fprintf(stderr, "Erreur de syntax vers: %s\n", tampon);
 						destroy_json(&j);
-						if(q)free(q);
 						exit(EXIT_FAILURE);
 					}
 					pj->key = ___calloc___(1, strlen(tampon) + 1);
@@ -232,10 +225,9 @@ struct json *to_json(int fd){
 					break;
 				default:
 					character:
-					if(tamp > 4094){
+					if(tamp > 1024){
 						fprintf(stderr, "Chaine de charactere trop longue: %s...\n", tampon);
 						destroy_json(&j);
-						if(q) free(q);
 						exit(EXIT_FAILURE);
 					}
 					tampon[tamp] = *pbuf;
@@ -259,10 +251,10 @@ struct json *to_json(int fd){
 	}
 	if(len != 0){
 		if(array > 0)
-			fprintf(stderr, "Trop de '[' ouverts\n");
+			fprintf(stderr, "Trop de '[' ouverts ou quote non fermee\n");
 		else
 			if(array < 0)
-				fprintf(stderr, "Trop de ']' fermées\n");
+				fprintf(stderr, "Trop de ']' fermées ou quote non fermee\n");
 			else
 				if(len > 0)
 					fprintf(stderr, "Trop de '{' ouverts\n");
@@ -271,13 +263,11 @@ struct json *to_json(int fd){
 						fprintf(stderr, "Trop de '}' fermées\n");
 					else	/*ne sera jamais vu :)*/
 						fprintf(stderr, "Fichier JSON invalide\n");
-		if(q){
-			fprintf(stderr, "Derniere double quote: %s\n", q);
-			free(q);
-		}
+		fprintf(stderr, "Ou quote non fermee\n");
 		destroy_json(&j);
 		exit(EXIT_FAILURE);
 	}
+	//if(quote)printf("Double quote non fermee: %s\n", bufquote);
 	return j;
 }
 void json_to_string(struct json *j,char **string, unsigned long int string_len, unsigned long int *total){
@@ -331,14 +321,19 @@ void json_to_string(struct json *j,char **string, unsigned long int string_len, 
 									printf("%s.%s:\"%s\"\n",*string, pj->name, pj->value);
 								else	printf("%s.%s:\"\"\n",*string, pj->name);
 							}else{	if(pj->value)
-									printf("%s.%s:%s\n",*string, pj->name, pj->value);
+									printf("==>%s.%s:%s\n",*string, pj->name, pj->value);
 								else	printf("%s.%s:\n",*string, pj->name);
 							}
 						}
 					}else{
-						if((pj->type&STR) == STR)
-							printf("%s:\"%s\"\n", pj->name, pj->value);
-						else	printf("%s:%s\n", pj->name, pj->value);
+						if((pj->type&STR) == STR){
+							if(pj->value)
+								printf("%s:\"%s\"\n", pj->name, pj->value);
+							else	printf("%s:\"\"\n", pj->name);
+						}else{	if(pj->value)
+								printf("%s:%s\n", pj->name, pj->value);
+							else	printf("%s:\n", pj->name);
+						}
 					}
 				}else{
 					if(*string && strlen(*string) > 0){
