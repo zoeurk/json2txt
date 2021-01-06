@@ -214,7 +214,7 @@ struct json *to_json(int fd){
 						fprintf(stderr, "Erreur de syntax:\n%s\n", buferror);
 						exit(EXIT_FAILURE);
 					}*/
-					//printf("%s\n", buferror);
+					//printf("%s:%i\n", buferror, type);
 					was = 1;
 					buferror[buferr] = *pbuf;
 					buferr++;
@@ -251,6 +251,14 @@ struct json *to_json(int fd){
 						erreur = 1;
 					break;
 				default:
+					ppj = pj;
+					while(ppj->prev)
+						ppj = ppj->prev;
+					type = ppj->type;
+					if(was == 0 && (type&ARRAY) == 0){
+						fprintf(stderr, "Erreur de syntax:\n%s\n", buferror);
+						exit(EXIT_FAILURE);
+					}
 					if(virgule == 4){
 						fprintf(stderr, "Erreur de syntax vers:\n%s\n", buferror);
 						exit(EXIT_FAILURE);
