@@ -98,7 +98,7 @@ unsigned long int json_type(struct json *pj){
 }
 struct json *to_json(int fd){
 	struct json *j = NULL, *pj = NULL;
-	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, buferror[SMALLBUF],
+	char buffer[BUFFERLEN],tampon[SMALLBUF], *pbuf = buffer, buferror[ALLOC],
 		type = 0, quote = 0, quoted = 0, virgule = 0, erreur = 0, was = 0;
 	long int r, i;
 	unsigned long int bufsize = BUFFERLEN,
@@ -159,6 +159,7 @@ struct json *to_json(int fd){
 						exit(EXIT_FAILURE);
 					}
 					was = 0;
+					//buferr = 0;
 					break;
 				case '[':
 					array++;
@@ -201,7 +202,7 @@ struct json *to_json(int fd){
 						pj = pj->prev;
 					if(pj->up)
 						pj = pj->up;
-					memset(tampon , 0, ALLOC);
+					memset(tampon , 0, SMALLBUF);
 					buferr = 0;
 					tamp = 0;
 					type = 0;
@@ -236,7 +237,6 @@ struct json *to_json(int fd){
 					memset(buferror, 0, SMALLBUF);
 					quoted = 0;
 					tamp = 0;
-					buferr = 0;
 					break;
 				case '/':
 					if(quote == 0)
