@@ -121,6 +121,7 @@ struct json *to_json(int fd){
 						destroy_json(&j);
 						exit(EXIT_FAILURE);
 					}
+					virgule = 0;
 					if(tampon[0] != 0){
 						if(!pj->name){
 							pj->name = ___calloc___(1, strlen(tampon) + 1);
@@ -152,6 +153,7 @@ struct json *to_json(int fd){
 					type = ARRAY;
 				case '{':
 					len++;
+					virgule = 0;
 					if(j == NULL){
 						pj =  j = calloc(1,sizeof(struct json));
 						pj->type = (type == ARRAY) ? type : LIST;
@@ -194,6 +196,7 @@ struct json *to_json(int fd){
 				case '"':
 					quote = !quote;
 					quoted = 1;
+					virgule = 4;
 					ppj = pj;
 					while(ppj->prev)
 						ppj = ppj->prev;
@@ -223,7 +226,10 @@ struct json *to_json(int fd){
 					if(quote == 0)
 						erreur = 1;
 					break;
-				default:
+				default:if(virgule == 4){
+						fprintf(stderr, "Erreur de syntax vers: %s\n", tampon);
+						exit(EXIT_FAILURE);
+					}
 					character:
 					if(tamp > 1024){
 						fprintf(stderr, "Chaine de charactere trop longue: %s...\n", tampon);
