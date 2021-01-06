@@ -9,6 +9,7 @@
 
 #define BUFFERLEN 65535
 #define ALLOC 4096
+#define SMALLBUF 1024
 
 enum TYPE{
 	NONE = 0,
@@ -92,14 +93,14 @@ unsigned long int json_type(struct json *pj){
 }
 struct json *to_json(int fd){
 	struct json *j = NULL, *pj = NULL;
-	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, buferror[1024],
+	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, buferror[SMALLBUF],
 		type = 0, quote = 0, quoted = 0, virgule = 0, erreur = 0, was = 0;
 	long int r, i;
 	unsigned long int bufsize = BUFFERLEN,
 				len = 0, array = 0, tamp = 0, buferr = 0;
 	memset(buffer, 0, BUFFERLEN);
 	memset(tampon, 0, ALLOC);
-	memset(buferror, 0, 1024);
+	memset(buferror, 0, SMALLBUF);
 	while((r = (long int)read(fd,pbuf,bufsize)) > 0)
 	{
 		for(i = 0 ,pbuf = buffer; i < r; i++,pbuf++){
@@ -120,17 +121,13 @@ struct json *to_json(int fd){
 			switch(*pbuf){
 				case ',':
 					if(virgule == 1 && tampon[0] == 0){
-						printf("Erreur de syntax vers:\n%s\n", &buferror[1]);
+						printf("Erreur de syntax vers:\n%s\n", buferror);
 						destroy_json(&j);
 						exit(EXIT_FAILURE);
 					}
 					if(tampon[0] != 0){
 						if(!pj->name){
-							/*ppj = pj;
-							while(ppj->prev)
-								ppj = ppj->prev;
-							type = ppj->type;*/
-							type = (int)json_type(pj);
+							type = (char)json_type(pj);
 							if(was || (type&ARRAY) == ARRAY){
 								pj->key = ___calloc___(1, strlen(tampon) +1);
 								strcpy(pj->key, tampon);
@@ -220,7 +217,7 @@ struct json *to_json(int fd){
 					quote = !quote;
 					quoted = 1;
 					virgule = 4;
-					type = (int)json_type(pj);
+					type = (char)json_type(pj);
 					if((type&ARRAY) == ARRAY){
 						if(quote)
 							pj->type |= STR;
@@ -248,7 +245,7 @@ struct json *to_json(int fd){
 						erreur = 1;
 					break;
 				default:
-					type = json_type(pj);
+					type = (char)json_type(pj);
 					if((was == 0 && (type&ARRAY) == 0) || virgule == 4){
 						fprintf(stderr, "Erreur de syntax:\n%s\n", buferror);
 						exit(EXIT_FAILURE);
@@ -258,7 +255,7 @@ struct json *to_json(int fd){
 						exit(EXIT_FAILURE);
 					}*/
 					character:
-					if(tamp > 1024){
+					if(tamp > SMALLBUF-1){
 						fprintf(stderr, "Chaine de charactere trop longue: %s...\n", tampon);
 						if(quote)fprintf(stderr, "double quote non fermee\n");
 						destroy_json(&j);
