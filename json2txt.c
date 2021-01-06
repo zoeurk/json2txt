@@ -86,14 +86,14 @@ void destroy_json(struct json **j){
 }
 struct json *to_json(int fd){
 	struct json *j = NULL, *pj = NULL, *ppj;
-	char buffer[BUFFERLEN],tampon[ALLOC],___tampon___[ALLOC], *pbuf = buffer, buferror[1024],
-		type = 0, quote = 0, quoted = 0, virgule = 0, was = 0, erreur = 0;
+	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, buferror[1024],
+		type = 0, quote = 0, quoted = 0, virgule = 0, erreur = 0, was = 0;
 	long int r, i;
 	unsigned long int bufsize = BUFFERLEN,
 				len = 0, array = 0, tamp = 0, buferr = 0;
 	memset(buffer, 0, BUFFERLEN);
 	memset(tampon, 0, ALLOC);
-	memset(___tampon___, 0, ALLOC);
+	//memset(___tampon___, 0, ALLOC);
 	memset(buferror, 0, 1024);
 	//memset(bufquote, 0, 1024);
 	while((r = (long int)read(fd,pbuf,bufsize)) > 0)
@@ -116,15 +116,26 @@ struct json *to_json(int fd){
 			switch(*pbuf){
 				case ',':
 					if(virgule == 1 && tampon[0] == 0){
-						printf("Erreur de syntax vers:\n%s (virgule mal placee)\n", &buferror[1]);
+						printf("Erreur de syntax vers:\n%s\n", &buferror[1]);
 						destroy_json(&j);
 						exit(EXIT_FAILURE);
 					}
 					if(tampon[0] != 0){
 						if(!pj->name){
+							ppj = pj;
+							while(ppj->prev)
+								ppj = ppj->prev;
+							type = ppj->type;
+							if(was || (type&ARRAY) == ARRAY){
+								pj->key = ___calloc___(1, strlen(tampon) +1);
+								strcpy(pj->key, tampon);
+							}else{
+								fprintf(stderr,"Erreur de syntax vers:\n%s\n", buferror);
+								destroy_json(&j);
+								exit(EXIT_FAILURE);
+							}
 							pj->name = ___calloc___(1, strlen(tampon) + 1);
 							strcpy(pj->name, tampon);
-							strcpy(___tampon___, tampon);
 							memset(tampon, 0, ALLOC);
 							tamp = 0;
 						}else{
@@ -133,7 +144,6 @@ struct json *to_json(int fd){
 								pj->type |= VALUE;
 								pj->value = ___calloc___(1, strlen(tampon) + 1);
 								strcpy(pj->value, tampon);
-								strcpy(___tampon___, tampon);
 								memset(tampon, 0, ALLOC);
 								tamp = 0;
 							}
@@ -145,6 +155,7 @@ struct json *to_json(int fd){
 					else{	fprintf(stderr, "Json mal forme\n");
 						exit(EXIT_FAILURE);
 					}
+					was = 0;
 					break;
 				case '[':
 					array++;
@@ -158,6 +169,7 @@ struct json *to_json(int fd){
 					}else
 						pj = add_to_struct_json(&pj,&type);
 					type = 0;
+					was = 0;
 					break;
 				case ']':
 					array--;
@@ -166,8 +178,15 @@ struct json *to_json(int fd){
 					len--;
 					if(tampon[0] != 0){
 						if(pj->key == NULL){
-							pj->key = ___calloc___(1, strlen(tampon) +1);
-							strcpy(pj->key, tampon);
+							//printf("=>%s:%i:%i\n", tampon, was, type);
+							if(was || (type&ARRAY) == ARRAY){
+								pj->key = ___calloc___(1, strlen(tampon) +1);
+								strcpy(pj->key, tampon);
+							}else{
+								fprintf(stderr,"Erreur de syntax vers:\n%s\n", buferror);
+								destroy_json(&j);
+								exit(EXIT_FAILURE);
+							}
 						}else{
 							pj->value = ___calloc___(1, strlen(tampon) +1);
 							strcpy(pj->value, tampon);
@@ -175,11 +194,10 @@ struct json *to_json(int fd){
 						virgule = 2;
 					}
 					if(virgule != 0 && virgule != 2 && virgule != 4){
-						fprintf(stderr, "Erreur de syntax vers:\n%s (virgule mal placee)\n", buferror);
+						fprintf(stderr, "Erreur de syntax vers:\n%s\n", buferror);
 						destroy_json(&j);
 						exit(EXIT_FAILURE);
 					}
-					memset(___tampon___, 0, ALLOC);
 					type = (type == ARRAY) ? type : LIST;
 					while(pj->prev)
 						pj = pj->prev;
@@ -189,14 +207,20 @@ struct json *to_json(int fd){
 					tamp = 0;
 					type = 0;
 					virgule = 0;
+					was = 0;
 					break;
 				case '"':
+					/*if(was == 1){
+						fprintf(stderr, "Erreur de syntax:\n%s\n", buferror);
+						exit(EXIT_FAILURE);
+					}*/
+					//printf("%s\n", buferror);
+					was = 1;
 					buferror[buferr] = *pbuf;
 					buferr++;
 					quote = !quote;
 					quoted = 1;
 					virgule = 4;
-					was = 1;
 					ppj = pj;
 					while(ppj->prev)
 						ppj = ppj->prev;
