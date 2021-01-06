@@ -322,7 +322,7 @@ void json_to_string(struct json *j,char **string, unsigned long int string_len, 
 									printf("%s.%s:\"%s\"\n",*string, pj->name, pj->value);
 								else	printf("%s.%s:\"\"\n",*string, pj->name);
 							}else{	if(pj->value)
-									printf("==>%s.%s:%s\n",*string, pj->name, pj->value);
+									printf("%s.%s:%s\n",*string, pj->name, pj->value);
 								else	printf("%s.%s:\n",*string, pj->name);
 							}
 						}
