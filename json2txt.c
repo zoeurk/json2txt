@@ -251,10 +251,10 @@ struct json *to_json(int fd){
 	}
 	if(len != 0){
 		if(array > 0)
-			fprintf(stderr, "Trop de '[' ouverts ou quote non fermee\n");
+			fprintf(stderr, "Trop de '[' ouverts\n");
 		else
 			if(array < 0)
-				fprintf(stderr, "Trop de ']' fermées ou quote non fermee\n");
+				fprintf(stderr, "Trop de ']' fermées\n");
 			else
 				if(len > 0)
 					fprintf(stderr, "Trop de '{' ouverts\n");
@@ -263,7 +263,8 @@ struct json *to_json(int fd){
 						fprintf(stderr, "Trop de '}' fermées\n");
 					else	/*ne sera jamais vu :)*/
 						fprintf(stderr, "Fichier JSON invalide\n");
-		fprintf(stderr, "Ou quote non fermee\n");
+		if(quote == 1)
+			fprintf(stderr, "double quote non fermee\n");
 		destroy_json(&j);
 		exit(EXIT_FAILURE);
 	}
