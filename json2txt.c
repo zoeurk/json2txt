@@ -233,6 +233,7 @@ struct json *to_json(int fd){
 					character:
 					if(tamp > 1024){
 						fprintf(stderr, "Chaine de charactere trop longue: %s...\n", tampon);
+						if(quote)fprintf(stderr, "double quote non fermee\n");
 						destroy_json(&j);
 						exit(EXIT_FAILURE);
 					}
