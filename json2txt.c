@@ -134,15 +134,12 @@ struct json *to_json(int fd){
 						if(!pj->name){
 							type = (char)json_type(pj);
 							if(was || (type&ARRAY) == ARRAY){
-								//printf("%s\n",tampon);
-								//pj->key = ___calloc___(1, strlen(tampon) +1);
-								//strcpy(pj->key, tampon);
 								pj->name = ___calloc___(1, strlen(tampon) + 1);
 								strcpy(pj->name, tampon);
 								memset(tampon, 0, ALLOC);
 								tamp = 0;
 							}else{
-								ERROR(offset);
+								ERROR(offset-strlen(tampon));
 							}
 						}else{
 							if((pj->type&UNKNOW) == UNKNOW){
@@ -190,7 +187,7 @@ struct json *to_json(int fd){
 								pj->key = ___calloc___(1, strlen(tampon) +1);
 								strcpy(pj->key, tampon);
 							}else{
-								ERROR(offset);
+								ERROR(offset-strlen(tampon));
 							}
 						}else{	
 							pj->value = ___calloc___(1, strlen(tampon) +1);
@@ -199,7 +196,7 @@ struct json *to_json(int fd){
 						virgule = 2;
 					}
 					if(virgule != 0 && virgule != 2 && virgule != 4){
-						ERROR(offset);
+						ERROR(offset - strlen(tampon));
 					}
 					type = (type == ARRAY) ? type : LIST;
 					while(pj->prev)
@@ -230,7 +227,7 @@ struct json *to_json(int fd){
 					virgule = 0;
 					pj->type |= (KEY|UNKNOW);
 					if(pj->key || quoted == 0){
-						ERROR(offset)
+						ERROR(offset - strlen(tampon));
 					}
 					pj->key = ___calloc___(1, strlen(tampon) + 1);
 					strcpy(pj->key, tampon);
@@ -244,7 +241,7 @@ struct json *to_json(int fd){
 				default:
 					type = (char)json_type(pj);
 					if((was == 0 && (type&ARRAY) == 0) || virgule == 4){
-						ERROR(offset);
+						ERROR(offset- strlen(tampon));
 					}
 					character:
 					if(tamp > ALLOC-1){
