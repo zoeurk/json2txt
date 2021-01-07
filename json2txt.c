@@ -122,16 +122,12 @@ struct json *to_json(int fd){
 					exit(EXIT_FAILURE);
 				}
 			if(err > SMALLBUF-1){
-				//fprintf(stderr,"splited:%s\n",errbuf);
 				memcpy(errbuf,&errbuf[(SMALLBUF/2)], SMALLBUF/2);
-				memset(&errbuf[(SMALLBUF/2)], 0, (SMALLBUF/2)-1);
+				memset(&errbuf[(SMALLBUF/2)], 0, (SMALLBUF/2));
 				err = (SMALLBUF/2);
-				//fprintf(stderr,"splited:%s\n",errbuf);
-				//printf("%lu;%lu;%s\n",strlen(errbuf),err, errbuf);
 			}
 			errbuf[err] = *pbuf;
 			err++;
-			//printf("%lu:%s\n",err,errbuf);
 			if(erreur == 2)
 				goto end;
 			if(*pbuf != '"' && quote == 1){
