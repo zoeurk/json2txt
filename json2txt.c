@@ -112,7 +112,7 @@ struct json *to_json(int fd){
 			if(erreur == 1 && *pbuf == '/')
 				erreur = 2;
 			else	if(erreur == 1){
-					fprintf(stderr, "Erreur de syntax dans le commentaire vers l'offset: %lu\n", offset);
+					fprintf(stderr, "Erreur de syntaxe dans le commentaire vers l'offset: %lu\n", offset);
 					json_destroy(&j);
 					exit(EXIT_FAILURE);
 				}
@@ -173,6 +173,7 @@ struct json *to_json(int fd){
 						pj->type = (type == ARRAY) ? type : LIST;
 					}else
 						pj = add_to_struct_json(&pj,&type);
+					memset(tampon, 0, ALLOC);
 					type = 0;
 					was = 0;
 					break;
@@ -189,7 +190,7 @@ struct json *to_json(int fd){
 							}else{
 								ERROR(offset);
 							}
-						}else{
+						}else{	
 							pj->value = ___calloc___(1, strlen(tampon) +1);
 							strcpy(pj->value, tampon);
 						}
@@ -254,7 +255,6 @@ struct json *to_json(int fd){
 					tampon[tamp+1] = 0;
 					tamp++;
 					quoted = 0;
-					if(offset == 0) printf("oh");
 					break;
 			}
 			end:
