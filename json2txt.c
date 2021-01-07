@@ -134,8 +134,9 @@ struct json *to_json(int fd){
 						if(!pj->name){
 							type = (char)json_type(pj);
 							if(was || (type&ARRAY) == ARRAY){
-								pj->key = ___calloc___(1, strlen(tampon) +1);
-								strcpy(pj->key, tampon);
+								//printf("%s\n",tampon);
+								//pj->key = ___calloc___(1, strlen(tampon) +1);
+								//strcpy(pj->key, tampon);
 							}else{
 								ERROR(offset);
 							}
@@ -174,6 +175,7 @@ struct json *to_json(int fd){
 					}else
 						pj = add_to_struct_json(&pj,&type);
 					memset(tampon, 0, ALLOC);
+					tamp = 0;
 					type = 0;
 					was = 0;
 					break;
