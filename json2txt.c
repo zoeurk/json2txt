@@ -137,13 +137,13 @@ struct json *to_json(int fd){
 								//printf("%s\n",tampon);
 								//pj->key = ___calloc___(1, strlen(tampon) +1);
 								//strcpy(pj->key, tampon);
+								pj->name = ___calloc___(1, strlen(tampon) + 1);
+								strcpy(pj->name, tampon);
+								memset(tampon, 0, ALLOC);
+								tamp = 0;
 							}else{
 								ERROR(offset);
 							}
-							pj->name = ___calloc___(1, strlen(tampon) + 1);
-							strcpy(pj->name, tampon);
-							memset(tampon, 0, ALLOC);
-							tamp = 0;
 						}else{
 							if((pj->type&UNKNOW) == UNKNOW){
 								pj->type -= UNKNOW;
