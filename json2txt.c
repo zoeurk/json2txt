@@ -176,8 +176,8 @@ struct json *to_json(int fd){
 					array++;
 					type = ARRAY;
 				case '{':
-					if(quoted == 4)quoted = 2;
-					if(*pbuf == '{')quoted = 2;else quoted = 4;
+					//if(*pbuf == '{')quoted = 2;else quoted = 4;
+					quoted = (*pbuf == '{') ? 2 : 4;
 					len++;
 					virgule = 0;
 					if(j == NULL){
