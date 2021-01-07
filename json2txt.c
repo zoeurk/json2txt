@@ -122,11 +122,11 @@ struct json *to_json(int fd){
 					exit(EXIT_FAILURE);
 				}
 			if(err > SMALLBUF-1){
-				memcpy(errbuf,&errbuf[(SMALLBUF/2)-1], SMALLBUF/2);
-				memset(&errbuf[(SMALLBUF/2)-1], 0, SMALLBUF/2);
+				memcpy(errbuf,&errbuf[(SMALLBUF/2)], SMALLBUF/2);
+				memset(&errbuf[(SMALLBUF/2)], 0, SMALLBUF/2);
 				err = (SMALLBUF/2);
 			}
-			errbuf[err-1] = *pbuf;
+			errbuf[err] = *pbuf;
 			err++;
 			if(erreur == 2)
 				goto end;
