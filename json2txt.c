@@ -107,7 +107,10 @@ struct json *to_json(int fd){
 	memset(buffer, 0, BUFFERLEN);
 	memset(tampon, 0, ALLOC);
 	while((r = (long int)read(fd,pbuf,bufsize)) > 0)
-	{
+	{	if(!pj)
+			if(*pbuf != '{'){
+				ERROR(offset);
+			}
 		for(i = 0 ,pbuf = buffer; i < r; i++,pbuf++){
 			if(erreur == 1 && *pbuf == '/')
 				erreur = 2;
@@ -127,7 +130,7 @@ struct json *to_json(int fd){
 			}
 			switch(*pbuf){
 				case ',':
-					if(virgule == 1 && tampon[0] == 0){
+					if((virgule == 1 && tampon[0] == 0) || quoted == 2 || quoted == 4){
 						ERROR(offset);
 					}
 					if(tampon[0] != 0){
@@ -164,6 +167,8 @@ struct json *to_json(int fd){
 					array++;
 					type = ARRAY;
 				case '{':
+					if(quoted == 4)quoted = 2;
+					if(*pbuf == '{')quoted = 2;else quoted = 4;
 					len++;
 					virgule = 0;
 					if(j == NULL){
@@ -180,6 +185,7 @@ struct json *to_json(int fd){
 					array--;
 					type = ARRAY;
 				case '}':
+					quoted = 0;
 					len--;
 					if(tampon[0] != 0){
 						if(pj->key == NULL){
