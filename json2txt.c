@@ -9,7 +9,7 @@
 
 #define BUFFERLEN 65535
 #define ALLOC 4096
-#define SMALLBUF 128
+#define SMALLBUF 64
 
 #define ERROR(offset, buferr)\
 fprintf(stderr, "Erreur de syntaxe vers l'offset:\t%lu\n%s\n", offset, buferr);\
