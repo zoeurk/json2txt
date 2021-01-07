@@ -9,9 +9,10 @@
 
 #define BUFFERLEN 65535
 #define ALLOC 4096
+#define SMALLBUF 32
 
-#define ERROR(offset)\
-fprintf(stderr, "Erreur de syntaxe vers l'offset:\t%lu\n", offset);\
+#define ERROR(offset, errbuf)\
+fprintf(stderr, "Erreur de syntaxe vers l'offset:\t%lu:\n%s\n", offset, errbuf);\
 json_destroy(&j);\
 exit(EXIT_FAILURE);
 
@@ -99,17 +100,18 @@ unsigned long int json_type(struct json *pj){
 }
 struct json *to_json(int fd){
 	struct json *j = NULL, *pj = NULL;
-	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer,
+	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, errbuf[64],
 		type = 0, quote = 0, quoted = 0, virgule = 0, erreur = 0, was = 0;
 	long int r, i;
 	unsigned long int bufsize = BUFFERLEN, offset = 0,
-				len = 0, array = 0, tamp = 0;
+				len = 0, array = 0, tamp = 0, err = 0;
 	memset(buffer, 0, BUFFERLEN);
 	memset(tampon, 0, ALLOC);
+	memset(errbuf, 0, 64);
 	while((r = (long int)read(fd,pbuf,bufsize)) > 0)
 	{	if(!pj)
 			if(*pbuf != '{'){
-				ERROR(offset);
+				ERROR(offset, errbuf);
 			}
 		for(i = 0 ,pbuf = buffer; i < r; i++,pbuf++){
 			if(erreur == 1 && *pbuf == '/')
@@ -128,10 +130,14 @@ struct json *to_json(int fd){
 				offset++;
 				continue;
 			}
+			if(err > SMALLBUF-1){
+				memcpy(errbuf,&errbuf[SMALLBUF/2],SMALLBUF/2);
+				err = SMALLBUF/2;
+			}
 			switch(*pbuf){
 				case ',':
 					if((virgule == 1 && tampon[0] == 0) || quoted == 2 || quoted == 4){
-						ERROR(offset-strlen(tampon)-1);
+						ERROR(offset-strlen(tampon)-1, errbuf);
 					}
 					if(tampon[0] != 0){
 						if(!pj->name){
@@ -142,7 +148,7 @@ struct json *to_json(int fd){
 								memset(tampon, 0, ALLOC);
 								tamp = 0;
 							}else{
-								ERROR(offset-strlen(tampon)-1);
+								ERROR(offset-strlen(tampon)-1, errbuf);
 							}
 						}else{
 							if((pj->type&UNKNOW) == UNKNOW){
@@ -155,6 +161,8 @@ struct json *to_json(int fd){
 							}
 						}
 					}
+					errbuf[err] = *pbuf;
+					err++;
 					virgule = 1;
 					if(pj)
 						pj = add_json_entry(&pj);
@@ -167,6 +175,8 @@ struct json *to_json(int fd){
 					array++;
 					type = ARRAY;
 				case '{':
+					errbuf[err] = *pbuf;
+					err++;
 					if(quoted == 4)quoted = 2;
 					if(*pbuf == '{')quoted = 2;else quoted = 4;
 					len++;
@@ -185,6 +195,8 @@ struct json *to_json(int fd){
 					array--;
 					type = ARRAY;
 				case '}':
+					errbuf[err] = *pbuf;
+					err++;
 					quoted = 0;
 					len--;
 					if(tampon[0] != 0){
@@ -193,7 +205,7 @@ struct json *to_json(int fd){
 								pj->key = ___calloc___(1, strlen(tampon) +1);
 								strcpy(pj->key, tampon);
 							}else{
-								ERROR(offset-strlen(tampon)-1);
+								ERROR(offset-strlen(tampon)-1, errbuf);
 							}
 						}else{	
 							pj->value = ___calloc___(1, strlen(tampon) +1);
@@ -202,7 +214,7 @@ struct json *to_json(int fd){
 						virgule = 2;
 					}
 					if(virgule != 0 && virgule != 2 && virgule != 4){
-						ERROR(offset - strlen(tampon) -1);
+						ERROR(offset - strlen(tampon) -1, errbuf);
 					}
 					type = (type == ARRAY) ? type : LIST;
 					while(pj->prev)
@@ -216,6 +228,8 @@ struct json *to_json(int fd){
 					was = 0;
 					break;
 				case '"':
+					errbuf[err] = *pbuf;
+					err++;
 					was = 1;
 					quote = !quote;
 					quoted = 1;
@@ -231,9 +245,11 @@ struct json *to_json(int fd){
 					break;
 				case ':':
 					virgule = 0;
+					errbuf[err] = *pbuf;
+					err++;
 					pj->type |= (KEY|UNKNOW);
 					if(pj->key || quoted == 0){
-						ERROR(offset - strlen(tampon)-1);
+						ERROR(offset - strlen(tampon)-1, errbuf);
 					}
 					pj->key = ___calloc___(1, strlen(tampon) + 1);
 					strcpy(pj->key, tampon);
@@ -241,15 +257,19 @@ struct json *to_json(int fd){
 					tamp = 0;
 					break;
 				case '/':
+					errbuf[err] = *pbuf;
+					err++;
 					if(quote == 0)
 						erreur = 1;
 					break;
 				default:
 					type = (char)json_type(pj);
 					if((was == 0 && (type&ARRAY) == 0) || virgule == 4){
-						ERROR(offset- strlen(tampon)-1);
+						ERROR(offset- strlen(tampon)-1, errbuf);
 					}
 					character:
+					errbuf[err] = *pbuf;
+					err++;
 					if(tamp > ALLOC-1){
 						fprintf(stderr, "Chaine de charactere trop longue: %s...\n", tampon);
 						if(quote)fprintf(stderr, "double quote non fermee\n");
