@@ -224,14 +224,14 @@ struct json *to_json(int fd){
 					if(ls_offset >= 0){
 						if(l[ls_offset].type != type){
 							___char___ = (l[ls_offset].type == ARRAY) ? '[' : '{';
-							fprintf(stderr,"A l'offset %lu: \"%c\" non fermee correctement.\n",
+							fprintf(stderr,"A l'offset %lu: \"%c\" non fermee.\n",
 								l[ls_offset].offset+1, ___char___);
 							json_destroy(&j);
 							free(l);
 							exit(EXIT_FAILURE);
 						}
 					}else{
-						fprintf(stderr, "Echec a l'offset: %lu", offset);
+						fprintf(stderr, "Echec a l'offset: %lu.\n", offset);
 						json_destroy(&j);
 						free(l);
 						exit(EXIT_FAILURE);
