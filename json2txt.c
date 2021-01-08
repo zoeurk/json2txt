@@ -118,7 +118,7 @@ struct json *to_json(int fd){
 		type = 0, quote = 0, quoted = 0, virgule = 0, comments = 0, was_quoted = 0, ___char___ = 0;
 	long int r, i, len = 0, array = 0, ls_offset = 0;
 	unsigned long int bufsize = BUFFERLEN, offset = 0,
-				tamp = 0, err = 0, error = 0;
+				tamp = 0, err = 0;
 	memset(buffer, 0, BUFFERLEN);
 	memset(tampon, 0, ALLOC);
 	memset(errbuf, 0, SMALLBUF);
@@ -221,7 +221,6 @@ struct json *to_json(int fd){
 				case '}':
 					type = (type == ARRAY)? type : LIST;
 					ls_offset--;
-					error--;
 					if(ls_offset >= 0){
 						if(l[ls_offset].type != type){
 							___char___ = (l[ls_offset].type == ARRAY) ? '[' : '{';
@@ -232,7 +231,9 @@ struct json *to_json(int fd){
 							exit(EXIT_FAILURE);
 						}
 					}else{
-						fprintf(stderr, "Failure a l'offset: %lu", offset);
+						fprintf(stderr, "Echec a l'offset: %lu", offset);
+						json_destroy(&j);
+						free(l);
 						exit(EXIT_FAILURE);
 					}
 					quoted = 0;
