@@ -30,13 +30,6 @@ enum ARGS{
 	JSON = 1,
 	TXT = 2
 };
-enum IO{
-	OPEN = 1,
-	CLOSE = 2,
-	LST = 4,
-	TAB = 8,
-	ENTRY = 16
-};
 struct arguments{
 	int args;
 	int ___;
