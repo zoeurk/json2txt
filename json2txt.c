@@ -53,6 +53,7 @@ struct list_offset{
 	int type;
 	int ___;
 	unsigned long int offset;
+	struct json *j;
 };
 void print_space(unsigned long int len){
 	unsigned long int i;
@@ -104,12 +105,24 @@ unsigned long int json_type(struct json *pj){
 		ppj = ppj->prev;
 	return ppj->type;
 }
+unsigned long int json_up_type(struct json *pj){
+	struct json *ppj = pj;
+	if (!pj)
+		return 0;
+	while(ppj->prev)
+		ppj = ppj->prev;
+	if(ppj->up)
+		ppj = ppj->up;
+	while(ppj->prev)
+		ppj = ppj->prev;
+	return ppj->type;
+}
 struct json *to_json(int fd){
 	struct json *j = NULL, *pj = NULL;
 	struct list_offset *l = NULL;
 	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, errbuf[SMALLBUF],
-		type = 0, quote = 0, quoted = 0, virgule = 0, comments = 0, was_quoted = 0, ___char___ = 0;
-	long int r, i, len = 0, array = 0, ls_offset = 0;
+		type = 0, quote = 0, quoted = 0, virgule = 0, comments = 0, was_quoted = 0;
+	long int r, i, len = 0, array = 0;
 	unsigned long int bufsize = BUFFERLEN, offset = 0,
 				tamp = 0, err = 0;
 	memset(buffer, 0, BUFFERLEN);
@@ -191,13 +204,6 @@ struct json *to_json(int fd){
 					quoted = (type == LIST) ? 2 : 4;
 					len++;
 					virgule = 0;
-					if((l = realloc(l,(ls_offset+1)*sizeof(struct list_offset))) == NULL){
-						perror("realloc()");
-						exit(EXIT_FAILURE);
-					}
-					ls_offset++;
-					l[ls_offset-1].type = type;
-					l[ls_offset-1].offset = offset;
 					if(j == NULL){
 						pj =  j = calloc(1,sizeof(struct json));
 						pj->type = (type == ARRAY) ? type : LIST;
@@ -213,22 +219,6 @@ struct json *to_json(int fd){
 					type = ARRAY;
 				case '}':
 					type = (type == ARRAY)? type : LIST;
-					ls_offset--;
-					if(ls_offset >= 0){
-						if(l[ls_offset].type != type){
-							___char___ = (l[ls_offset].type == ARRAY) ? '[' : '{';
-							fprintf(stderr,"A l'offset %lu: \"%c\" non fermee.\n",
-								l[ls_offset].offset+1, ___char___);
-							json_destroy(&j);
-							free(l);
-							exit(EXIT_FAILURE);
-						}
-					}else{
-						fprintf(stderr, "Echec a l'offset: %lu.\n", offset);
-						json_destroy(&j);
-						free(l);
-						exit(EXIT_FAILURE);
-					}
 					quoted = 0;
 					len--;
 					if(tampon[0] != 0){
