@@ -222,7 +222,6 @@ struct json *to_json(int fd){
 					type = (type == ARRAY)? type : LIST;
 					ls_offset--;
 					error--;
-					printf("%lu\n", offset);
 					if(ls_offset >= 0){
 						if(l[ls_offset].type != type){
 							___char___ = (l[ls_offset].type == ARRAY) ? '[' : '{';
