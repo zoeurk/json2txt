@@ -141,7 +141,7 @@ struct json *to_json(int fd){
 					ERROR(offset,errbuf);
 				}
 			}else{
-				if(len == 0){
+				if(len == 0 && *pbuf != '/' && comments == 0){
 					fprintf(stderr, "Caractere invalide a l'offset: %lu.\n", offset);
 					json_destroy(&j);
 					exit(EXIT_FAILURE);
