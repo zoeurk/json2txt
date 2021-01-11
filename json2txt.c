@@ -253,7 +253,7 @@ struct json *to_json(int fd){
 					virgule = 0;
 					pj->type |= (KEY|UNKNOW);
 					if(pj->key || quoted == 0){
-						ERROR(offset - strlen(tampon), errbuf);
+						ERROR(offset - strlen(tampon)-2, errbuf);
 					}
 					pj->key = ___calloc___(1, strlen(tampon) + 1);
 					strcpy(pj->key, tampon);
