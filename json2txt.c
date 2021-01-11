@@ -136,10 +136,17 @@ struct json *to_json(int fd){
 				offset++;
 				continue;
 			};
-			if(!pj)
+			if(!pj){
 				if(*pbuf != '{'){
 					ERROR(offset,errbuf);
 				}
+			}else{
+				if(len == 0){
+					fprintf(stderr, "Caractere invalide a l'offset: %lu.\n", offset);
+					json_destroy(&j);
+					exit(EXIT_FAILURE);
+				}
+			}
 			switch(*pbuf){
 				case ',':
 					if((virgule == 1 && tampon[0] == 0) || quoted == 2 || quoted == 4){
@@ -240,10 +247,9 @@ struct json *to_json(int fd){
 					if((type&ARRAY) == ARRAY){
 						if(quote)
 							pj->type |= STR;
-					}else{
+					}else
 						if(pj->key && quote)
 							pj->type |= STR;
-					}
 					type = 0;
 					break;
 				case ':':
@@ -297,23 +303,26 @@ struct json *to_json(int fd){
 		perror("read()");
 		exit(EXIT_FAILURE);
 	}
+	if(quote == 1){
+		json_destroy(&j);
+		fprintf(stderr, "double quote non fermee a l'offset: %lu\n", offset);
+		exit(EXIT_FAILURE);
+	}
 	/*ne devrais pas etre vu*/
 	if(len != 0){
 		if(array > 0)
-			fprintf(stderr, "Trop de '[' ouverts\n");
+			fprintf(stderr, "Trop de '[' ouverts a l'offset %lu.\n", offset);
 		else
 			if(array < 0)
-				fprintf(stderr, "Trop de ']' fermées\n");
+				fprintf(stderr, "Trop de ']' fermées a l'offset: %lu\n", offset);
 			else
 				if(len > 0)
-					fprintf(stderr, "Trop de '{' ouverts\n");
+					fprintf(stderr, "Trop de '{' ouverts a l'offset: %lu.\n", offset);
 				else
 					if(len < 0)
-						fprintf(stderr, "Trop de '}' fermées\n");
+						fprintf(stderr, "Trop de '}' fermées a l'offset: %lu.\n", offset);
 					else	//ne sera jamais vu :)
 						fprintf(stderr, "Fichier JSON invalide\n");
-		if(quote == 1)
-			fprintf(stderr, "double quote non fermee\n");
 		json_destroy(&j);
 		exit(EXIT_FAILURE);
 	}
