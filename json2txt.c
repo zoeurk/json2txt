@@ -101,7 +101,7 @@ unsigned long int json_type(struct json *pj){
 struct json *to_json(int fd){
 	struct json *j = NULL, *pj = NULL;
 	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, errbuf[SMALLBUF],
-		type = 0, quote = 0, quoted = 0, virgule = 0, comments = 0, was_quoted = 0;
+		type = 0, quote = 0, quoted = 0, virgule = 0, comments = 0, was_quoted = 0, backslash = 0;
 	long int r, i , len = 0, array = 0;
 	unsigned long int bufsize = BUFFERLEN, offset = 0, err = 0,
 				tamp = 0;
@@ -129,6 +129,10 @@ struct json *to_json(int fd){
 			}
 			if(comments == 2)
 				goto end;
+			if(*pbuf == '\\' || backslash){
+				backslash = (backslash == 1) ? 0 : 1;
+				goto character;
+			}
 			if(*pbuf != '"' && quote == 1){
 				goto character;
 			}
@@ -278,6 +282,7 @@ struct json *to_json(int fd){
 					}
 					if(type == ARRAY)virgule = 2;
 					character:
+					//printf("%c",*pbuf);
 					if(tamp > ALLOC-1){
 						fprintf(stderr, "Chaine de charactere trop longue: %s...\n", tampon);
 						if(quote)fprintf(stderr, "Double quote non fermee\n");
