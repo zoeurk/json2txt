@@ -137,7 +137,7 @@ struct json *to_json(int fd){
 				continue;
 			};
 			if(!pj){
-				if(*pbuf != '{'){
+				if(*pbuf != '{' && *pbuf != '/'){
 					ERROR(offset,errbuf);
 				}
 			}else{
@@ -280,7 +280,7 @@ struct json *to_json(int fd){
 					character:
 					if(tamp > ALLOC-1){
 						fprintf(stderr, "Chaine de charactere trop longue: %s...\n", tampon);
-						if(quote)fprintf(stderr, "double quote non fermee\n");
+						if(quote)fprintf(stderr, "Double quote non fermee\n");
 						json_destroy(&j);
 						exit(EXIT_FAILURE);
 					}
