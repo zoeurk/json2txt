@@ -107,6 +107,7 @@ struct json *to_json(int fd){
 				tamp = 0;
 	memset(buffer, 0, BUFFERLEN);
 	memset(tampon, 0, ALLOC);
+	memset(errbuf, 0, SMALLBUF);
 	while((r = (long int)read(fd,pbuf,bufsize)) > 0)
 	{	
 		for(i = 0 ,pbuf = buffer; i < r; i++,pbuf++){
@@ -129,10 +130,20 @@ struct json *to_json(int fd){
 			}
 			if(comments == 2)
 				goto end;
-			if(*pbuf == '\\' || backslash){
+			if(pj)
+				type = json_type(pj);
+			if((pj && (pj->type&STR) == STR 
+				&& ((((type&ARRAY) == ARRAY)) || ((type&LIST) == LIST && pj->name != NULL))) 
+				&&(*pbuf == '\\' || backslash))
+			{
 				backslash = (backslash == 1) ? 0 : 1;
 				goto character;
+			}else{
+				if(backslash || *pbuf == '\\'){
+					ERROR(offset, errbuf);
+				}
 			}
+			type = 0;
 			if(*pbuf != '"' && quote == 1){
 				goto character;
 			}
