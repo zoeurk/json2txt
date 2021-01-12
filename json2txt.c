@@ -122,12 +122,9 @@ struct json *to_json(int fd){
 				memcpy(errbuf,&errbuf[SMALLBUF/2], SMALLBUF/2);
 				memset(&errbuf[(SMALLBUF/2)], 0, (SMALLBUF/2));
 				err = (SMALLBUF/2);
-				errbuf[err] = *pbuf;
-				err++;
-			}else{
-				errbuf[err] = *pbuf;
-				err++;
 			}
+			errbuf[err] = *pbuf;
+			err++;
 			if(comments == 2)
 				goto end;
 			type = json_type(pj);
