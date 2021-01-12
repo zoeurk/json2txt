@@ -130,8 +130,7 @@ struct json *to_json(int fd){
 			}
 			if(comments == 2)
 				goto end;
-			if(pj)
-				type = json_type(pj);
+			type = json_type(pj);
 			if(pj && (pj->type&STR) == STR 
 				&& (
 					(((type&ARRAY) == ARRAY)) || 
