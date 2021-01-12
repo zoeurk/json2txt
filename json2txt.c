@@ -132,10 +132,13 @@ struct json *to_json(int fd){
 				goto end;
 			if(pj)
 				type = json_type(pj);
-			if((pj && (pj->type&STR) == STR 
-				&& ((((type&ARRAY) == ARRAY)) || ((type&LIST) == LIST && pj->name != NULL))) 
-				&&(*pbuf == '\\' || backslash))
-			{
+			if(pj && (pj->type&STR) == STR 
+				&& (
+					(((type&ARRAY) == ARRAY)) || 
+					((type&LIST) == LIST && pj->name != NULL)
+				)
+				&& (*pbuf == '\\' || backslash)
+			){
 				backslash = (backslash == 1) ? 0 : 1;
 				goto character;
 			}else{
