@@ -6,4 +6,7 @@ autoconf
 automake --add-missing  
 ./configure  
 make  
-make install
+make install  
+  
+ou juste "make" si vous ne voulez pas installer le programme.
+
