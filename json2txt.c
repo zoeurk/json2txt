@@ -151,9 +151,8 @@ struct json *to_json(int fd){
 				}
 			}
 			type = 0;
-			if(*pbuf != '"' && quote == 1){
+			if(*pbuf != '"' && quote == 1)
 				goto character;
-			}
 			if(quote == 0 && (*pbuf == ' ' || *pbuf == '\t' || *pbuf == '\n')){
 				offset++;
 				continue;
@@ -242,7 +241,7 @@ struct json *to_json(int fd){
 							if(was_quoted || (type&ARRAY) == ARRAY){
 								pj->key = ___calloc___(1, strlen(tampon) +1);
 								strcpy(pj->key, tampon);
-							}else{	fprintf(stderr,"grr\n");
+							}else{	
 								ERROR(offset-strlen(tampon), errbuf);
 							}
 						}else{	
