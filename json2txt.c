@@ -214,7 +214,6 @@ struct json *to_json(int fd){
 				case '{':
 					type = (type == ARRAY) ? ARRAY : LIST;
 					if(virgule == 2){
-						fprintf(stderr,"syntax\n");
 						ERROR(offset-strlen(tampon), errbuf);
 					}
 					quoted = (type == LIST) ? 2 : 4;
