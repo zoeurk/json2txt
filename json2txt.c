@@ -219,7 +219,7 @@ struct json *to_json(int fd){
 					if(pj){
 						pj = add_json_entry(&pj);
 						
-					}else{	fprintf(stderr, "Json mal forme\n");
+					}else{	fprintf(stderr, "JSON mal forme\n");
 						exit(EXIT_FAILURE);
 					}
 					was_quoted = 0;
@@ -276,7 +276,11 @@ struct json *to_json(int fd){
 						len--;
 						hug--;
 						if(hug < 1){
-							ERROR(parts[0].offset, errbuf);
+							//ERROR(parts[0].offset, errbuf);
+							fprintf(stderr,"JSON mal forme\n");
+							if(parts)free(parts);
+							json_destroy(&j);
+							exit(EXIT_FAILURE);
 						}
 						parts[hug-1].offset = parts[hug].offset;
 						parts[hug-1].len++;
