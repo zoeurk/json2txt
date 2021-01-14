@@ -261,6 +261,8 @@ struct json *to_json(int fd){
 							fprintf(stderr, "Erreur de syntaxe apres l'offset: %lu\n",
 									parts[hug-1].offset + parts[hug-1].len
 							);
+							free(parts);
+							json_destroy(&p);
 							exit(EXIT_FAILURE);
 						}
 						parts[hug-1].offset = parts[hug].offset;
