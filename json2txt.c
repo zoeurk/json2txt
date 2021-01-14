@@ -221,7 +221,8 @@ struct json *to_json(int fd){
 					was_quoted = 0;
 					type = 0;
 					break;
-				case '[':accolade = 1;
+				case '[':
+					accolade = 1;
 					parts[hug-1].array++;
 					type = ARRAY;
 				case '{':
