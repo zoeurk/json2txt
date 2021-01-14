@@ -120,7 +120,7 @@ struct json *to_json(int fd){
 	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, errbuf[SMALLBUF],
 		type = 0, quote = 0, quoted = 0, virgule = 0, comments = 0, was_quoted = 0, backslash = 0;
 	long int r, i , len = 0;//, array = 0;
-	unsigned long int bufsize = BUFFERLEN, err = 0,
+	unsigned long int bufsize = BUFFERLEN, //err = 0,
 				tamp = 0, offset = 0,
 				accolade = 0, hug = 1;
 	memset(buffer, 0, BUFFERLEN);
