@@ -176,7 +176,7 @@ struct json *to_json(int fd){
 				}
 			}else{
 				if(parts[hug-1].len == 0 && *pbuf != '/' && comments == 0){
-					if(*pbuf == ']' || *pbuf == '}' || *pbuf == ',' || *pbuf == '"')
+					if(*pbuf == ']' || *pbuf == '}' || *pbuf == ',' || *pbuf == '"' || *pbuf == ':')
 						fprintf(stderr,"JSON mal forme.\n");
 					else
 						fprintf(stderr, "Caractere invalide (\"%c\") a l'offset: %lu.\n", *pbuf,parts[hug-1].offset);
