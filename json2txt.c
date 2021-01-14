@@ -228,7 +228,6 @@ struct json *to_json(int fd){
 						len++;
 						hug++;
 						parts = ___realloc___((void **)&parts, hug*sizeof(struct json_parts));
-						//fprintf(stderr, "++>%lu\n",parts[hug-1].offset);
 						parts[hug-1].offset = parts[hug-2].offset;
 						parts[hug-1].len = 0;
 						parts[hug-1].array = 0;
@@ -245,8 +244,6 @@ struct json *to_json(int fd){
 					if(parts[hug-1].len - len >1){
 						ERROR(offset- strlen(tampon) - 2,parts[hug-1].errbuf);
 					}
-					//else	fprintf(stderr,"++>ok\n");
-					//fprintf(stderr,"==>%lu, %lu\n",parts[hug-1].len, len);
 					if(j == NULL){
 						pj =  j = calloc(1,sizeof(struct json));
 						pj->type = (type == ARRAY) ? type : LIST;
@@ -299,7 +296,6 @@ struct json *to_json(int fd){
 					if(parts[hug-1].len - len >1){
 						ERROR(offset- strlen(tampon) - 2,parts[hug-1].errbuf);
 					}
-					//else	fprintf(stderr,"==>ok\n");
 					memset(tampon , 0, ALLOC);
 					tamp = 0;
 					type = 0;
