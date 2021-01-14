@@ -13,6 +13,7 @@
 
 #define ERROR(offset, buferr)\
 fprintf(stderr, "Erreur de syntaxe vers l'offset: %lu\n%s\n", offset, buferr);\
+if(parts)free(parts);\
 json_destroy(&j);\
 exit(EXIT_FAILURE);
 
@@ -119,8 +120,8 @@ struct json *to_json(int fd){
 	struct json_parts *parts = NULL;
 	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, errbuf[SMALLBUF],
 		type = 0, quote = 0, quoted = 0, virgule = 0, comments = 0, was_quoted = 0, backslash = 0;
-	long int r, i , len = 0;//, array = 0;
-	unsigned long int bufsize = BUFFERLEN, //err = 0,
+	long int r, i , len = 0;
+	unsigned long int bufsize = BUFFERLEN, err = 0,
 				tamp = 0, offset = 0,
 				accolade = 0, hug = 1;
 	memset(buffer, 0, BUFFERLEN);
@@ -137,13 +138,14 @@ struct json *to_json(int fd){
 					json_destroy(&j);
 					exit(EXIT_FAILURE);
 				}
-			if(parts[hug-1].err > SMALLBUF-1){
-				memcpy(parts[hug-1].errbuf,&parts[hug-1].errbuf[SMALLBUF/2], SMALLBUF/2);
-				memset(&parts[hug-1].errbuf[SMALLBUF/2], 0, (SMALLBUF/2));
-				parts[hug-1].err = (SMALLBUF/2);
+			if(parts[hug-1].err == SMALLBUF-1){
+				parts[hug-1].err = SMALLBUF-2;
+				memcpy(errbuf,&parts[hug-1].errbuf[1],SMALLBUF-2);
+				memset(parts[hug-1].errbuf, 0, SMALLBUF);
+				strncpy(parts[hug-1].errbuf,errbuf, SMALLBUF-2);
 			}
-			parts[hug-1].errbuf[parts[hug-1].err] = *pbuf;
 			parts[hug-1].err++;
+			parts[hug-1].errbuf[parts[hug-1].err-1] = *pbuf;
 			if(comments == 2)
 				goto end;
 			type = json_type(pj);
@@ -230,7 +232,10 @@ struct json *to_json(int fd){
 						parts[hug-1].offset = parts[hug-2].offset;
 						parts[hug-1].len = 0;
 						parts[hug-1].array = 0;
-						memcpy(parts[hug-1].errbuf, parts[hug-2].errbuf, SMALLBUF);
+						parts[hug-1].err = parts[hug-2].err;
+						strcpy(errbuf, parts[hug-2].errbuf);
+						memset(parts[hug-1].errbuf, 0, SMALLBUF);
+						strcpy(parts[hug-1].errbuf,errbuf);
 					}
 					accolade = 0;
 					type = (type == ARRAY) ? ARRAY : LIST;
@@ -263,8 +268,11 @@ struct json *to_json(int fd){
 						hug--;
 						parts[hug-1].offset = parts[hug].offset;
 						parts[hug-1].len++;
-						memcpy(parts[hug-1].errbuf, parts[hug].errbuf, SMALLBUF);
+						memcpy(errbuf,parts[hug].errbuf,SMALLBUF);
+						err = parts[hug].err;
 						parts = ___realloc___((void **)&parts, hug*sizeof(struct json_parts));
+						parts[hug-1].err = err;
+						strcpy(parts[hug-1].errbuf,errbuf);
 					}
 					accolade = 0;
 					type = (type == ARRAY)? type : LIST;
@@ -291,9 +299,6 @@ struct json *to_json(int fd){
 						pj = pj->prev;
 					if(pj->up)
 						pj = pj->up;
-					/*if(parts[hug-1].len - len >2){
-						ERROR(offset - strlen(tampon) - 2,parts[hug-1].errbuf);
-					}*/
 					parts[hug-1].len--;
 					memset(tampon , 0, ALLOC);
 					tamp = 0;
