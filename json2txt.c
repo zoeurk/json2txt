@@ -233,10 +233,6 @@ struct json *to_json(int fd){
 					if(accolade == 1){
 						len++;
 						hug++;
-						/*if(hug-1 < 0){
-							fprintf(stderr,"erreur: %lu\n", parts[0].offset);
-							exit(EXIT_FAILURE);
-						}*/
 						parts = ___realloc___((void **)&parts, hug*sizeof(struct json_parts));
 						parts[hug-1].offset = parts[hug-2].offset;
 						parts[hug-1].len = 0;
@@ -276,7 +272,6 @@ struct json *to_json(int fd){
 						len--;
 						hug--;
 						if(hug < 1){
-							//ERROR(parts[0].offset, errbuf);
 							fprintf(stderr,"JSON mal forme\n");
 							if(parts)free(parts);
 							json_destroy(&j);
@@ -392,7 +387,7 @@ struct json *to_json(int fd){
 		fprintf(stderr, "double quote non fermee a l'offset: %lu\n", parts[hug-1].offset);
 		exit(EXIT_FAILURE);
 	}
-	if(parts[hug-1].len != 0){
+	if(parts[hug-1].len != 0 && parts[hug-1].array != 0){
 		if(parts[hug-1].array > 0)
 			fprintf(stderr, "Trop de '[' ouverts a l'offset %lu.\n", parts[hug-1].offset);
 		else
