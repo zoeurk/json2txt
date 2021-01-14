@@ -350,6 +350,7 @@ struct json *to_json(int fd){
 					if(tamp > ALLOC-1){
 						fprintf(stderr, "Chaine de charactere trop longue: %s...\n", tampon);
 						if(quote)fprintf(stderr, "Double quote non fermee\n");
+						free(parts);
 						json_destroy(&j);
 						exit(EXIT_FAILURE);
 					}
