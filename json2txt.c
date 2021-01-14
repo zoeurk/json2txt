@@ -142,7 +142,7 @@ struct json *to_json(int fd){
 				memset(&parts[hug-1].errbuf[SMALLBUF/2], 0, (SMALLBUF/2));
 				parts[hug-1].err = (SMALLBUF/2);
 			}
-			parts[hug-1].errbuf[err] = *pbuf;
+			parts[hug-1].errbuf[parts[hug-1].err] = *pbuf;
 			parts[hug-1].err++;
 			if(comments == 2)
 				goto end;
@@ -230,7 +230,7 @@ struct json *to_json(int fd){
 						parts[hug-1].offset = parts[hug-2].offset;
 						parts[hug-1].len = 0;
 						parts[hug-1].array = 0;
-						memset(parts[hug-1].errbuf, 0, SMALLBUF);
+						memcpy(parts[hug-1].errbuf, parts[hug-2].errbuf, SMALLBUF);
 					}
 					accolade = 0;
 					type = (type == ARRAY) ? ARRAY : LIST;
@@ -292,7 +292,7 @@ struct json *to_json(int fd){
 					if(pj->up)
 						pj = pj->up;
 					if(parts[hug-1].len - len >2){
-						ERROR(offset- strlen(tampon) - 2,parts[hug-1].errbuf);
+						ERROR(offset - strlen(tampon) - 2,parts[hug-1].errbuf);
 					}
 					parts[hug-1].len--;
 					memset(tampon , 0, ALLOC);
@@ -357,7 +357,6 @@ struct json *to_json(int fd){
 			end:
 			if(*pbuf == '\n')
 				comments = 0;
-
 			offset = parts[hug-1].offset++;
 		}
 		pbuf = buffer;
