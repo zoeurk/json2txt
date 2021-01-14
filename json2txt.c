@@ -372,7 +372,6 @@ struct json *to_json(int fd){
 		fprintf(stderr, "double quote non fermee a l'offset: %lu\n", parts[hug-1].offset);
 		exit(EXIT_FAILURE);
 	}
-	/*ne devrais pas etre vu*/
 	if(parts[hug-1].len != 0){
 		if(parts[hug-1].array > 0)
 			fprintf(stderr, "Trop de '[' ouverts a l'offset %lu.\n", parts[hug-1].offset);
