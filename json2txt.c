@@ -542,8 +542,8 @@ void json_print(struct json *j, unsigned long int space){
 	if(space == 0)
 		printf("\n");
 }
-void usage(void){
-	printf("Usage: json [options] [filename|-]\n");
+void usage(char **args){
+	printf("Usage: %s [options] [filename|-]\n", args[0]);
 	printf("\t-J\tno json\n");
 	printf("\t-T\tno text\n");
 	printf("\t-[h|?]\tshow this message\n");
@@ -570,7 +570,7 @@ void parse_args(int argc, char **argv, struct arguments *args){
 					break;
 				case 'h':
 				case '?':
-					usage();
+					usage(argv);
 					break;
 				case 0: if(file == 1){
 						fprintf(stderr, "Mismatch arguments\n");
