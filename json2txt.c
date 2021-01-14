@@ -240,7 +240,7 @@ struct json *to_json(int fd){
 					quoted = (type == LIST) ? 2 : 4;
 					parts[hug-1].len++;
 					virgule = 0;
-					if(parts[hug-1].len - len >1){
+					if(parts[hug-1].len - len > 1 && len > 1){
 						ERROR(offset- strlen(tampon) - 2,parts[hug-1].errbuf);
 					}
 					if(j == NULL){
@@ -291,9 +291,9 @@ struct json *to_json(int fd){
 						pj = pj->prev;
 					if(pj->up)
 						pj = pj->up;
-					if(parts[hug-1].len - len >2){
+					/*if(parts[hug-1].len - len >2){
 						ERROR(offset - strlen(tampon) - 2,parts[hug-1].errbuf);
-					}
+					}*/
 					parts[hug-1].len--;
 					memset(tampon , 0, ALLOC);
 					tamp = 0;
