@@ -244,8 +244,6 @@ struct json *to_json(int fd){
 					virgule = 0;
 					if(parts[hug-1].len - len >1){
 						ERROR(offset- strlen(tampon) - 2,parts[hug-1].errbuf);
-						fprintf(stderr,"++>%lu;%lu;%lu;%lu;%li;%lu\n",parts[hug-1].len,len, parts[hug-1].offset, offset- strlen(tampon) - 2,parts[hug-1].len - len, strlen(tampon));
-						exit(EXIT_FAILURE);
 					}
 					//else	fprintf(stderr,"++>ok\n");
 					//fprintf(stderr,"==>%lu, %lu\n",parts[hug-1].len, len);
@@ -300,8 +298,6 @@ struct json *to_json(int fd){
 					parts[hug-1].len--;
 					if(parts[hug-1].len - len >1){
 						ERROR(offset- strlen(tampon) - 2,parts[hug-1].errbuf);
-						fprintf(stderr,"==>%lu;%lu;%lu;%lu;%li%lu\n",parts[hug-1].len,len, parts[hug-1].offset, offset - strlen(tampon) -2, parts[hug-1].len - len, strlen(tampon));
-						exit(EXIT_FAILURE);
 					}
 					//else	fprintf(stderr,"==>ok\n");
 					memset(tampon , 0, ALLOC);
