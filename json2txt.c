@@ -176,7 +176,11 @@ struct json *to_json(int fd){
 				}
 			}else{
 				if(parts[hug-1].len == 0 && *pbuf != '/' && comments == 0){
-					fprintf(stderr, "Caractere invalide a l'offset: %lu.\n", parts[hug-1].offset);
+					if(*pbuf == ']' || *pbuf == '}' || *pbuf == ',' || *pbuf == '"')
+						fprintf(stderr,"JSON mal forme.\n");
+					else
+						fprintf(stderr, "Caractere invalide (\"%c\") a l'offset: %lu.\n", *pbuf,parts[hug-1].offset);
+					if(parts)free(parts);
 					json_destroy(&j);
 					exit(EXIT_FAILURE);
 				}
@@ -229,6 +233,10 @@ struct json *to_json(int fd){
 					if(accolade == 1){
 						len++;
 						hug++;
+						/*if(hug-1 < 0){
+							fprintf(stderr,"erreur: %lu\n", parts[0].offset);
+							exit(EXIT_FAILURE);
+						}*/
 						parts = ___realloc___((void **)&parts, hug*sizeof(struct json_parts));
 						parts[hug-1].offset = parts[hug-2].offset;
 						parts[hug-1].len = 0;
@@ -267,6 +275,9 @@ struct json *to_json(int fd){
 					if(accolade == -1){
 						len--;
 						hug--;
+						if(hug < 1){
+							ERROR(parts[0].offset, errbuf);
+						}
 						parts[hug-1].offset = parts[hug].offset;
 						parts[hug-1].len++;
 						memcpy(errbuf,parts[hug].errbuf,SMALLBUF);
