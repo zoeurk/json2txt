@@ -291,6 +291,9 @@ struct json *to_json(int fd){
 						pj = pj->prev;
 					if(pj->up)
 						pj = pj->up;
+					if(parts[hug-1].len - len >2){
+						ERROR(offset- strlen(tampon) - 2,parts[hug-1].errbuf);
+					}
 					parts[hug-1].len--;
 					memset(tampon , 0, ALLOC);
 					tamp = 0;
