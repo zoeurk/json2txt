@@ -125,7 +125,7 @@ struct json *to_json(int fd){
 	struct json *j = NULL, *pj = NULL, *ppj = NULL;
 	struct json_parts *parts = NULL;
 	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, errbuf[SMALLBUF],
-		type = 0, quote = 0, quoted = 0, virgule = 0, comments = 0, was_quoted = 0, backslash = 0;
+		type = 0, quote = 0, quoted = 0, virgule = 0, comments = 0, was_quoted = 0, backslash = 0, ok = 0, last = 0;
 	long int r, i , len = 0;
 	unsigned long int bufsize = BUFFERLEN, err = 0,
 				tamp = 0, offset = 0,
@@ -229,6 +229,7 @@ struct json *to_json(int fd){
 					}else{	fprintf(stderr, "JSON mal forme\n");
 						exit(EXIT_FAILURE);
 					}
+					ok = 0;
 					was_quoted = 0;
 					type = 0;
 					break;
@@ -248,8 +249,17 @@ struct json *to_json(int fd){
 						strcpy(errbuf, parts[hug-2].errbuf);
 						memset(parts[hug-1].errbuf, 0, SMALLBUF);
 						strcpy(parts[hug-1].errbuf,errbuf);
-						parts[hug-1].start = 1;
-					}
+						parts[hug-1].start |= 1;
+						ok = 0;
+					}else
+						if(ok == 0)
+							ok = 1;
+						else
+							if(parts[hug-1].start == 1 && last == hug){
+								ERROR(parts[hug-1].offset, parts[hug-1].errbuf, parts, j);
+							}
+					
+					last = hug;
 					accolade = 0;
 					type = (type == ARRAY) ? ARRAY : LIST;
 					if(virgule == 2){
@@ -368,7 +378,6 @@ struct json *to_json(int fd){
 				default:
 					type = (char)json_type(pj);
 					if((was_quoted == 0 && (type&ARRAY) == 0) || virgule == 4){
-						
 						ERROR(parts[hug-1].offset - strlen(tampon), parts[hug-1].errbuf, parts, j);
 					}
 					if(type == ARRAY)virgule = 2;
