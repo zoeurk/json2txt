@@ -612,7 +612,7 @@ void parse_args(int argc, char **argv, struct arguments *args){
 					file = 1;
 					break;
 				default:
-					if(*a_ == '-'){
+					if(*a_ == '-' || a[1] == 0){
 						fprintf(stderr,"L'option -%c est inconnue\n",*a);
 						fprintf(stderr,"essayer %s -[?|h]\n",argv[0]);
 						exit(EXIT_FAILURE);
