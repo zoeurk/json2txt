@@ -286,7 +286,7 @@ struct json *to_json(int fd){
 						len--;
 						hug--;
 						if(hug < 1){
-							fprintf(stderr,"=>JSON mal forme\n");
+							fprintf(stderr,"JSON mal forme\n");
 							if(parts)free(parts);
 							json_destroy(&j);
 							exit(EXIT_FAILURE);
