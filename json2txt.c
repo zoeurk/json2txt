@@ -129,8 +129,7 @@ struct json *to_json(int fd){
 		virgule = 0, comments = 0, backslash = 0,
 		last = 0, ok = 0;
 	long int r, i , len = 0;
-	unsigned long int bufsize = BUFFERLEN, err = 0,
-				tamp = 0, offset = 0,
+	unsigned long int bufsize = BUFFERLEN, err = 0, tamp = 0,
 				accolade = 0, hug = 1;
 	memset(buffer, 0, BUFFERLEN);
 	memset(tampon, 0, ALLOC);
@@ -251,7 +250,7 @@ struct json *to_json(int fd){
 						strcpy(errbuf, parts[hug-2].errbuf);
 						memset(parts[hug-1].errbuf, 0, SMALLBUF);
 						strcpy(parts[hug-1].errbuf,errbuf);
-						parts[hug-1].start |= 1;
+						parts[hug-1].start = 1;
 						ok = 0;
 					}else
 						if(ok == 0)
@@ -274,7 +273,7 @@ struct json *to_json(int fd){
 					parts[hug-1].len++;
 					virgule = 0;
 					if(parts[hug-1].len - len > 1 && len > 1){
-						ERROR(offset- strlen(tampon) - 2,parts[hug-1].errbuf, parts, j);
+						ERROR(parts[hug-1].offset- strlen(tampon) - 2,parts[hug-1].errbuf, parts, j);
 					}
 					if(j == NULL){
 						pj =  j = calloc(1,sizeof(struct json));
@@ -293,7 +292,7 @@ struct json *to_json(int fd){
 				case '}':
 					if(accolade == -1){
 						if(len -1 < 0){
-							ERROR(offset,parts[hug-1].errbuf, parts, j);
+							ERROR(parts[hug-1].offset,parts[hug-1].errbuf, parts, j);
 						}
 						len--;
 						hug--;
@@ -402,7 +401,7 @@ struct json *to_json(int fd){
 			end:
 			if(*pbuf == '\n')
 				comments = 0;
-			offset = parts[hug-1].offset++;
+			parts[hug-1].offset++;
 		}
 		pbuf = buffer;
 	}
