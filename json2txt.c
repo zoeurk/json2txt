@@ -295,12 +295,12 @@ struct json *to_json(int fd){
 						}
 						len--;
 						hug--;
-						if(hug < 1){
+						/*if(hug < 1){
 							fprintf(stderr,"JSON mal forme\n");
 							if(parts)free(parts);
 							json_destroy(&j);
 							exit(EXIT_FAILURE);
-						}
+						}*/
 						parts[hug-1].offset = parts[hug].offset;
 						parts[hug-1].len++;
 						memcpy(errbuf,parts[hug].errbuf,SMALLBUF);
