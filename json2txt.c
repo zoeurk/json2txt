@@ -30,6 +30,9 @@ enum ARGS{
 	JSON = 1,
 	TXT = 2
 };
+enum LST{
+	LST = 32768
+};
 struct arguments{
 	int args;
 	int ___;
@@ -56,6 +59,9 @@ struct json_parts{
 	int err;
 	int ___;
 	char errbuf[SMALLBUF];
+	unsigned short int start;
+	unsigned short int pad;
+	int _pad_;
 };
 void print_space(unsigned long int len){
 	unsigned long int i;
@@ -176,9 +182,10 @@ struct json *to_json(int fd){
 				}
 			}else{
 				if(parts[hug-1].len == 0 && *pbuf != '/' && comments == 0){
-					if(*pbuf == ']' || *pbuf == '}' || *pbuf == ',' || *pbuf == '"' || *pbuf == ':' || *pbuf == '{' || *pbuf == '[')
-						fprintf(stderr,"JSON mal forme.\n");
-					else
+					if(*pbuf == ']' || *pbuf == '}' || *pbuf == ',' || *pbuf == '"' || *pbuf == ':' || *pbuf == '{' || *pbuf == '['){
+						//fprintf(stderr,"JSON mal forme:%c;%lu.\n", *pbuf, parts[hug-1].offset);
+						ERROR(parts[hug-1].offset, parts[hug-1].errbuf);
+					}else
 						fprintf(stderr, "Caractere invalide (\"%c\") a l'offset: %lu.\n", *pbuf,parts[hug-1].offset);
 					if(parts)free(parts);
 					json_destroy(&j);
@@ -241,10 +248,14 @@ struct json *to_json(int fd){
 						strcpy(errbuf, parts[hug-2].errbuf);
 						memset(parts[hug-1].errbuf, 0, SMALLBUF);
 						strcpy(parts[hug-1].errbuf,errbuf);
+						parts[hug-1].start = 1;
 					}
 					accolade = 0;
 					type = (type == ARRAY) ? ARRAY : LIST;
 					if(virgule == 2){
+						ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf);
+					}
+					if(parts[hug-1].start == 0 && parts[hug-1].offset > 0){
 						ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf);
 					}
 					quoted = (type == LIST) ? 2 : 4;
@@ -269,10 +280,13 @@ struct json *to_json(int fd){
 					type = ARRAY;
 				case '}':
 					if(accolade == -1){
+						if(len -1 < 0){
+							ERROR(offset,parts[hug-1].errbuf);
+						}
 						len--;
 						hug--;
 						if(hug < 1){
-							fprintf(stderr,"JSON mal forme\n");
+							fprintf(stderr,"=>JSON mal forme\n");
 							if(parts)free(parts);
 							json_destroy(&j);
 							exit(EXIT_FAILURE);
@@ -285,6 +299,8 @@ struct json *to_json(int fd){
 						parts[hug-1].err = err;
 						strcpy(parts[hug-1].errbuf,errbuf);
 					}
+					if((parts[hug-1].start&LST) == LST)
+						parts[hug-1].start  -= LST;
 					accolade = 0;
 					type = (type == ARRAY)? type : LIST;
 					quoted = 0;
@@ -357,6 +373,7 @@ struct json *to_json(int fd){
 					}
 					if(type == ARRAY)virgule = 2;
 					character:
+					parts[hug-1].start |= LST;
 					if(tamp > ALLOC-1){
 						fprintf(stderr, "Chaine de charactere trop longue: %s...\n", tampon);
 						if(quote)fprintf(stderr, "Double quote non fermee\n");
@@ -377,6 +394,10 @@ struct json *to_json(int fd){
 			offset = parts[hug-1].offset++;
 		}
 		pbuf = buffer;
+	}
+	if(parts[hug-1].start > 0){
+		ERROR(parts[hug-1].offset,parts[hug-1].errbuf);
+		//printf("=>%li;%u\n",parts[hug-1].array, parts[hug-1].start);
 	}
 	if(r < 0){
 		perror("read()");
