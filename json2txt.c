@@ -397,7 +397,6 @@ struct json *to_json(int fd){
 	}
 	if(parts[hug-1].start > 0){
 		ERROR(parts[hug-1].offset,parts[hug-1].errbuf, parts, j);
-		//printf("=>%li;%u\n",parts[hug-1].array, parts[hug-1].start);
 	}
 	if(r < 0){
 		perror("read()");
