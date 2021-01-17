@@ -9,7 +9,7 @@ $ {
 	g
 	:id
 	/id:/{
-		s/\n[^\n]*\.id:\([0-9]*\)/\ni3-msg '[con_id="\1"] move workspace Welcome';i3-msg '[con_id="\1"] floating enable';i3-msg '[con_id="\1"] resize set 50 ppt';i3-msg '[con_id="\1"] resize set height 50 ppt';i3-msg '[con_id="\1"] move position X ppt Y ppt';/
+		s/\n[^\n]*\.id:\([0-9]*\)/\ni3-msg '[con_id="\1"] move workspace Welcome';i3-msg '[con_id="\1"] floating enable';i3-msg '[con_id="\1"] resize set 50 ppt';i3-msg '[con_id="\1"] resize set height 50 ppt';/
 		t id
 	}
 	s/^\n//
