@@ -508,7 +508,10 @@ void json_to_string(struct json *j,char **string, unsigned long int string_len, 
 }
 void json_print(struct json *j, unsigned long int space){
 	struct json *pj = j;
-	unsigned long int type = j->type;
+	unsigned long int type;
+	if(j)
+		type = j->type;
+	else	exit(EXIT_FAILURE);
 	switch(type&(ARRAY|LIST)){
 		case ARRAY:
 			printf("[");
