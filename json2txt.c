@@ -178,7 +178,7 @@ struct json *to_json(int fd){
 				continue;
 			};
 			if(!pj){
-				if(*pbuf != '{' && *pbuf != '/'){
+				if(*pbuf != '{' && *pbuf != '/' && *pbuf != '['){
 					ERROR(parts[hug-1].offset, parts[hug-1].errbuf, parts, j);
 				}
 			}else{
