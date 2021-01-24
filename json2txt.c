@@ -55,13 +55,11 @@ struct json{
 struct json_parts{
 	unsigned long int offset;
 	long int len, array;
-	long int xlen, xarray;
 	int err;
 	int ___;
 	char errbuf[SMALLBUF];
 	unsigned short int start;
-	unsigned short int pad;
-	int _pad_;
+	unsigned short int pad[3];
 };
 void print_space(unsigned long int len){
 	unsigned long int i;
@@ -184,7 +182,6 @@ struct json *to_json(int fd){
 			}else{
 				if(parts[hug-1].len == 0 && *pbuf != '/' && comments == 0){
 					if(*pbuf == ']' || *pbuf == '}' || *pbuf == ',' || *pbuf == '"' || *pbuf == ':' || *pbuf == '{' || *pbuf == '['){
-						//fprintf(stderr,"JSON mal forme:%c;%lu.\n", *pbuf, parts[hug-1].offset);
 						ERROR(parts[hug-1].offset, parts[hug-1].errbuf, parts, j);
 					}else
 						fprintf(stderr, "Caractere invalide (\"%c\") a l'offset: %lu.\n", *pbuf,parts[hug-1].offset);
@@ -296,12 +293,6 @@ struct json *to_json(int fd){
 						}
 						len--;
 						hug--;
-						/*if(hug < 1){
-							fprintf(stderr,"JSON mal forme\n");
-							if(parts)free(parts);
-							json_destroy(&j);
-							exit(EXIT_FAILURE);
-						}*/
 						parts[hug-1].offset = parts[hug].offset;
 						parts[hug-1].len++;
 						memcpy(errbuf,parts[hug].errbuf,SMALLBUF);
@@ -322,7 +313,6 @@ struct json *to_json(int fd){
 								strcpy(pj->key, tampon);
 							}else{	
 								ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
-							}
 						}else{	
 							pj->value = ___calloc___(1, strlen(tampon) +1);
 							strcpy(pj->value, tampon);
