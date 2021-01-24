@@ -120,7 +120,7 @@ unsigned long int json_type(struct json *pj){
 	return ppj->type;
 }
 struct json *to_json(int fd){
-	struct json *j = NULL, *pj = NULL, *ppj = NULL;
+	struct json *j = NULL, *pj = NULL;
 	struct json_parts *parts = NULL;
 	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, errbuf[SMALLBUF],
 		type = 0, quote = 0, quoted = 0, was_quoted = 0,
@@ -192,12 +192,7 @@ struct json *to_json(int fd){
 			}
 			switch(*pbuf){
 				case ',':
-					if(pj){
-						ppj = pj;
-						while(ppj->prev)
-							ppj = ppj->prev;
-					}
-					if((virgule == 1 && tampon[0] == 0) || (ppj->type == (LIST|KEY|UNKNOW) && virgule == 4) || quoted == 2 || quoted == 4){
+					if((virgule == 1 && tampon[0] == 0) || (json_type(pj) == (LIST|KEY|UNKNOW) && virgule == 4) || quoted == 2 || quoted == 4){
 						ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
 					}
 					if(tampon[0] != 0){
@@ -313,6 +308,7 @@ struct json *to_json(int fd){
 								strcpy(pj->key, tampon);
 							}else{	
 								ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
+							}
 						}else{	
 							pj->value = ___calloc___(1, strlen(tampon) +1);
 							strcpy(pj->value, tampon);
