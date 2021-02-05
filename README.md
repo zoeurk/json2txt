@@ -1,5 +1,5 @@
 # json2txt  
-"decompression" json  
+"decompression" de fichier json  
   
 aclocale  
 autoconf  
