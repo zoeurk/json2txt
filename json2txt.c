@@ -169,12 +169,20 @@ struct json *to_json(int fd){
 				}
 			}
 			type = 0;
-			if(*pbuf != '"' && quote == 1)
+			if(*pbuf != '"' && quote == 1){
+				if((*pbuf == '\t' || *pbuf == '\n')){
+						ERROR(parts[hug-1].offset, parts[hug-1].errbuf, parts, j);
+				}
 				goto character;
+			}
 			if(quote == 0 && (*pbuf == ' ' || *pbuf == '\t' || *pbuf == '\n')){
 				parts[hug-1].offset++;
 				continue;
-			};
+			}else{
+				if(quote == 1 && (*pbuf == '\t' || *pbuf == '\n')){
+					ERROR(parts[hug-1].offset, parts[hug-1].errbuf, parts, j);
+				}
+			}
 			if(!pj){
 				if(*pbuf != '{' && *pbuf != '/' && *pbuf != '['){
 					ERROR(parts[hug-1].offset, parts[hug-1].errbuf, parts, j);
