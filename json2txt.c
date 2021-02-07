@@ -17,6 +17,11 @@ if(parts)free(parts);\
 json_destroy(&j);\
 exit(EXIT_FAILURE);
 
+#define NUM_VALUE(tampon, pj, offset, buferr, parts, j)\
+if((pj->type&STR) == 0 && is_num(tampon)){\
+ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);\
+}
+
 enum TYPE{
 	NONE = 0,
 	LIST = 1,
@@ -66,6 +71,24 @@ void print_space(unsigned long int len){
 	for(i = 0; i < len; i++){
 		printf(" ");
 	}
+}
+int is_num(char *buffer){
+	int ret = 0;
+	char *pbuf = buffer;
+	if(*pbuf == '+' || *pbuf == '-')
+		pbuf++;
+	for(;*pbuf != 0 && ret == 0; pbuf++){
+		if(*pbuf == '.'){
+			if(ret == 1)
+				return 1;
+			else ret = 1;
+		}else{
+			if(*pbuf < 48 && *pbuf > 58){
+				return 2;
+			}
+		}
+	}
+	return 0;
 }
 void *___calloc___(unsigned long int nbr, unsigned long int size){
 	void *ptr;
@@ -220,6 +243,7 @@ struct json *to_json(int fd){
 								strcpy(pj->value, tampon);
 							}
 						}
+						NUM_VALUE(tampon, pj, offset, buferr, parts, j)
 						memset(tampon, 0, ALLOC);
 						tamp = 0;
 					}
@@ -319,6 +343,10 @@ struct json *to_json(int fd){
 							}
 						}else{	
 							pj->value = ___calloc___(1, strlen(tampon) +1);
+							//if(is_num(tampon) != 0 && (pj->type&STR) == 0){
+							//	ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
+							//}
+							NUM_VALUE(tampon, pj, offset, buferr, parts, j)
 							strcpy(pj->value, tampon);
 						}
 						virgule = 2;
