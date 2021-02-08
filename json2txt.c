@@ -205,7 +205,6 @@ struct json *to_json(int fd){
 					ERROR(parts[hug-1].offset, parts[hug-1].errbuf, parts, j);
 				}
 				else	if(*pbuf == '\n'){
-						printf("%s\n",tampon);
 						set = 1;
 						tamp = 0;
 					}
