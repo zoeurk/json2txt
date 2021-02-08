@@ -75,8 +75,10 @@ void print_space(unsigned long int len){
 int is_num(char *buffer){
 	int ret = 0;
 	char *pbuf = buffer;
-	if(strcmp(buffer, "true") == 0 || strcmp(buffer, "false") == 0 || strcmp(buffer, "null") == 0)
-		return 0;
+	if(	strcmp(buffer, "true") == 0 ||
+		strcmp(buffer, "false") == 0 ||
+		strcmp(buffer, "null") == 0
+	)	return 0;
 	if(*pbuf == '+' || *pbuf == '-')
 		pbuf++;
 	for(;*pbuf != 0 && ret == 0; pbuf++){
@@ -201,13 +203,14 @@ struct json *to_json(int fd){
 				goto character;
 			}
 			if(quote == 0 && (*pbuf == ' ' || *pbuf == '\t' || *pbuf == '\n')){
-				if(tamp > 0 && *pbuf != '\n'){
+				if(tamp > 0 && (*pbuf != '\n' && *pbuf != ' ' && *pbuf != '\t')){
 					ERROR(parts[hug-1].offset, parts[hug-1].errbuf, parts, j);
 				}
-				else	if(*pbuf == '\n'){
+				else{ //if(*pbuf == '\n'){
 						set = 1;
 						tamp = 0;
-					}
+					//}
+				}
 				parts[hug-1].offset++;
 				continue;
 			}else{
