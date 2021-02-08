@@ -205,6 +205,7 @@ struct json *to_json(int fd){
 					ERROR(parts[hug-1].offset, parts[hug-1].errbuf, parts, j);
 				}
 				else	if(*pbuf == '\n'){
+						printf("%s\n",tampon);
 						set = 1;
 						tamp = 0;
 					}
@@ -267,6 +268,7 @@ struct json *to_json(int fd){
 					ok = 0;
 					was_quoted = 0;
 					type = 0;
+					set = 0;
 					break;
 				case '[':
 					accolade = 1;
