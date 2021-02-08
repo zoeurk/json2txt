@@ -75,6 +75,8 @@ void print_space(unsigned long int len){
 int is_num(char *buffer){
 	int ret = 0;
 	char *pbuf = buffer;
+	if(strcmp(buffer, "true") == 0 || strcmp(buffer, "false") == 0 || strcmp(buffer, "null") == 0)
+		return 0;
 	if(*pbuf == '+' || *pbuf == '-')
 		pbuf++;
 	for(;*pbuf != 0 && ret == 0; pbuf++){
@@ -148,7 +150,7 @@ struct json *to_json(int fd){
 	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, errbuf[SMALLBUF],
 		type = 0, quote = 0, quoted = 0, was_quoted = 0,
 		virgule = 0, comments = 0, backslash = 0,
-		last = 0, ok = 0;
+		last = 0, ok = 0, set = 0;
 	long int r, i , len = 0;
 	unsigned long int bufsize = BUFFERLEN, err = 0, tamp = 0,
 				accolade = 0, hug = 1;
@@ -202,8 +204,10 @@ struct json *to_json(int fd){
 				if(tamp > 0 && *pbuf != '\n'){
 					ERROR(parts[hug-1].offset, parts[hug-1].errbuf, parts, j);
 				}
-				else	if(*pbuf == '\n')
+				else	if(*pbuf == '\n'){
+						set = 1;
 						tamp = 0;
+					}
 				parts[hug-1].offset++;
 				continue;
 			}else{
@@ -369,10 +373,14 @@ struct json *to_json(int fd){
 					was_quoted = 0;
 					break;
 				case '"':
+					if(tamp > 0 && quote == 0){
+						ERROR(parts[hug-1].offset - strlen(tampon), parts[hug-1].errbuf, parts, j);
+					}
 					was_quoted = 1;
 					quote = !quote;
 					quoted = 1;
 					virgule = 4;
+					set = 0;
 					type = (char)json_type(pj);
 					if((type&ARRAY) == ARRAY){
 						if(quote)
@@ -408,6 +416,9 @@ struct json *to_json(int fd){
 					}
 					if(type == ARRAY)virgule = 2;
 					character:
+					if(tamp == 0 && strlen(tampon) && set == 1){
+						ERROR(parts[hug-1].offset - strlen(tampon), parts[hug-1].errbuf, parts, j);
+					}
 					parts[hug-1].start |= LST;
 					if(tamp > ALLOC-1){
 						fprintf(stderr, "Chaine de charactere trop longue: %s...\n", tampon);
