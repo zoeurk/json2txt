@@ -171,6 +171,7 @@ struct json *to_json(int fd){
 			else	if(comments == 1){
 					fprintf(stderr, "Erreur de syntaxe dans le commentaire vers l'offset: %lu\n", parts[hug-1].offset);
 					json_destroy(&j);
+					free(parts);
 					exit(EXIT_FAILURE);
 				}
 			if(parts[hug-1].err == SMALLBUF-1){
@@ -207,11 +208,11 @@ struct json *to_json(int fd){
 			}
 			if(quote == 0 && (*pbuf == ' ' || *pbuf == '\t' || *pbuf == '\n')){
 				if(tampon[0] != 0){
-					if(space == 1)
+					/*if(space == 1)
 						strcpy(tampbuf, tampon);
 					else	if(space > 0 && strcmp(tampbuf,tampon)){
 							ERROR(parts[hug-1].offset-space, parts[hug-1].errbuf, parts, j);
-						}
+						}*/
 				}
 				parts[hug-1].offset++;
 				space++;
@@ -238,7 +239,7 @@ struct json *to_json(int fd){
 			}
 			switch(*pbuf){
 				case ',':
-					if((virgule == 1 && tampon[0] == 0) || (json_type(pj) == (LIST|KEY|UNKNOW) && virgule == 4) || quoted == 2 || quoted == 4){
+					if((virgule == 1 && tampon[0] == 0) || (quoted&(ARRAY|LIST)) == (ARRAY|LIST)/*(json_type(pj) == (LIST|KEY|UNKNOW) && virgule == 4) || quoted == 2 || quoted == 4*/){
 						ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
 					}
 					if(tampon[0] != 0){
@@ -354,7 +355,7 @@ struct json *to_json(int fd){
 						if(pj->key == NULL){
 							if(was_quoted || (type&ARRAY) == ARRAY){
 								if((pj->type&STR) == 0){
-									NUM_VALUE(tampon, pj, offset, buferr, parts, j);
+									//NUM_VALUE(tampon, pj, offset, buferr, parts, j);
 								}
 								pj->key = ___calloc___(1, strlen(tampon) +1);
 								strcpy(pj->key, tampon);
@@ -362,7 +363,7 @@ struct json *to_json(int fd){
 								ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
 							}
 						}else{	if((pj->type&STR) == 0){
-								NUM_VALUE(tampon, pj, offset, buferr, parts, j);
+								//NUM_VALUE(tampon, pj, offset, buferr, parts, j);
 							}
 							pj->value = ___calloc___(1, strlen(tampon) +1);
 							strcpy(pj->value, tampon);
@@ -391,7 +392,7 @@ struct json *to_json(int fd){
 					was_quoted = 1;
 					quote = !quote;
 					quoted = 1;
-					virgule = 4;
+					//virgule = 4;
 					type = (char)json_type(pj);
 					if((type&ARRAY) == ARRAY){
 						if(quote)
@@ -442,7 +443,6 @@ struct json *to_json(int fd){
 					tamp++;
 					quoted = 0;
 					type = 0;
-					//space = 0;
 					break;
 			}
 			end:
