@@ -208,11 +208,11 @@ struct json *to_json(int fd){
 			}
 			if(quote == 0 && (*pbuf == ' ' || *pbuf == '\t' || *pbuf == '\n')){
 				if(tampon[0] != 0){
-					/*if(space == 1)
+					if(space == 1)
 						strcpy(tampbuf, tampon);
 					else	if(space > 0 && strcmp(tampbuf,tampon)){
 							ERROR(parts[hug-1].offset-space, parts[hug-1].errbuf, parts, j);
-						}*/
+						}
 				}
 				parts[hug-1].offset++;
 				space++;
@@ -239,9 +239,12 @@ struct json *to_json(int fd){
 			}
 			switch(*pbuf){
 				case ',':
-					if((virgule == 1 && tampon[0] == 0) || (quoted&(ARRAY|LIST)) == (ARRAY|LIST)/*(json_type(pj) == (LIST|KEY|UNKNOW) && virgule == 4) || quoted == 2 || quoted == 4*/){
+					if((virgule == 1 && tampon[0] == 0) || (quoted&(ARRAY|LIST)) == (ARRAY|LIST) ||
+						(json_type(pj) == (LIST|KEY|UNKNOW) && virgule == 4)
+					){
 						ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
 					}
+					//printf("%lu;%i;%i\n",json_type(pj)&(LIST|KEY|UNKNOW),LIST|KEY|UNKNOW, virgule);
 					if(tampon[0] != 0){
 						if(!pj->name){
 							type = (char)json_type(pj);
