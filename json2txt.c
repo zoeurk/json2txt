@@ -244,7 +244,6 @@ struct json *to_json(int fd){
 					){
 						ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
 					}
-					//printf("%lu;%i;%i\n",json_type(pj)&(LIST|KEY|UNKNOW),LIST|KEY|UNKNOW, virgule);
 					if(tampon[0] != 0){
 						if(!pj->name){
 							type = (char)json_type(pj);
