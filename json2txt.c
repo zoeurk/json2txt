@@ -358,7 +358,7 @@ struct json *to_json(int fd){
 						if(pj->key == NULL){
 							if(was_quoted || (type&ARRAY) == ARRAY){
 								if((pj->type&STR) == 0){
-									//NUM_VALUE(tampon, pj, offset, buferr, parts, j);
+									NUM_VALUE(tampon, pj, offset, buferr, parts, j);
 								}
 								pj->key = ___calloc___(1, strlen(tampon) +1);
 								strcpy(pj->key, tampon);
@@ -366,7 +366,7 @@ struct json *to_json(int fd){
 								ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
 							}
 						}else{	if((pj->type&STR) == 0){
-								//NUM_VALUE(tampon, pj, offset, buferr, parts, j);
+								NUM_VALUE(tampon, pj, offset, buferr, parts, j);
 							}
 							pj->value = ___calloc___(1, strlen(tampon) +1);
 							strcpy(pj->value, tampon);
