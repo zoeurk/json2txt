@@ -240,7 +240,7 @@ struct json *to_json(int fd){
 			switch(*pbuf){
 				case ',':
 					if((virgule == 1 && tampon[0] == 0) || 
-						(json_type(pj) == (LIST|KEY|UNKNOW) && virgule == 4) || quoted == 2 || quoted == 4
+						/*(json_type(pj) == (LIST|KEY|UNKNOW) && virgule == 4) ||*/ quoted == 2 || quoted == 4
 					){
 						ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
 					}
@@ -394,7 +394,7 @@ struct json *to_json(int fd){
 					was_quoted = 1;
 					quote = !quote;
 					quoted = 1;
-					//virgule = 4;
+					virgule = 4;
 					type = (char)json_type(pj);
 					if((type&ARRAY) == ARRAY){
 						if(quote)
