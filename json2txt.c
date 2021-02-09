@@ -149,13 +149,13 @@ unsigned long int json_type(struct json *pj){
 struct json *to_json(int fd){
 	struct json *j = NULL, *pj = NULL;
 	struct json_parts *parts = NULL;
-	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, errbuf[SMALLBUF],
+	char buffer[BUFFERLEN],tampon[ALLOC], *pbuf = buffer, errbuf[SMALLBUF], tampbuf[ALLOC],
 		type = 0, quote = 0, quoted = 0, was_quoted = 0,
 		virgule = 0, comments = 0, backslash = 0,
 		last = 0, ok = 0;
 	long int r, i , len = 0;
 	unsigned long int bufsize = BUFFERLEN, err = 0, tamp = 0,
-				accolade = 0, hug = 1;
+				accolade = 0, hug = 1, space = 0;
 	memset(buffer, 0, BUFFERLEN);
 	memset(tampon, 0, ALLOC);
 	memset(errbuf, 0, SMALLBUF);
@@ -203,7 +203,15 @@ struct json *to_json(int fd){
 				goto character;
 			}
 			if(quote == 0 && (*pbuf == ' ' || *pbuf == '\t' || *pbuf == '\n')){
+				if(tampon[0] != 0){
+					if(space == 1)
+						strcpy(tampbuf, tampon);
+					else	if(space > 0 && strcmp(tampbuf,tampon)){
+							ERROR(parts[hug-1].offset-space, parts[hug-1].errbuf, parts, j);
+						}
+				}
 				parts[hug-1].offset++;
+				space++;
 				continue;
 			}else{
 				if(quote == 1 && (*pbuf == '\t' || *pbuf == '\n')){
@@ -262,6 +270,7 @@ struct json *to_json(int fd){
 					ok = 0;
 					was_quoted = 0;
 					type = 0;
+					space = 0;
 					break;
 				case '[':
 					accolade = 1;
@@ -365,6 +374,7 @@ struct json *to_json(int fd){
 					tamp = 0;
 					type = 0;
 					was_quoted = 0;
+					space = 0;
 					break;
 				case '"':
 					if(tamp > 0 && quote == 0){
@@ -382,6 +392,7 @@ struct json *to_json(int fd){
 						if(pj->key && quote)
 							pj->type |= STR;
 					type = 0;
+					space = 0;
 					break;
 				case ':':
 					if((json_type(pj)&ARRAY) == ARRAY){
@@ -397,6 +408,7 @@ struct json *to_json(int fd){
 					quoted = 0;
 					tamp = 0;
 					type = 0;
+					space = 0;
 					break;
 				case '/':
 					if(quote == 0)
@@ -422,6 +434,7 @@ struct json *to_json(int fd){
 					tamp++;
 					quoted = 0;
 					type = 0;
+					//space = 0;
 					break;
 			}
 			end:
