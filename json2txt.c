@@ -79,16 +79,19 @@ int is_num(char *buffer){
 		strcmp(buffer, "false") == 0 ||
 		strcmp(buffer, "null") == 0
 	)	return 0;
-	if(*pbuf == '+' || *pbuf == '-')
+	if(*pbuf == '-'){
 		pbuf++;
-	for(;*pbuf != 0 && ret == 0; pbuf++){
+	}
+	if(*pbuf < 48 || *pbuf > 58)
+		return 1;
+	for(;*pbuf != 0; pbuf++){
 		if(*pbuf == '.'){
-			if(ret == 1)
-				return 1;
-			else ret = 1;
+			if(ret == 2)
+				return 2;
+			else ret = 2;
 		}else{
 			if(*pbuf < 48 || *pbuf > 58){
-				return 2;
+				return 3;
 			}
 		}
 	}
@@ -252,7 +255,7 @@ struct json *to_json(int fd){
 							if((pj->type&UNKNOW) == UNKNOW && !pj->value){
 								pj->type -= UNKNOW;
 								pj->type |= VALUE;
-								//NUM_VALUE(tampon, pj, offset, buferr, parts, j)
+								NUM_VALUE(tampon, pj, offset, buferr, parts, j)
 								pj->value = ___calloc___(1, strlen(tampon) + 1);
 								strcpy(pj->value, tampon);
 							}
@@ -350,12 +353,17 @@ struct json *to_json(int fd){
 					if(tampon[0] != 0){
 						if(pj->key == NULL){
 							if(was_quoted || (type&ARRAY) == ARRAY){
+								if((pj->type&STR) == 0){
+									NUM_VALUE(tampon, pj, offset, buferr, parts, j);
+								}
 								pj->key = ___calloc___(1, strlen(tampon) +1);
 								strcpy(pj->key, tampon);
 							}else{	
 								ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
 							}
-						}else{	
+						}else{	if((pj->type&STR) == 0){
+								NUM_VALUE(tampon, pj, offset, buferr, parts, j);
+							}
 							pj->value = ___calloc___(1, strlen(tampon) +1);
 							strcpy(pj->value, tampon);
 						}
