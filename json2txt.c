@@ -156,9 +156,9 @@ struct json *to_json(int fd){
 		type = 0, quote = 0, quoted = 0, was_quoted = 0,
 		virgule = 0, comments = 0, backslash = 0,
 		last = 0, ok = 0;
-	long int r, i , len = 0;
+	long int r, i , accolade = 0, len = 0;
 	unsigned long int bufsize = BUFFERLEN, err = 0, tamp = 0,
-				accolade = 0, hug = 1, space = 0;
+				 hug = 1, space = 0;
 	memset(buffer, 0, BUFFERLEN);
 	memset(tampon, 0, ALLOC);
 	memset(errbuf, 0, SMALLBUF);
@@ -301,7 +301,7 @@ struct json *to_json(int fd){
 						if(ok == 0)
 							ok = 1;
 						else
-							if(parts[hug-1].start == 1 && last == hug){
+							if(parts[hug-1].start == 1 && (unsigned long int)last == hug){
 								ERROR(parts[hug-1].offset, parts[hug-1].errbuf, parts, j);
 							}
 					
