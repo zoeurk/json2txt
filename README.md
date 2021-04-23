@@ -1,7 +1,7 @@
 # json2txt  
 "decompression" de fichier json  
   
-aclocale  
+aclocal  
 autoconf  
 automake --add-missing  
 ./configure  
