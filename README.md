@@ -1,7 +1,8 @@
 # json2txt  
 "decompression" de fichier json  
   
-aclocal  
+aclocal 
+autoconf  
 autoreconf --install  
 ./configure  
 make  
