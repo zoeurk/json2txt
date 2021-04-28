@@ -2,7 +2,6 @@
 "decompression" de fichier json  
   
 aclocal 
-autoconf  
 autoreconf --install  
 ./configure  
 make  
