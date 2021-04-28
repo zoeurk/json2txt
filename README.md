@@ -2,8 +2,7 @@
 "decompression" de fichier json  
   
 aclocal  
-autoconf  
-automake --add-missing  
+autoreconf --install  
 ./configure  
 make  
 make install  
