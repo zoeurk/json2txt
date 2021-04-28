@@ -7,6 +7,6 @@ autoreconf --install
 make  
 make install  
   
-ou juste "make" si vous ne voulez pas installer le programme.
+ou juste "make -f Makefile.orig" si vous ne voulez pas installer le programme.
 
 libre d'usage, de modification et de distribution.
