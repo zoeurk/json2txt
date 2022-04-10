@@ -9,4 +9,4 @@ make install
   
 ou juste "make -f Makefile.orig" si vous ne voulez pas installer le programme.
 
-libre d'usage, de modification et de distribution.
+libre d'usage, de modification et de (re/)distribution.
