@@ -45,13 +45,13 @@ struct arguments{
 };
 struct json{
 	size_t type;
-	union{
+	union entry{
 		char *name;
-		struct {
+		struct type{
 			char *key;
 			char *value;
-		};
-	};
+		}type;
+	}entry;
 	struct json *next;
 	struct json *prev;
 	struct json *sub;
@@ -131,11 +131,11 @@ void json_destroy(struct json **j){
 	while(pj){
 		if(pj->sub)
 			json_destroy(&pj->sub);
-		if(pj->key)
-			free(pj->key);
+		if(pj->entry.type.key)
+			free(pj->entry.type.key);
 
-		if(pj->value)
-			free(pj->value);
+		if(pj->entry.type.value)
+			free(pj->entry.type.value);
 		ppj = pj->next;
 		free(pj);
 		pj = ppj;
@@ -188,7 +188,7 @@ struct json *to_json(int fd){
 			if(pj && (pj->type&STR) == STR 
 				&& (
 					(((type&ARRAY) == ARRAY)) || 
-					((type&LIST) == LIST && pj->name != NULL)
+					((type&LIST) == LIST && pj->entry.name != NULL)
 				)
 				&& (*pbuf == '\\' || backslash)
 			){
@@ -246,22 +246,22 @@ struct json *to_json(int fd){
 						ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
 					}
 					if(tampon[0] != 0){
-						if(!pj->name){
+						if(!pj->entry.name){
 							type = (char)json_type(pj);
 							if(was_quoted || (type&ARRAY) == ARRAY){
 								NUM_VALUE(tampon, pj, offset, buferr, parts, j);
-								pj->name = ___calloc___(1, strlen(tampon) + 1);
-								strcpy(pj->name, tampon);
+								pj->entry.name = ___calloc___(1, strlen(tampon) + 1);
+								strcpy(pj->entry.name, tampon);
 							}else{	
 								ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
 							}
 						}else{
-							if((pj->type&UNKNOW) == UNKNOW && !pj->value){
+							if((pj->type&UNKNOW) == UNKNOW && !pj->entry.type.value){
 								pj->type -= UNKNOW;
 								pj->type |= VALUE;
 								NUM_VALUE(tampon, pj, offset, buferr, parts, j)
-								pj->value = ___calloc___(1, strlen(tampon) + 1);
-								strcpy(pj->value, tampon);
+								pj->entry.type.value = ___calloc___(1, strlen(tampon) + 1);
+								strcpy(pj->entry.type.value, tampon);
 							}
 						}
 						memset(tampon, 0, ALLOC);
@@ -355,21 +355,21 @@ struct json *to_json(int fd){
 					type = (type == ARRAY)? type : LIST;
 					quoted = 0;
 					if(tampon[0] != 0){
-						if(pj->key == NULL){
+						if(pj->entry.type.key == NULL){
 							if(was_quoted || (type&ARRAY) == ARRAY){
 								if((pj->type&STR) == 0){
 									NUM_VALUE(tampon, pj, offset, buferr, parts, j);
 								}
-								pj->key = ___calloc___(1, strlen(tampon) +1);
-								strcpy(pj->key, tampon);
+								pj->entry.type.key = ___calloc___(1, strlen(tampon) +1);
+								strcpy(pj->entry.type.key, tampon);
 							}else{	
 								ERROR(parts[hug-1].offset-strlen(tampon), parts[hug-1].errbuf, parts, j);
 							}
 						}else{	if((pj->type&STR) == 0){
 								NUM_VALUE(tampon, pj, offset, buferr, parts, j);
 							}
-							pj->value = ___calloc___(1, strlen(tampon) +1);
-							strcpy(pj->value, tampon);
+							pj->entry.type.value = ___calloc___(1, strlen(tampon) +1);
+							strcpy(pj->entry.type.value, tampon);
 						}
 						virgule = 2;
 					}
@@ -401,7 +401,7 @@ struct json *to_json(int fd){
 						if(quote)
 							pj->type |= STR;
 					}else
-						if(pj->key && quote)
+						if(pj->entry.type.key && quote)
 							pj->type |= STR;
 					type = 0;
 					space = 0;
@@ -412,11 +412,11 @@ struct json *to_json(int fd){
 					}
 					virgule = 0;
 					pj->type |= (KEY|UNKNOW);
-					if(pj->key || quoted == 0){
+					if(pj->entry.type.key || quoted == 0){
 						ERROR(parts[hug-1].offset - strlen(tampon)-2, parts[hug-1].errbuf, parts, j);
 					}
-					pj->key = ___calloc___(1, strlen(tampon) + 1);
-					strcpy(pj->key, tampon);
+					pj->entry.type.key = ___calloc___(1, strlen(tampon) + 1);
+					strcpy(pj->entry.type.key, tampon);
 					quoted = 0;
 					tamp = 0;
 					type = 0;
@@ -476,8 +476,8 @@ void json_to_string(struct json *j,char **string, unsigned long int string_len, 
 	int inc = 0;
 	while(pj){
  		if(pj->sub){
-			if(pj->name){
-				len = strlen(pj->name);
+			if(pj->entry.name){
+				len = strlen(pj->entry.name);
 				if(*total < string_len + len + 2){
 					if((*string = realloc(*string, string_len + len + 2)) == NULL){
 						perror("realloc()");
@@ -489,14 +489,14 @@ void json_to_string(struct json *j,char **string, unsigned long int string_len, 
 					else{	inc = 1;
 						strcat(*string, ".");
 					}
-					strcat(*string,pj->name);
+					strcat(*string,pj->entry.name);
 				}else
 					if(string_len > 0){
 						inc = 1;
 						strcat(*string, ".");
-						strcat(*string,pj->name);
+						strcat(*string,pj->entry.name);
 					}else{
-						strcat((*string),pj->name);
+						strcat((*string),pj->entry.name);
 					}
 			}
 			json_to_string(pj->sub, string, string_len + len + inc, total);
@@ -505,47 +505,47 @@ void json_to_string(struct json *j,char **string, unsigned long int string_len, 
 			else	if(*string != NULL)
 					**string = 0;
 		}else{
-			if(pj->name){
-				if(pj->value || (pj->type&(STR|UNKNOW|KEY)) == (STR|UNKNOW|KEY)){
+			if(pj->entry.name){
+				if(pj->entry.type.value || (pj->type&(STR|UNKNOW|KEY)) == (STR|UNKNOW|KEY)){
 					if(*string && strlen(*string) > 0){
 						if(**string == '.'){
 							if((pj->type&STR) == STR){
-								if(pj->value)
-									printf("%s.%s:\"%s\"\n",&(*string)[1], pj->name, pj->value);
-								else	printf("%s.%s:\"\"\n",&(*string)[1], pj->name);
-							}else{	if(pj->value)
-									printf("%s.%s:%s\n",&(*string)[1], pj->name, pj->value);
-								else	printf("%s.%s:\n",&(*string)[1], pj->name);
+								if(pj->entry.type.value)
+									printf("%s.%s:\"%s\"\n",&(*string)[1], pj->entry.name, pj->entry.type.value);
+								else	printf("%s.%s:\"\"\n",&(*string)[1], pj->entry.name);
+							}else{	if(pj->entry.type.value)
+									printf("%s.%s:%s\n",&(*string)[1], pj->entry.name, pj->entry.type.value);
+								else	printf("%s.%s:\n",&(*string)[1], pj->entry.name);
 							}
 						}else{	if((pj->type&STR) == STR){
-								if(pj->value)
-									printf("%s.%s:\"%s\"\n",*string, pj->name, pj->value);
-								else	printf("%s.%s:\"\"\n",*string, pj->name);
-							}else{	if(pj->value)
-									printf("%s.%s:%s\n",*string, pj->name, pj->value);
-								else	printf("%s.%s:\n",*string, pj->name);
+								if(pj->entry.type.value)
+									printf("%s.%s:\"%s\"\n",*string, pj->entry.name, pj->entry.type.value);
+								else	printf("%s.%s:\"\"\n",*string, pj->entry.name);
+							}else{	if(pj->entry.type.value)
+									printf("%s.%s:%s\n",*string, pj->entry.name, pj->entry.type.value);
+								else	printf("%s.%s:\n",*string, pj->entry.name);
 							}
 						}
 					}else{
 						if((pj->type&STR) == STR){
-							if(pj->value)
-								printf("%s:\"%s\"\n", pj->name, pj->value);
-							else	printf("%s:\"\"\n", pj->name);
-						}else{	if(pj->value)
-								printf("%s:%s\n", pj->name, pj->value);
-							else	printf("%s:\n", pj->name);
+							if(pj->entry.type.value)
+								printf("%s:\"%s\"\n", pj->entry.name, pj->entry.type.value);
+							else	printf("%s:\"\"\n", pj->entry.name);
+						}else{	if(pj->entry.type.value)
+								printf("%s:%s\n", pj->entry.name, pj->entry.type.value);
+							else	printf("%s:\n", pj->entry.name);
 						}
 					}
 				}else{
 					if(*string && strlen(*string) > 0){
 						if(**string == '.'){
 							if((pj->type&STR) == STR)
- 	    							printf("%s:\"%s\"\n",&(*string)[1], pj->key);
-							else	printf("%s:%s\n",&(*string)[1], pj->key);
+ 	    							printf("%s:\"%s\"\n",&(*string)[1], pj->entry.type.key);
+							else	printf("%s:%s\n",&(*string)[1], pj->entry.type.key);
 						}else{
 							if((pj->type&STR) == STR)
-								printf("%s:\"%s\"\n",*string, pj->key);
-							else	printf("%s:%s\n", *string, pj->key);
+								printf("%s:\"%s\"\n",*string, pj->entry.type.key);
+							else	printf("%s:%s\n", *string, pj->entry.type.key);
 						}
 					}
 					
@@ -566,15 +566,15 @@ void json_print(struct json *j, unsigned long int space){
 		case ARRAY:
 			printf("[");
 			while(pj){
-				if(pj->name){
+				if(pj->entry.name){
 					if(pj->next)
 						if((pj->type&STR) == STR)
-							printf("\"%s\",", pj->name);
+							printf("\"%s\",", pj->entry.name);
 						else
-							printf("%s,", pj->name);
+							printf("%s,", pj->entry.name);
 					else	if((pj->type&STR) == STR)
-							printf("\"%s\"", pj->name);
-						else	printf("%s", pj->name);
+							printf("\"%s\"", pj->entry.name);
+						else	printf("%s", pj->entry.name);
 				}
 				if(pj->sub){
 					json_print(pj->sub, space+1);
@@ -590,18 +590,18 @@ void json_print(struct json *j, unsigned long int space){
 		case LIST:
 			printf("{\n");
 			while(pj){
-				if(pj->name){
+				if(pj->entry.name){
 					print_space(space);
-					if(pj->value){
+					if(pj->entry.type.value){
 						if((pj->type&STR) == STR)
-							printf(" \"%s\":\"%s\"", pj->name, pj->value);
-						else	printf(" \"%s\":%s", pj->name, pj->value);
+							printf(" \"%s\":\"%s\"", pj->entry.name, pj->entry.type.value);
+						else	printf(" \"%s\":%s", pj->entry.name, pj->entry.type.value);
 						if(pj->next)
 							printf(",\n");
 						else	printf("\n");
 					}else{	if((pj->type&(STR|UNKNOW|KEY)) == (STR|UNKNOW|KEY))
-							printf(" \"%s\":\"\",\n", pj->name);
-						else	printf(" \"%s\":", pj->name);
+							printf(" \"%s\":\"\",\n", pj->entry.name);
+						else	printf(" \"%s\":", pj->entry.name);
 					}
 				}
 				if(pj->sub){
