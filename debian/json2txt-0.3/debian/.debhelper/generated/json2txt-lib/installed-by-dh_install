@@ -1,0 +1,5 @@
+./debian/tmp/usr/lib/x86_64-linux-gnu/json2txt/libjson2txt.a
+./debian/tmp/usr/lib/x86_64-linux-gnu/json2txt/libjson2txt.la
+./debian/tmp/usr/lib/x86_64-linux-gnu/json2txt/libjson2txt.so
+./debian/tmp/usr/lib/x86_64-linux-gnu/json2txt/libjson2txt.so.0
+./debian/tmp/usr/lib/x86_64-linux-gnu/json2txt/libjson2txt.so.0.0.0

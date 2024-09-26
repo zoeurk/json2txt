@@ -1,12 +1,5 @@
-# json2txt  
-"decompression" de fichier json  
-  
-aclocal 
-autoreconf --install  
-./configure  
-make  
-make install  
-  
-ou juste "make -f Makefile.orig" si vous ne voulez pas installer le programme.
+#json2txt Version 0.3
+Bon ben voila si j'ai fait une bouse,
+	je l'ai en plus signé
 
-libre d'usage, de modification et de (re/)distribution.
+Sans Aucunes Garanties
