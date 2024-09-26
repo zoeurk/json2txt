@@ -1,4 +1,5 @@
-#json2txt Version 0.3
+# json2txt Version 0.3
+Conversion de fichier json dans un format text
 Bon ben voila si j'ai fait une bouse,
 	je l'ai en plus signé
 
