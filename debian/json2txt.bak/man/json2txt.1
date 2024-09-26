@@ -1,0 +1,36 @@
+.\Manpage pour comunix.
+.\Contact zoeurk.gmail.com
+.TH man 1 "25 septembre 2024" "0.1" "comunix man page"
+.SH NAME
+comunix \- communiquer avec un socket unix
+.SH SYNOPSIS
+comunix OPTIONS
+.SH DESCRIPTION
+Outil pour communiquer
+.SH OPTIONS
+.TP
+.BR \-J , " \-\-json
+Inhibit the output of json.
+.TP
+.BR \-T , " \-\-text
+Inhibit the output of text.
+.TP
+.BR \-s , " \-\-sort "\fIasc|dsc|none\fR
+sort json and text;
+.TP
+.BR \-t , " \-\-test
+No test
+.TP
+.BR \-w , " \-\-warning "\fItrue|false|none\fR
+On warning
+.EX
+true		exit on warning
+false	just emit warning
+none		do nothing
+.EE
+.TP
+.BR
+.SH BUGS
+Doesn't check for limits
+.SH AUTHORS
+ZoeurK (zoeurk@gmail.com)

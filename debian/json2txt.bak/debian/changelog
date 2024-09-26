@@ -1,0 +1,5 @@
+json2txt (0.3-1) unstable; urgency=medium
+
+  * Initial release (Closes: #2024)  <2024 is the bug number of your ITP>
+
+ -- Thomas Marsaleix <zoeurk@gmail.com>  Thu, 26 Sep 2024 17:22:03 +0200

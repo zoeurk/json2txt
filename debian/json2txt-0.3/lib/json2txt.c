@@ -32,18 +32,18 @@ void *json_create(struct json **j, int kind, int type){
 			rj = *j;
 			break;
 		case SUB:
+			rj = *j;
 			if(((*j)->sub = calloc(1, sizeof(struct json))) == NULL)
 				err(255, "calloc()");
 			(*j)->sub->up = *j;
 			(*j) = (*j)->sub;
-			rj = *j;
 			break;
 		case NEXT:
+			rj = *j;
 			if(((*j)->next = calloc(1, sizeof(struct json))) == NULL)
 				err(255, "calloc()");
 			(*j)->next->prev = *j;
 			(*j) = (*j)->next;
-			rj = *j;
 			break;
 	}
 	(*j)->t_val = VOID;

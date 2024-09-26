@@ -7,29 +7,29 @@ Binary: json2txt-dev json2txt-lib json2txt
 Architecture: amd64 source
 Version: 0.3-1
 Checksums-Md5:
- a3b735b7f69e06e11480c97383ac8659 1640 json2txt_0.3-1.dsc
+ e9a1f0467c7f3e8f06874be3b29596f5 1640 json2txt_0.3-1.dsc
  d83a1cb259892b55c4d990a7aac2221d 7312 json2txt-dbgsym_0.3-1_amd64.ddeb
  d88c38f0e3927e964d7e9aacd5e85666 4488 json2txt-dev_0.3-1_amd64.deb
- 6914c707395bbbb84154e62f56bcd0a1 16348 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
- a7a5885121992f2f10a6f1ef7df70c26 11784 json2txt-lib_0.3-1_amd64.deb
+ cc1c077008a19472c1980ca616c79c76 16292 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
+ 921e7422c01a751342deb390a50aafec 11760 json2txt-lib_0.3-1_amd64.deb
  2a5d9f852e294828244e58c321b1285a 5916 json2txt_0.3-1_amd64.deb
 Checksums-Sha1:
- 347796e3f6f028fbac10ebda48f0b62426a2f9ad 1640 json2txt_0.3-1.dsc
+ 1b54918652388df06ec8ce8c086e9c48ecb7edb8 1640 json2txt_0.3-1.dsc
  70b638141e33c6da88987fde91cb97594855223f 7312 json2txt-dbgsym_0.3-1_amd64.ddeb
  d1e34683671dfd622020b9404ff4f3f5defb5b8b 4488 json2txt-dev_0.3-1_amd64.deb
- fa70e53b234f146f07dd85940ffbbb6f0bd9ac9c 16348 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
- 4ce717781adbf8dc3fc57e5a0eccb9589cceb9ff 11784 json2txt-lib_0.3-1_amd64.deb
+ 41e6d71292a019801bbb63932d1b814779019d19 16292 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
+ e81d8c652f6d41af4001bf2180ad7a583fef5d52 11760 json2txt-lib_0.3-1_amd64.deb
  1b7fd6e6a82797b979549b12666a5c7fa85066e5 5916 json2txt_0.3-1_amd64.deb
 Checksums-Sha256:
- 4570304be9a6dc7b836f0f9ec25f945d6e60368481c88147747e3ec947a72c4c 1640 json2txt_0.3-1.dsc
+ a72002a021303865f0862d029665f738fa9c18a4a854d7a99a20686af19a4514 1640 json2txt_0.3-1.dsc
  c46700a317a3ab8e66b1edb3f194e1b6259026fbeb2748e56ff7935eb9e710b2 7312 json2txt-dbgsym_0.3-1_amd64.ddeb
  b41ae4529105c5111f98b8211f389021711b26c199760fd123eff6de52ee6e2a 4488 json2txt-dev_0.3-1_amd64.deb
- 86822267b3af326a276eb01b3f79d3dd00ba751b62a391a6f7d219529add03a3 16348 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
- 40e6aac05d1faf841763d7f2bb3c4c2d91970b0ee9cfa76832d793a45e7e38b4 11784 json2txt-lib_0.3-1_amd64.deb
+ 976b5b2bfa2c512f03097370be9dfa64a80dfc13902a44f5bd698cf66674cdb4 16292 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
+ 4ff2b325f2971ec8cd22f55db4d21ac68ecc15ad934d7854288c7f0966ae73e1 11760 json2txt-lib_0.3-1_amd64.deb
  ef57964d5f00004a0d667da9a6c90ce595b88d58b192124185cbd62191e20284 5916 json2txt_0.3-1_amd64.deb
 Build-Origin: Ubuntu
 Build-Architecture: amd64
-Build-Date: Thu, 26 Sep 2024 21:03:17 +0200
+Build-Date: Thu, 26 Sep 2024 21:29:35 +0200
 Build-Tainted-By:
  merged-usr-via-symlinks
  usr-local-has-includes
@@ -188,15 +188,15 @@ Environment:
 
 -----BEGIN PGP SIGNATURE-----
 
-iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb1r/YRHHpvZXVya0Bn
-bWFpbC5jb20ACgkQ5SbKMk2fAI53PQwAvrOvrPqdnU8wlaLzeWWRFKgjeahRa6nh
-p0ItGITDGoMLlM5ibGJoERcvPlyTye0c13GGF+I8R5lBmQBhRZgIGBQPO49wLZ7S
-Tt4F2fKEpg9wwiCQDdbTRPP7pPWVUieKKD5oGUDDCaLF3B9b2IsHrTHGiU9OiPQk
-8iE2AkKyoiH3AAl1agtySxOV0TDTxV494nJp3DAoFedvHGvv3uTxGM8fvpEXGas8
-xyVasiz8PttZ1unSwH5d0Ohs2Kt1MfU3zaxaNHBdpPE/F847BOq4V3ZhnXs1qSPm
-A1BF3qkuqo71XykFeh/GD2R4VVgedsrkSU6zRL8+eRyuytq8bkD1XEwpoGW9NZMY
-6YBGpPl+tkxntBpowz0e07D1ZRinLKF1Vy5yfvapHq6IwFFoKyfMuqeozxi3CF0J
-WU+ViV1bNgy3kTejJqYuOm3Lk9k/AmlYIUoEZVh0KvehmiscpTLjk2lzX+2nIEND
-2+X3x1yRRVMu8B9KsERK7xmEBK/pvbdD
-=Gilj
+iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb1tikRHHpvZXVya0Bn
+bWFpbC5jb20ACgkQ5SbKMk2fAI6mPwwAvFzNzTyTConjP7N5zVI4xtOsIFmLPeEi
+FIITh/u4nTSm2Qg6UqfqrzmKE7s8JuTJ6vlNx+t0AHpm0TtTdAqZxPYV8ZjszeTp
+bDD98OKXbPHRiuLsu/5sAFP95AuYmbP4MyMfA8YxHp/6azJU7JgHxtbyK06B7aBY
+HrZO6R3KtsCK9o1CbY7XuZo6+wwtkDi7zTCtnQFZ4DNkS5+PiLe2GxltG5XjuR5s
+qQda43TGZpB6u5hpM0J+m2WcTRpN/QYuW6F+5Yrvy9oTU3cXNATqONyeFuTS1KQd
+G2uemhgt1rdfRswqJ3AD+Z3VHA0G93NxqRTpfr93oc0r7qUJD9CG4Dia0npMhgj8
+gB4wmZi/GDer1LyEkd8+Gu1LpNu2M7nBJ+SPgOAq8rylTLNv0Qtnq30pxQTeTKAG
+G+xR4LvsELevTKsWDxwv3IMkkh5VZJaERMfPOmqSLYY4D2Nmx0rW3jigIF232ChO
+q1xMvhsoduLG9VIauknj6SgLjyA+WEXT
+=/zbJ
 -----END PGP SIGNATURE-----

@@ -21,47 +21,47 @@ Changes:
  .
    * Initial release (Closes: #2024)  <2024 is the bug number of your ITP>
 Checksums-Sha1:
- 347796e3f6f028fbac10ebda48f0b62426a2f9ad 1640 json2txt_0.3-1.dsc
- 61a08ebe76f47696c14cb6e58317bf5b2025773d 15100 json2txt_0.3.orig.tar.xz
+ 1b54918652388df06ec8ce8c086e9c48ecb7edb8 1640 json2txt_0.3-1.dsc
+ 8391482dbc69c064945c9bc3243b7839410757b1 15100 json2txt_0.3.orig.tar.xz
  6d533f8795d770bf194eec919c6c93962f0e2b85 7944 json2txt_0.3-1.debian.tar.xz
  70b638141e33c6da88987fde91cb97594855223f 7312 json2txt-dbgsym_0.3-1_amd64.ddeb
  d1e34683671dfd622020b9404ff4f3f5defb5b8b 4488 json2txt-dev_0.3-1_amd64.deb
- fa70e53b234f146f07dd85940ffbbb6f0bd9ac9c 16348 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
- 4ce717781adbf8dc3fc57e5a0eccb9589cceb9ff 11784 json2txt-lib_0.3-1_amd64.deb
- 04e19eaf18d50737b074398ce5036c8e0ffad441 7328 json2txt_0.3-1_amd64.buildinfo
+ 41e6d71292a019801bbb63932d1b814779019d19 16292 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
+ e81d8c652f6d41af4001bf2180ad7a583fef5d52 11760 json2txt-lib_0.3-1_amd64.deb
+ e78797f73ec1ab77d935e497345cc06983aa01b7 7328 json2txt_0.3-1_amd64.buildinfo
  1b7fd6e6a82797b979549b12666a5c7fa85066e5 5916 json2txt_0.3-1_amd64.deb
 Checksums-Sha256:
- 4570304be9a6dc7b836f0f9ec25f945d6e60368481c88147747e3ec947a72c4c 1640 json2txt_0.3-1.dsc
- 9289727b3c46fe6dc768c757d47e8b4a889d206597aeac9acec578c09602fe3b 15100 json2txt_0.3.orig.tar.xz
+ a72002a021303865f0862d029665f738fa9c18a4a854d7a99a20686af19a4514 1640 json2txt_0.3-1.dsc
+ dd5e8469656aa5b5ac1b4ae0c7e26656f9008a7f90aac951f68d40e9a727554b 15100 json2txt_0.3.orig.tar.xz
  6c6d4ebd8012e6c79c70d652eaf669232c94fc9dca76f60ea4e4be85f07c011b 7944 json2txt_0.3-1.debian.tar.xz
  c46700a317a3ab8e66b1edb3f194e1b6259026fbeb2748e56ff7935eb9e710b2 7312 json2txt-dbgsym_0.3-1_amd64.ddeb
  b41ae4529105c5111f98b8211f389021711b26c199760fd123eff6de52ee6e2a 4488 json2txt-dev_0.3-1_amd64.deb
- 86822267b3af326a276eb01b3f79d3dd00ba751b62a391a6f7d219529add03a3 16348 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
- 40e6aac05d1faf841763d7f2bb3c4c2d91970b0ee9cfa76832d793a45e7e38b4 11784 json2txt-lib_0.3-1_amd64.deb
- d024e27d963376220c5f8864fd47cb5806d4ee8ca0632b86183f05fbb9ff4421 7328 json2txt_0.3-1_amd64.buildinfo
+ 976b5b2bfa2c512f03097370be9dfa64a80dfc13902a44f5bd698cf66674cdb4 16292 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
+ 4ff2b325f2971ec8cd22f55db4d21ac68ecc15ad934d7854288c7f0966ae73e1 11760 json2txt-lib_0.3-1_amd64.deb
+ 5990cebfd9d2d94ecc95887fd57ced5845919497c7f5238e60194bf6679d4281 7328 json2txt_0.3-1_amd64.buildinfo
  ef57964d5f00004a0d667da9a6c90ce595b88d58b192124185cbd62191e20284 5916 json2txt_0.3-1_amd64.deb
 Files:
- a3b735b7f69e06e11480c97383ac8659 1640 utils optional json2txt_0.3-1.dsc
- b0f2957cfe078f5691057612c25e1273 15100 utils optional json2txt_0.3.orig.tar.xz
+ e9a1f0467c7f3e8f06874be3b29596f5 1640 utils optional json2txt_0.3-1.dsc
+ 4ea545dabc19ae19d9ba19ffe30c7ec2 15100 utils optional json2txt_0.3.orig.tar.xz
  8bd83ea8098cd13d29d010ccd31dc28e 7944 utils optional json2txt_0.3-1.debian.tar.xz
  d83a1cb259892b55c4d990a7aac2221d 7312 debug optional json2txt-dbgsym_0.3-1_amd64.ddeb
  d88c38f0e3927e964d7e9aacd5e85666 4488 libdevel optional json2txt-dev_0.3-1_amd64.deb
- 6914c707395bbbb84154e62f56bcd0a1 16348 debug optional json2txt-lib-dbgsym_0.3-1_amd64.ddeb
- a7a5885121992f2f10a6f1ef7df70c26 11784 utils optional json2txt-lib_0.3-1_amd64.deb
- 1b7ec52b4ff38d7d6b4d87f2c4e9efad 7328 utils optional json2txt_0.3-1_amd64.buildinfo
+ cc1c077008a19472c1980ca616c79c76 16292 debug optional json2txt-lib-dbgsym_0.3-1_amd64.ddeb
+ 921e7422c01a751342deb390a50aafec 11760 utils optional json2txt-lib_0.3-1_amd64.deb
+ 07999d642642978244768ae97301d43a 7328 utils optional json2txt_0.3-1_amd64.buildinfo
  2a5d9f852e294828244e58c321b1285a 5916 utils optional json2txt_0.3-1_amd64.deb
 
 -----BEGIN PGP SIGNATURE-----
 
-iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb1r/YRHHpvZXVya0Bn
-bWFpbC5jb20ACgkQ5SbKMk2fAI69awv+Oq6xvB5OUQg7hLaXoJpzsJrtclpx4WOz
-paECOEkFYp23bROHszyk3Q58Iw07jcgHFdqXVx3gmJjj49swFKz/CBKN3gbL2gB8
-ck75ITnFsHqlSWgzpe8PaVamnJg/t9XviKK4qoad9bTtmPL4HUVk/9mDYEiBaSh/
-K91SVtirgMZCy2tripdCipy/dPLM/gt/OKTraSy/SWy3nPzGahnBqPsJ2b1uFZ2B
-ekMTG39StWfjY0HKdziyykWjca5Lod9D41EFDxwqr21GkReR5jzTnK/fKarfjM89
-ltZv5ekThP8gBed/QSAyNb1lB2gg7dGrUvPYkydK1qE8Q7saCZmgRTMDCz9OPiWT
-bXXMam+kB+B1f480zvKhtkXXHu/mtHrXkqNioWTu1IcjtSeRaZ53Q3xfpwSYoFBX
-vuyjqMg3VHOz6yFeSQdxzXeIoNS5nvEqLY11H/UvHnYubg52FcVFPeaThOLqmnkm
-VdQy/TDad3FQ56roqTLVzI4ef7P5RGjJ
-=hsIu
+iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb1tioRHHpvZXVya0Bn
+bWFpbC5jb20ACgkQ5SbKMk2fAI482wwAj57JRim0i5v1DGY/MAY4MDwz5PiyPQZ9
+9E02MOmitC1pbLtP6yfdhfhBsAje38TMLII7BFI/zbGMA212297u9WrQELiAbQat
+dK5G/AvwDosl3QqlPpLzxfVP+zfMzQwu9ZasqE2z2NoAzw+WoBIGDji7mLZHItbR
+WoHi/VgTOzeTFKDvgq3f6lzpWbJdR5qyrZHSk3WfcEwt6PmwFfAv4a2pUGeIQ95v
+FjMJVcQjWUBruGQ5ybyIK0P6EfAcfAHiGg7HMnoYSuSkzdVRDOJ1tEt5yqO3XhqX
+O3F468vQyIBgyprN3rSB2QjA/0LKAXKPGsAaz9CZFP3hsf1Eiz6VbybFG5U1cfpi
+dfrCv2o3qxTQnxQDTPnmqDht4EZBV+nxU1e8A3oxxipXhSXaP5OFXxF1o8VPgx0N
+bdpzbAA0/Y+s2UddYNFrJU26kq09fiWsIrIkMu6O33HIpQe+tKaylqTqLIMLg8mY
+b2kGXcSVViS7hvvZfiI/u/6EBwVneiHU
+=S1hj
 -----END PGP SIGNATURE-----

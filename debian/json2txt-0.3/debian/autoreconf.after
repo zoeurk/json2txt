@@ -11,7 +11,7 @@ c561817611f0deb1b9db41a0c590bdea  ./man/json2txt.3
 a1e2ac1c7b1a059b3839844edba8e158  ./aclocal.m4
 12051cd90fdd2697de703d27bf48649b  ./autom4te.cache/output.0
 21e6a38218f98b4fc94436ff5667c6d7  ./autom4te.cache/traces.1
-afe7e4e14d93df2b1c30bcbaadfbfede  ./autom4te.cache/requests
+77824fdafaa5ec6f587d77a89c2480df  ./autom4te.cache/requests
 828e6ba4be3d4e6e18405fa77b6fa0ed  ./autom4te.cache/traces.2
 12051cd90fdd2697de703d27bf48649b  ./autom4te.cache/output.2
 12051cd90fdd2697de703d27bf48649b  ./autom4te.cache/output.1
@@ -20,7 +20,7 @@ d20ca664c55f1ef08816469eb1ec53bf  ./config.h.in
 57ebede1bcc032c3471a7b7c9733849e  ./lib/json2txt.h
 82d676a936523d1a5673b18fbea560bf  ./lib/Makefile.in
 65cf31bde79b071ec2d6032dd8a2d6ae  ./lib/Makefile.am
-104961dfe4625d162b4abd25f11f4123  ./lib/json2txt.c
+6f63c9729e0fdad592ccab354bc73792  ./lib/json2txt.c
 3bc5e7bf84900e6fc67bacb372312885  ./main/Makefile.in
 ef1fb8311a566c3fb468f4ce534368fe  ./main/Makefile.am
 c93967ebfa88ffd6dc9316a5e7350f1a  ./main/main.c
