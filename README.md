@@ -6,5 +6,7 @@ Bon ben voila si j'ai fait une bouse,
 Sans Aucunes Garanties
 
 Des macros peuvent être changée lors de la compilation:  
-STRICT_NUM  
-EXPLICIT_SIGN  
+STRICT_NUM  (-U par default)
+EXPLICIT_SIGN  (-D par default)  
+  
+Pour les macros j'ai fait avec ma vision
