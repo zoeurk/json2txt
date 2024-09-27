@@ -460,7 +460,7 @@ int duplicate_keys(struct json *j, int warning_only){
 				if(duplicate_keys(pj->sub, warning_only) == 1)
 					return 1;
 			}
-			if(warning_only >= 0){
+			if(warning_only >= 0 && (pj->t_val&WARN) == WARN){
 				warnx("Mal formed number: %s", pj->value.value);
 				if(warning_only == 0)
 					return 1;
