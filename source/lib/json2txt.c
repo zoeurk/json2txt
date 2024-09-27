@@ -471,12 +471,10 @@ int duplicate_keys(struct json *j, int warning_only){
 					free(order);
 					return 1;
 				}
-			if((pj->t_val&WARN) == WARN){
-				if(warning_only >= 0){
-					warnx("Mal formed number: %s", pj->value.value);
-					if(warning_only == 0)
-						return 1;
-				}
+			if(warning_only >= 0 (pj->t_val&WARN) == WARN){
+				warnx("Mal formed number: %s", pj->value.value);
+				if(warning_only == 0)
+					return 1;
 			}
 			if(json_sort(pj, &order, 0, warning_only) == -1){
 				free(order);
