@@ -7,21 +7,21 @@ Binary: json2txt-dev json2txt-lib json2txt
 Architecture: amd64 source
 Version: 0.3-1
 Checksums-Md5:
- 411b33c83363ed6524455d5276750ff6 1643 json2txt_0.3-1.dsc
+ fd12f7cce8fa5d9fdbc995630c5504ff 1643 json2txt_0.3-1.dsc
  2de4e322c814472cb936caccc9b4226f 7364 json2txt-dbgsym_0.3-1_amd64.ddeb
  54e3d12dacd7d9becf66b57340627cc0 4500 json2txt-dev_0.3-1_amd64.deb
  34918975f9aa0e227ac65b3c15f8bb3c 16304 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
  f058507bdee27579decf38fbe77f072f 11768 json2txt-lib_0.3-1_amd64.deb
  958f1f8cdd170eb1258a5dd68e423037 5916 json2txt_0.3-1_amd64.deb
 Checksums-Sha1:
- e8e4cdc9c3450f05d17f7617d63222bc437e5c8c 1643 json2txt_0.3-1.dsc
+ 2d388327ec9e87870af6e19dceca773c95593948 1643 json2txt_0.3-1.dsc
  f9b1d8b935e75092e4b96ea3ef1b0717d4ff0b29 7364 json2txt-dbgsym_0.3-1_amd64.ddeb
  37b79178f5d09c7a6074ad32949e5242b4d550fd 4500 json2txt-dev_0.3-1_amd64.deb
  3a2b9393867bec2a5ec0fe20242e4eacce7b962e 16304 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
  983d4877c6fde482c3948cde51a683b3ce2029fa 11768 json2txt-lib_0.3-1_amd64.deb
  ca42fb26aa351095e4f25e87ae1b8d71f297e9b6 5916 json2txt_0.3-1_amd64.deb
 Checksums-Sha256:
- 578207113f281bddb5adc78cfff1137a82eba785271c0c1a0106fde64b75819d 1643 json2txt_0.3-1.dsc
+ 48368af355ffb3b778c92b41c8aa859df274db3b16aa7276fea4f3fd814730f8 1643 json2txt_0.3-1.dsc
  bb53e7c28bbf8d067d8bbc47b28c69363c0a67d647c9366ce8063199eae84aea 7364 json2txt-dbgsym_0.3-1_amd64.ddeb
  9d2cc80f680668e95e2b5e7ba462a720f5b4f5e71657762c3433c90402dbfd2b 4500 json2txt-dev_0.3-1_amd64.deb
  ef8e9ff02cbfe4826f430a24773e133e75b637db65f903a93bf80ce1defde096 16304 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
@@ -29,7 +29,7 @@ Checksums-Sha256:
  c66f7d273ffae54f7454fb988e9f85d0bae1e90579af12e5a634749b776f53ba 5916 json2txt_0.3-1_amd64.deb
 Build-Origin: Ubuntu
 Build-Architecture: amd64
-Build-Date: Sat, 28 Sep 2024 13:07:28 +0200
+Build-Date: Sat, 28 Sep 2024 17:47:25 +0200
 Build-Tainted-By:
  merged-usr-via-symlinks
  usr-local-has-includes
@@ -188,15 +188,15 @@ Environment:
 
 -----BEGIN PGP SIGNATURE-----
 
-iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb343wRHHpvZXVya0Bn
-bWFpbC5jb20ACgkQ5SbKMk2fAI6k8gwAneaWoBu/lheb+LiUB9MEKJrDTJP+Ggsh
-Id+5i6WOCoSj31NnKE+EP3/0lLxRkqz6z65hGBsBeeMa/qMk1ckSMUl9ZvqS7C8g
-J1l4EmoTSvtiqcbrz8mmrHCxyhyUF6kgFajqm9vAjq5cRhXNV+pbhOqu6YZnb0hx
-7YC/DTe969ZsDHP8Hn4W/Q39gj5Fp+woUJBLl7wkuFgRoKRpSecTsr7Pr8yDZ6Tk
-nJp+nlyJmWqmgk/lrW/Q9laFY9sYk7l35I1GBSnX7tWmKwbN0BHo2M0DFQkzTXjH
-uANnPgyZHvPk5YZ2H/53N/PEzGDffM/TlVa9e0X6hNZHx0a1+RNHDpdiYVbvsGza
-g+At/Fn7OpjAzNs83/k7dsHWoB3SQcQLkQzmo4WO/SBMyoSRuRw/sMa4DS5IyTB8
-WsomuhYfCPInR+HKkntRkfdqDbxT/t1yZTgFv1gH784euHKrUgFOVSFcveJtUWaj
-0zXuHtjw72BnKl/sGtn1H1j1Vg3nAMjz
-=aV/I
+iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb4JRgRHHpvZXVya0Bn
+bWFpbC5jb20ACgkQ5SbKMk2fAI7zJQv+O8oHHaqOkGZeYzOIMKMprxMZKyklXKhm
+Cw6yISu7wzhjYCj8kSemYALH5ljU/zNulV1SKJxP5pZ8UAqhjCU/WdtUHOACwuWi
+2SAxUGOjcnDb92GenKMAQd6GhswI9bmq431fTm45KgUE5S0s09Nk37OXw+0pqxaB
+cufnvsySHG/l8FuUzObdPJUJ2ZRM7uz7QdfnpaBpWcyWCU4Hw710n0F2M7ua3KGd
+c46QQ6Rq7C9+MVOsxFAcZ/hynfi0Lv577hQVFPrv/ps8Ybs+xdHUBkKH+5birsbc
+SQ/eh2M8OZt/WITEYb6L79lzYgPLB9vNY3MLbXWYanlhu9ecbHtbJYPVw93/fjB4
+7fnC+ex7zpYLDASXzCuJV44UjDt7KtJCNyTvlpTzLrUnRXvIX0d+HXmVWmB0qxJg
+E5KI3+xGkxxPWbhfzMTuSDcT1GqbstBdQSODBDDb7R1oyHWSibQeJ2boTt4nWiYg
+tctZo5YVw+Rft19NCeIA4Z+9EjYZdQiX
+=63Fo
 -----END PGP SIGNATURE-----

@@ -1,9 +1,10 @@
+symlink  ./m4/lt~obsolete.m4
+symlink  ./m4/ltsugar.m4
+symlink  ./m4/ltoptions.m4
+symlink  ./m4/ltversion.m4
+symlink  ./m4/libtool.m4
+symlink  ./ltmain.sh
 28e27b0082703426127843fe36c96cc0  ./compile
-22aa295bf5320aec7fba6756ff11058a  ./m4/lt~obsolete.m4
-fa2891f9060865871cbbaa1c6e2d96f4  ./m4/ltsugar.m4
-064af1799febaa676203302bbf359180  ./m4/ltoptions.m4
-d936fd6b2025c9b5322f826117d7f30c  ./m4/ltversion.m4
-8fcc227ef27dfc7a0fecfdde0c4d2de0  ./m4/libtool.m4
 83033bdc5ec203b69a7046b5cb2b4522  ./config.sub
 8b737dce0a2f3bbe576d7b135cee0a1c  ./man/json2txt.1
 ab205a9749d33126ee310dbd223ef9a6  ./man/json2txt.3
@@ -19,7 +20,6 @@ c93967ebfa88ffd6dc9316a5e7350f1a  ./main/main.c
 a39f1b9163db92ea743d55705a9295bd  ./Makefile.in
 e5f9da8b55623ead67f2bcfee03fb4d4  ./depcomp
 bcf35cdf761dd889ed083222464d3045  ./Makefile.am
-9802a62059d97e84d1be76dc04003c6c  ./ltmain.sh
 c9671feb88339208a8c34c54ac7a6eef  ./config.guess
 96c7faf0b25dcf731ab2960dc73877fe  ./configure.ac
 ff06331c3f16a2d526d6399dfeabf67a  ./missing

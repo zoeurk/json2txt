@@ -15,26 +15,26 @@ Package-List:
  json2txt-dev deb libdevel optional arch=any
  json2txt-lib deb utils optional arch=any
 Checksums-Sha1:
- 892287ef47de916d53e6a87da0fc548bbb99e14e 249500 json2txt_0.3.orig.tar.xz
+ ce9620724670faae10ac7bcc52616e55f68e6580 140300 json2txt_0.3.orig.tar.xz
  6d533f8795d770bf194eec919c6c93962f0e2b85 7944 json2txt_0.3-1.debian.tar.xz
 Checksums-Sha256:
- 8d607690bfe9804510061cd8406e6d46b648ebb996b7aeeaceb0b2ea3bb24bba 249500 json2txt_0.3.orig.tar.xz
+ 43c153fd21de7a104c8ef887dac71f9ac76caf2ee361193a2b89c0927e73bc74 140300 json2txt_0.3.orig.tar.xz
  6c6d4ebd8012e6c79c70d652eaf669232c94fc9dca76f60ea4e4be85f07c011b 7944 json2txt_0.3-1.debian.tar.xz
 Files:
- 8a06ba74c51b4e833eb1548a68cccdc9 249500 json2txt_0.3.orig.tar.xz
+ 0c6a2e31123f43ef176c2f6fcd75cf84 140300 json2txt_0.3.orig.tar.xz
  8bd83ea8098cd13d29d010ccd31dc28e 7944 json2txt_0.3-1.debian.tar.xz
 
 -----BEGIN PGP SIGNATURE-----
 
-iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb343ERHHpvZXVya0Bn
-bWFpbC5jb20ACgkQ5SbKMk2fAI4Qbgv+O+iCL+yaeP2smoKH7bRLP0qC+oyd89yT
-vxJwXK86tOf/CCOoHVLT9SXLRc6c1GLTWNhjssAS2+9sfu7+gr1Dj2QFi5b/iT/r
-I5PmZ5/Pmb+MOuJgfmIWQk7byd7a0Z5m1TBRZV1XSCucOydKHt7Qpiv3FdPkvXXl
-R7EUjvhWVyhS1u5h7VhqDBE3sJAxgz7bCpc4YMHHBFOMU89GZkyj5Eg3y88ffozT
-b2gyvdZdKfC4H8M56b1Pmf+axFrj5DZteQyiBk603l1mVos1gaeUgxXDfGrf4hD6
-3dZCVL9kLzwiNtHo9zIyX7fmwBnoWH2IuJ1l73hMUXQQoeBNxfl+IohBRVDbrmv0
-guluqayPYU/PPNaQKbFXxOcj9lQyQcBRhH60Cke+iQkS2NgOg+oYOfW6ecwewwZh
-m4S7hF+V5QJlZMupSpMGHS/QrL/LnAUksI55bs+/ikvJ+fUShtlBy+aVBHllCMQk
-jnrO4mce7fYGgi3tVnBQzc1mJDNHLqEG
-=Lhov
+iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb4JQ4RHHpvZXVya0Bn
+bWFpbC5jb20ACgkQ5SbKMk2fAI6sFQwAsoEbKqhxwpcxOLbn4SiFuyFoqZL9MDvJ
+7BKCS0nDoxfuERXmKaCHnuZ7eoUrGNdPV5A5CJMytAOgBTCgTVx6VOMOI6qHOsAb
+lP9s64UXZdB4PIoDPTwIXdaESfdErhgshOcRkDqe6wPrFpcdPIgcizN1at3XpcAP
+kqNREwU/RO6MsYQpeZC2UZ0i+8mWHalUB4QXfEgrs9iQC7NGPM0SNOWCbZOE21GN
+b4VS7w53h38YgZDtKdvIxrql3tKIZKtEGc+8icVi1P+83AcjC6E3+iQzYe6a0stp
+SFKxiFZzm5rsGSdQXTCVIOelM1N7XEd+2NrBa/IzCPGrHSvy/gKs1HyraAvWaXXG
+DqN3tgZ+ewjSRQTSGBv8N+1BILkRYI+xzlwAtTMllmDKS9KbVdWn7JEJkzLd8fM2
+dtbznVpdRUQsL/UA/yoOrRoDmgheH4JuIQS58xYt4ti6MUMbaGpd7JXzIVOIhQD6
+/RfCl684TIy2crkvbiXl2XwIMNKQ3xCo
+=LR1r
 -----END PGP SIGNATURE-----
