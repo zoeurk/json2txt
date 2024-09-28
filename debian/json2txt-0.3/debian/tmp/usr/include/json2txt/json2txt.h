@@ -24,7 +24,8 @@ enum TYPE{
 enum VAL{
 	INT = 0,
 	STRING = 1,
-	VOID = 2
+	VOID = 2,
+	WARN = 4
 };
 enum KIND{
 	NEW,
@@ -46,8 +47,8 @@ struct json_parser{
 	size_t stock_size;
 };
 struct json{
-	int type;
-	int t_val;
+	enum TYPE type;
+	enum VAL t_val;
 	struct{
 		union{
 			size_t index;
@@ -63,7 +64,7 @@ struct json{
 ssize_t read_fn(struct json_parser *p);
 void readchar(ssize_t *offset, char **str, const char *not);
 void allocstr(char **buffer, size_t lentoadd);
-void *json_create(struct json **j, int kind, int type);
+void *json_create(struct json **j, enum KIND kind, enum TYPE type);
 void *getint(struct json_parser *p);
 void *getstr(struct json_parser *p);
 void *array(struct json_parser *p, struct json **j);

@@ -70,7 +70,7 @@ void *getint(struct json_parser *p){
 	int i, dot  = 0, start = 0, zero = 0;
 	char *fboolean[2] = { "false", "FALSE" },
 		*tboolean[2] = { "true", "TRUE" },
-		*pbool = NULL, *Pbool = NULL, last;
+		*pbool = NULL, *Pbool = NULL;
 	p->len = 0;
 	if(*p->buf == 't' || *p->buf == 'T'){
 		pbool = tboolean[0];
@@ -108,33 +108,32 @@ void *getint(struct json_parser *p){
 		while(read_fn(p));
 		return p;
 	}
+	#ifdef EXPLICIT_SIGN
 		if(*p->buf == '-' || *p->buf == '+'){
-			if(*p->buf == '+'){
-				warnx("Value number: start by '+', this value is not valid (offset: %lu)", p->offset);
-			#ifndef EXPLICIT_SIGN
-				errx(255, "Invalid Number");
-			#endif
-			}
-			#ifdef EXPLICIT_SIGN
-				last = *p->buf;
-				STOCK_BUF(p);
-				p->len++;
-				p->buf++;
-				p->offset++;
-			#endif
+			STOCK_BUF(p);
+			p->len++;
+			p->buf++;
+			p->offset++;
 	}
+	#else
+		if(*p->buf == '-'){
+			STOCK_BUF(p);
+			p->len++;
+			p->buf++;
+			p->offset++;
+		}
+	#endif
 	do
-		for(;(last = *p->buf);p->buf++, p->len++, p->offset++)
+		for(;*p->buf;p->buf++, p->len++, p->offset++)
 			if(*p->buf == '.'){
 				switch(dot){
 					case 0:
+						#ifdef STRICT_NUM
 						if(zero == 0 && start == 0){
-							warnx("Value number: start by '(+|-)?.num', valid value should be '-?0.num' (offset: %lu)", p->offset);
-							#ifdef STRICT_NUM
-							errx("Invalid number.");
+							warnx("Invalid number.");
 							return p;
-							#endif
 						}
+						#endif
 						dot = 1;
 						start = 1;
 						STOCK_BUF(p);
@@ -187,7 +186,6 @@ void *array(struct json_parser *p, struct json **j){
 	size_t index = 0;
 	ssize_t offset = p->offset;
 	int next = 1, end = 0;
-	char c_char;
 	p->buf++;
 	p->offset++;
 	do
@@ -256,17 +254,9 @@ void *array(struct json_parser *p, struct json **j){
 					end = 1;
 					next = 0;
 					getint(p);
-					c_char = *(p->pstock -1);
-					if(c_char == '.' || c_char == '+' || c_char == '-'){
-						errx(255, "Unexpected chararcter (bad number) before offset %lu.", p->offset);
-					}
-					c_char = *p->stock;
-					if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.')
-						(*j)->t_val = INT | WARN;
-					else
-						(*j)->t_val = INT;
 					(*j)->value.name.index = index;
 					(*j)->value.value = p->stock;
+					(*j)->t_val = INT;
 					index++;
 					p->stock = NULL;
 					p->stock_size = 0;
@@ -281,7 +271,7 @@ void *pair(struct json_parser *p, struct json **j){
 	struct json *pj;
 	ssize_t offset = p->offset;
 	int need_key = 1, need_value = 0,
-		next = 0, end = 0, c_char;
+		next = 0, end = 0;
 	p->offset++;
 	p->buf++;
 	do
@@ -375,16 +365,8 @@ void *pair(struct json_parser *p, struct json **j){
 					end = 1;
 					next = 0;
 					getint(p);
-					c_char = *(p->pstock -1);
-					if(c_char == '.' || c_char == '+' || c_char == '-'){
-						errx(255, "Unexpected chararcter (bad number) before offset %lu.", p->offset);
-					}
-					c_char = *p->stock;
-					if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.')
-						(*j)->t_val = INT | WARN;
-					else
-						(*j)->t_val = INT;
 					(*j)->value.value = p->stock;
+					(*j)->t_val = INT;
 					p->stock = NULL;
 					p->stock_size = 0;
 					break;
@@ -455,34 +437,19 @@ int duplicate_keys(struct json *j, int warning_only){
 	struct json *pj = j;
 	char **order = NULL;
 	for(pj = j; pj;pj = pj->next){
-		if(pj->type == ARRAY){
-			if(pj->sub){
-				if(duplicate_keys(pj->sub, warning_only) == 1)
-					return 1;
-			}
-			if(warning_only >= 0 && (pj->t_val&WARN) == WARN){
-				warnx("Mal formed number: %s", pj->value.value);
-				if(warning_only == 0)
-					return 1;
-			}
-		}else{
-			if(pj->sub)
-				if(duplicate_keys(pj->sub, warning_only) == 1){
-					free(order);
-					return 1;
-				}
-			if(warning_only >= 0 && (pj->t_val&WARN) == WARN){
-				warnx("Mal formed number: %s", pj->value.value);
-				if(warning_only == 0)
-					return 1;
-			}
-			if(json_sort(pj, &order, 0, warning_only) == -1){
+		if(pj->type == ARRAY)
+			continue;
+		if(pj->sub)
+			if(duplicate_keys(pj->sub, warning_only) == 1){
 				free(order);
 				return 1;
 			}
+		if(json_sort(pj, &order, 0, warning_only) == -1){
 			free(order);
-			order = NULL;
+			return 1;
 		}
+		free(order);
+		order = NULL;
 	}
 	return 0;
 }
@@ -538,7 +505,7 @@ void json_print(struct json *j, int sort, size_t space, char c_sp, size_t count,
 			switch(pj->type^SET){
 				case ARRAY:
 					switch(pj->t_val){
-						case INT: case INT|WARN:
+						case INT:
 							printf("%s", pj->value.value);
 							break;
 						case STRING:
@@ -551,7 +518,7 @@ void json_print(struct json *j, int sort, size_t space, char c_sp, size_t count,
 				case PAIR:
 					printf("\"%s\":", pj->value.name.key);
 					switch(pj->t_val){
-						case INT: case INT|WARN:
+						case INT:
 							printf("%s", pj->value.value);
 							break;
 						case STRING:
@@ -611,7 +578,7 @@ void json2txt(struct json *j, int sort, char *string, int warn_only){
 			switch(pj->type^SET){
 				case ARRAY:
 					switch(pj->t_val){
-						case INT: case INT|WARN:
+						case INT:
 							if(string)
 								printf("%s[%lu]:%s\n",
 									string, pj->value.name.index, pj->value.value);
@@ -631,7 +598,7 @@ void json2txt(struct json *j, int sort, char *string, int warn_only){
 					break;
 				case PAIR:
 					switch(pj->t_val){
-						case INT:case INT|WARN:
+						case INT:
 							if(string)
 								printf("%s.%s:", string, pj->value.name.key);
 							else

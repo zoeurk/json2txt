@@ -24,8 +24,7 @@ enum TYPE{
 enum VAL{
 	INT = 0,
 	STRING = 1,
-	VOID = 2,
-	WARN = 4
+	VOID = 2
 };
 enum KIND{
 	NEW,

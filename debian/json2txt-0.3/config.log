@@ -28,7 +28,6 @@ uname -v = #132~20.04.1-Ubuntu SMP Fri Aug 30 15:50:07 UTC 2024
 /bin/universe          = unknown
 
 PATH: /home/thomas/.local/bin
-PATH: /home/thomas/.local/bin
 PATH: /usr/local/sbin
 PATH: /usr/local/bin
 PATH: /usr/sbin
