@@ -11,4 +11,4 @@ Section: debug
 Priority: optional
 Multi-Arch: same
 Description: debug symbols for json2txt-lib
-Build-Ids: 5f4f41759e9bd96539989ce3a1afc615132b30eb
+Build-Ids: 6515850d19b8d011a2f8182bfa21b4e152c4a1f9

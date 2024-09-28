@@ -57,8 +57,8 @@ struct json_parser
 struct json
 .EX
 \fBstruct json\fR{
-	\fBenum TYPE\fR type;			/*Type of data*/
-	\fBenum VAL\fR t_val;			/*Type of Value of the data*/
+	\fBenum TYPE\fR type;					/*Type of data*/
+	\fBenum VAL\fR t_val;				/*Type of Value of the data*/
 	struct{
 		union{
 			\fBsize_t\fR index;		/*index in array*/
@@ -87,7 +87,7 @@ Alloc/realloc buffer with lentoadd
 .BR
 .TP
 \fBvoid\fR *json_create(\fBstruct json\fR **j, \fBenum KIND\fR kind, \fBenum TYPE\fR type);
-Create a json structure by kind, and set type. *j is set to the new position and return the entering *json.
+Create a json structure by kind, and set type. *j is set to the new position and return the entering *json. 
 .BR
 .TP
 \fBvoid\fR *getint(\fBstruct json_parser\fR *p);
@@ -123,15 +123,11 @@ warn_only:
 .BR
 .TP
 \fBint\fR duplicate_keys(\fBstruct json\fR *j, \fBint\fR warning_only);
-Search for duplicate keys and bad numbers. Use json_sort().
+Search for duplicate keys. Use json_sort().
 .BR
 .TP
 \fBvoid\fR json_print(\fBstruct json\fR *j, \fBint\fR sort, \fBsize_t\fR space, \fBchar\fR c_sp, \fBsize_t\fR count, \fBint\fR warn_only);
 Print FD in json format. Use json_sort().
-.EX
-\fIspace\fR is the number of \fIc_sp\fR used for space.
-if \fIc_sp\fR == 0 no space are appliqued
-.EE
 .BR
 .TP
 \fBvoid\fR json2txt(\fBstruct json\fR *j, \fBint\fR sort, \fBchar\fR *string, \fBint\fR warn_only);
