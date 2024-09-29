@@ -539,6 +539,11 @@ void json_print(struct json *j, int sort, size_t space, char c_sp, size_t count,
 				case ARRAY:
 					switch(pj->t_val){
 						case INT: case INT|WARN:
+							if(warn_only >= 0 && (pj->t_val&WARN) == WARN){
+								warnx("Mal formed number: %s", pj->value.value);
+									if(warn_only == 0)
+										_exit(255);
+								}
 							printf("%s", pj->value.value);
 							break;
 						case STRING:
@@ -552,6 +557,11 @@ void json_print(struct json *j, int sort, size_t space, char c_sp, size_t count,
 					printf("\"%s\":", pj->value.name.key);
 					switch(pj->t_val){
 						case INT: case INT|WARN:
+							if(warn_only >= 0 && (pj->t_val&WARN) == WARN){
+								warnx("Mal formed number: %s", pj->value.value);
+									if(warn_only == 0)
+										_exit(255);
+								}
 							printf("%s", pj->value.value);
 							break;
 						case STRING:
@@ -612,6 +622,11 @@ void json2txt(struct json *j, int sort, char *string, int warn_only){
 				case ARRAY:
 					switch(pj->t_val){
 						case INT: case INT|WARN:
+							if(warn_only >= 0 && (pj->t_val&WARN) == WARN){
+								warnx("Mal formed number: %s", pj->value.value);
+									if(warn_only == 0)
+										_exit(255);
+								}
 							if(string)
 								printf("%s[%lu]:%s\n",
 									string, pj->value.name.index, pj->value.value);
@@ -632,6 +647,11 @@ void json2txt(struct json *j, int sort, char *string, int warn_only){
 				case PAIR:
 					switch(pj->t_val){
 						case INT:case INT|WARN:
+							if(warn_only >= 0 && (pj->t_val&WARN) == WARN){
+								warnx("Mal formed number: %s", pj->value.value);
+									if(warn_only == 0)
+										_exit(255);
+								}
 							if(string)
 								printf("%s.%s:", string, pj->value.name.key);
 							else

@@ -10,4 +10,4 @@ Depends: json2txt (= 0.3-1)
 Section: debug
 Priority: optional
 Description: debug symbols for json2txt
-Build-Ids: c515e772aab80832700523326b2c33c50009ff53
+Build-Ids: 4c875ca2030ef1aed057e799d441717d6813fd97

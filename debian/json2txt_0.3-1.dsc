@@ -15,26 +15,26 @@ Package-List:
  json2txt-dev deb libdevel optional arch=any
  json2txt-lib deb utils optional arch=any
 Checksums-Sha1:
- dc3049dacbd6e66a67ec835814a620c2ba8e0dec 167204 json2txt_0.3.orig.tar.xz
- d1ca431073ab26cff7cab16542d979bb82080b34 7964 json2txt_0.3-1.debian.tar.xz
+ d56b60ad6adca83c5c323224acf99197f25da853 167524 json2txt_0.3.orig.tar.xz
+ f030c58dbbc470902e33177a631b9a19932032b2 7956 json2txt_0.3-1.debian.tar.xz
 Checksums-Sha256:
- cb44cc9b0a4061acd2c3c6503c898ab86c9e2a6f2ddf542c082c369e838f8108 167204 json2txt_0.3.orig.tar.xz
- 17623ea584e7650cc2f62a151b9086628e636bd14c53cafeb586aec3d9f7224d 7964 json2txt_0.3-1.debian.tar.xz
+ dbd91a41c5fa5b3aa0caa377e29e7cad1d3df2b1f19a639cd676e35acdad1ddc 167524 json2txt_0.3.orig.tar.xz
+ 5b0815188248265da6ea5e43be5d74551f7149070418602def08ffd7022bc11d 7956 json2txt_0.3-1.debian.tar.xz
 Files:
- 5d51d320db609d8e9f267ccfb4a7507d 167204 json2txt_0.3.orig.tar.xz
- 6427197d968383ab958501b5cdb75613 7964 json2txt_0.3-1.debian.tar.xz
+ d58c64a8254f20089f7e60718aacf210 167524 json2txt_0.3.orig.tar.xz
+ 5acf0c57fd20edaeebcb169454d6b66a 7956 json2txt_0.3-1.debian.tar.xz
 
 -----BEGIN PGP SIGNATURE-----
 
-iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb5XQYRHHpvZXVya0Bn
-bWFpbC5jb20ACgkQ5SbKMk2fAI6vhQwAmZFQPIND0HMk+v9StdAzlWy92a1AjFBM
-tC+CRZmNGdEsLLwRWczP/baq2/YgjL/67cQiYGpD6RKWeukVZ6gyCSUEetx+ibkQ
-IcwYE9Xd3kuoB6agCGGV6c/pSDP5ea/8c/e3D8QHNBHwJtxffADXRUUylrj5kcEY
-h6gkMa4dw/HSSLhqYEWOfgu+cyrX1Z25wyxYWWgQ9DbJjZ6ZBHGp71IPJ+Ln8zfh
-G+NkaTaWxwhR5q4ZFRM7X2f294+8lZAJcTadDuYWjSN9UgGIYm7cTCEdi1vRhKWE
-+alLoDM6lo8GjFktmf1NN+GOvC5yl18DApa/maKYGuoofngJEBDx2AKK2OWl8VXK
-GRLiIkMVOEa1sXE70izz0guBeoopT8YJQAsh2+od3JZpQZ5KS3EXFmfaKkIkLMPD
-Ox/Na1+VOsisKln/6n77VX9nH5zWoz498ipUKZWS/rwBNzH4AbSeyac/z/wrhcxo
-fyatwEbaPkOaa8vmEPDwGMu3fwutoJ2G
-=ELJb
+iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb5Y6IRHHpvZXVya0Bn
+bWFpbC5jb20ACgkQ5SbKMk2fAI7ViQv/TSway3PmANCffomXUXzfh4xRF1GKW1E3
+4PsIvjyLpH/coaaweM+c69fO1sXgiJxZYlt2Pt3X30DD+/vpNrM5D/3Bk6/2bqas
+IRyi0qsewiYv2FmU21RZ91yEbT3Nzi3tUQai18/oK5TmPQTP77L31FU8vqalNIMY
+11ivFJ8TZsEZyF3QdM6t++5CW7jxvmzHZUxw6p6VkYvteuGgZ6GU/idHaTAvqHVq
+CKDXeT36mM0KIv22XHiFHB8dGQurdtvu2Xx2WF4tfT+AsUDcuHDCDK3fVMTnsjJ1
+dm0VNLKf7BuBvqzOSSsiffyMzrK2baOQ6eUXUAMfD9sRl8OVKUwui3aJRxaNLUoG
+tydt+DwDfD9ETyQJGSp2QQVl08ObhfapRCTYVhKNnePppJ3O7tZqddktES9xVPii
+gNTXii6fvDVv5x8hGOeDa7lcHFzHwA511kE5Kyh+9zBxoqblSa4w1HY82laeccG7
+LBIJjUtLZKtkz3sDfhvaO7xDf6HEcONJ
+=fuTi
 -----END PGP SIGNATURE-----

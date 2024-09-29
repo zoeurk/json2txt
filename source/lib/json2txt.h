@@ -7,12 +7,6 @@
 /*sprintf, printf*/
 #include <stdio.h>
 /*malloc, calloc(), realloc()*/
-/*#ifdef  __USE_XOPEN_EXTENDED
-	#undef __USE_XOPEN_EXTENDED
-#endif
-#ifdef __USE_XOPEN2K8
-	#undef __USE_XOPEN2K8
-#endif*/
 #include <stdlib.h>
 
 #define INIT_JSON(BUFSIZE, ALLOC_SIZE, CHARS, buffer) { 0, BUFSIZE, ALLOC_SIZE, CHARS, buffer, NULL, 0, 0, 1, NULL, NULL, 0 }

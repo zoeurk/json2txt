@@ -22,7 +22,7 @@ char *const duplicate[] = {
 	"none",
 	NULL
 };
-int subopt(char *subopt, char *const *tokens){
+int getsubopt(char *subopt, char *const *tokens){
 	int i = 0;
 	for(;*tokens && strcasecmp(subopt, *tokens); tokens++, i++);
 	return i;
@@ -36,9 +36,9 @@ static char args_doc[] = "[file]";
 static struct argp_option options[] = {
 	{ "json", 'J', NULL, 0, "Inhibit output to json", 0 },
 	{ "text", 'T', NULL, 0, "Inhibit output to text", 0 },
-	{ "sort", 's', "asc|dsc|none", 0, "Sort keys, ", 1},
+	{ "sort", 's', "1|-1|0", 0, "Sort keys, ", 1},
 	{ "test", 't', NULL, 0, "No test", 2},
-	{ "warn", 'w', "asc|dsc|none", 0, "Exit on duplicate key", 2},
+	{ "warn", 'w', "1|-1|0", 0, "Exit on duplicate key", 2},
 	{ NULL, 0, NULL, 0, "Help", 3},
 	{ NULL, '?', NULL, 0, "Alias for --usage", 4},
 	{ NULL, 'h', NULL, 0, "Alias for --help", 4},
@@ -69,7 +69,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state){
 			a->totext = 0;
 			break;
 		case 's':
-			switch(subopt(arg,sort)){
+			switch(getsubopt(arg,sort)){
 				case 0:
 					a->sort = 1;
 					break;
@@ -87,7 +87,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state){
 			a->test = 0;
 			break;
 		case 'w':
-			switch(subopt(arg, duplicate)){
+			switch(getsubopt(arg, duplicate)){
 				case 0:
 					a->warning = 1;
 					break;
