@@ -36,9 +36,9 @@ static char args_doc[] = "[file]";
 static struct argp_option options[] = {
 	{ "json", 'J', NULL, 0, "Inhibit output to json", 0 },
 	{ "text", 'T', NULL, 0, "Inhibit output to text", 0 },
-	{ "sort", 's', "1|-1|0", 0, "Sort keys, ", 1},
+	{ "sort", 's', "asc|dsc|none", 0, "Sort keys, ", 1},
 	{ "test", 't', NULL, 0, "No test", 2},
-	{ "warn", 'w', "1|-1|0", 0, "Exit on duplicate key", 2},
+	{ "warn", 'w', "asc|dsc|none", 0, "Exit on duplicate key", 2},
 	{ NULL, 0, NULL, 0, "Help", 3},
 	{ NULL, '?', NULL, 0, "Alias for --usage", 4},
 	{ NULL, 'h', NULL, 0, "Alias for --help", 4},
