@@ -22,7 +22,7 @@ char *const duplicate[] = {
 	"none",
 	NULL
 };
-int getsubopt(char *subopt, char *const *tokens){
+int subopt(char *subopt, char *const *tokens){
 	int i = 0;
 	for(;*tokens && strcasecmp(subopt, *tokens); tokens++, i++);
 	return i;
@@ -69,7 +69,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state){
 			a->totext = 0;
 			break;
 		case 's':
-			switch(getsubopt(arg,sort)){
+			switch(subopt(arg,sort)){
 				case 0:
 					a->sort = 1;
 					break;
@@ -87,7 +87,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state){
 			a->test = 0;
 			break;
 		case 'w':
-			switch(getsubopt(arg, duplicate)){
+			switch(subopt(arg, duplicate)){
 				case 0:
 					a->warning = 1;
 					break;

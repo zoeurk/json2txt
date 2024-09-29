@@ -7,29 +7,29 @@ Binary: json2txt-dev json2txt-lib json2txt
 Architecture: amd64 source
 Version: 0.3-1
 Checksums-Md5:
- fd12f7cce8fa5d9fdbc995630c5504ff 1643 json2txt_0.3-1.dsc
- 2de4e322c814472cb936caccc9b4226f 7364 json2txt-dbgsym_0.3-1_amd64.ddeb
- 54e3d12dacd7d9becf66b57340627cc0 4500 json2txt-dev_0.3-1_amd64.deb
+ 97d895e8267254d8f09497072a5d6a87 1643 json2txt_0.3-1.dsc
+ 0948ef77df243ba4c13d1e5041d17151 7360 json2txt-dbgsym_0.3-1_amd64.ddeb
+ f1f54c4bc63c7754e608ff4430b96a33 4496 json2txt-dev_0.3-1_amd64.deb
  34918975f9aa0e227ac65b3c15f8bb3c 16304 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
  f058507bdee27579decf38fbe77f072f 11768 json2txt-lib_0.3-1_amd64.deb
- 958f1f8cdd170eb1258a5dd68e423037 5916 json2txt_0.3-1_amd64.deb
+ 21eae12c485bd7b6f24e0c90739b03cd 5880 json2txt_0.3-1_amd64.deb
 Checksums-Sha1:
- 2d388327ec9e87870af6e19dceca773c95593948 1643 json2txt_0.3-1.dsc
- f9b1d8b935e75092e4b96ea3ef1b0717d4ff0b29 7364 json2txt-dbgsym_0.3-1_amd64.ddeb
- 37b79178f5d09c7a6074ad32949e5242b4d550fd 4500 json2txt-dev_0.3-1_amd64.deb
+ 90d0f4d879bf7a7bf2a02ff20b81bae079709f21 1643 json2txt_0.3-1.dsc
+ c2ba9052583e726e0b47dde76bdc7bd149956405 7360 json2txt-dbgsym_0.3-1_amd64.ddeb
+ 802cfd462b25a074315b24eead2d8342beb985b1 4496 json2txt-dev_0.3-1_amd64.deb
  3a2b9393867bec2a5ec0fe20242e4eacce7b962e 16304 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
  983d4877c6fde482c3948cde51a683b3ce2029fa 11768 json2txt-lib_0.3-1_amd64.deb
- ca42fb26aa351095e4f25e87ae1b8d71f297e9b6 5916 json2txt_0.3-1_amd64.deb
+ 83c24267f5c7bb2ae32ee2cf4d0f135378855b39 5880 json2txt_0.3-1_amd64.deb
 Checksums-Sha256:
- 48368af355ffb3b778c92b41c8aa859df274db3b16aa7276fea4f3fd814730f8 1643 json2txt_0.3-1.dsc
- bb53e7c28bbf8d067d8bbc47b28c69363c0a67d647c9366ce8063199eae84aea 7364 json2txt-dbgsym_0.3-1_amd64.ddeb
- 9d2cc80f680668e95e2b5e7ba462a720f5b4f5e71657762c3433c90402dbfd2b 4500 json2txt-dev_0.3-1_amd64.deb
+ 615b3e14ee61d9c69294e586a47ef7bfb4b9f13e8ab18c06da9d64f43d73b581 1643 json2txt_0.3-1.dsc
+ d576553c6921c153ac5e3c0ebecc052cd6159a87489b99540277724c41ef7a00 7360 json2txt-dbgsym_0.3-1_amd64.ddeb
+ 3715f421b451dd10a0d8a1a74a370c89f096db754b92e6015b20c546269d5877 4496 json2txt-dev_0.3-1_amd64.deb
  ef8e9ff02cbfe4826f430a24773e133e75b637db65f903a93bf80ce1defde096 16304 json2txt-lib-dbgsym_0.3-1_amd64.ddeb
  d89e295210e8a261f661253354abba8b904647a5fc1d0f389e364f1a45228cdd 11768 json2txt-lib_0.3-1_amd64.deb
- c66f7d273ffae54f7454fb988e9f85d0bae1e90579af12e5a634749b776f53ba 5916 json2txt_0.3-1_amd64.deb
+ 8d95553e8803ca1da7d263c5f6c0ad58fb5da618f1609aac3ad0532c9fe1fd69 5880 json2txt_0.3-1_amd64.deb
 Build-Origin: Ubuntu
 Build-Architecture: amd64
-Build-Date: Sat, 28 Sep 2024 17:47:25 +0200
+Build-Date: Sun, 29 Sep 2024 14:23:18 +0200
 Build-Tainted-By:
  merged-usr-via-symlinks
  usr-local-has-includes
@@ -188,15 +188,15 @@ Environment:
 
 -----BEGIN PGP SIGNATURE-----
 
-iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb4JRgRHHpvZXVya0Bn
-bWFpbC5jb20ACgkQ5SbKMk2fAI7zJQv+O8oHHaqOkGZeYzOIMKMprxMZKyklXKhm
-Cw6yISu7wzhjYCj8kSemYALH5ljU/zNulV1SKJxP5pZ8UAqhjCU/WdtUHOACwuWi
-2SAxUGOjcnDb92GenKMAQd6GhswI9bmq431fTm45KgUE5S0s09Nk37OXw+0pqxaB
-cufnvsySHG/l8FuUzObdPJUJ2ZRM7uz7QdfnpaBpWcyWCU4Hw710n0F2M7ua3KGd
-c46QQ6Rq7C9+MVOsxFAcZ/hynfi0Lv577hQVFPrv/ps8Ybs+xdHUBkKH+5birsbc
-SQ/eh2M8OZt/WITEYb6L79lzYgPLB9vNY3MLbXWYanlhu9ecbHtbJYPVw93/fjB4
-7fnC+ex7zpYLDASXzCuJV44UjDt7KtJCNyTvlpTzLrUnRXvIX0d+HXmVWmB0qxJg
-E5KI3+xGkxxPWbhfzMTuSDcT1GqbstBdQSODBDDb7R1oyHWSibQeJ2boTt4nWiYg
-tctZo5YVw+Rft19NCeIA4Z+9EjYZdQiX
-=63Fo
+iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb5RsERHHpvZXVya0Bn
+bWFpbC5jb20ACgkQ5SbKMk2fAI4tzgv/Vqafw2R8VXqLgJVdNO+yFNIgUqsrfOe3
+u27glxMpM/aKJzy4+0EwnVKJYBiBZeqzhX6Ud8ThgLgjxA0k40kHx3YXcIF/ctOX
+cENIZWj7FOa/zVI8NQCea2GLg+9wjYgBQD6N1Kjah44Ana6IOYzjiH7WPg7Ptk51
+am2kRAfpCTP3XWws7V+kU4u4/sxCRwyKfzieKIFq6bH07wFb+orQ50heM2mBxm0B
+zgOWuMKvLfz09QJb3ljOMuJ5ty2xqOgTHi/81NJ7lrmrEKS6vEUV2eziK9Y61H0c
+abq2Syb/UwbBN6qBm1mXCWTH3TGQ+PqLhCo+IIHD3oN9IFQqrovSLn1czfuuT0kF
+DWdgNWde5OclM32tVQLi5mmqgg9uyyB1lIpu2g6kX4Mt5JPMARhG4oxNo/EOkapd
+wAuN9A2gcpv+Cz8dkLUxHUqylBYYXMJK5VcsNK62r8+upwgbvQJNjtgcXzeyrBjH
+wh0g4HOxV7Ega/yNjftk84P5coJMbSUR
+=NKrh
 -----END PGP SIGNATURE-----

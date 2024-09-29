@@ -217,7 +217,7 @@ AUTOMAKE = ${SHELL} /home/thomas/Projets/json2txt/json2txt/debian/json2txt-0.3/m
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=none
-CFLAGS = -g -O2 -fdebug-prefix-map=/home/thomas/Projets/json2txt/json2txt/debian/json2txt-0.3=. -fstack-protector-strong -Wformat -Werror=format-security -Wall -pedantic -U STRICT_NUM -D EXPLICIT_SIGN
+CFLAGS = -g -O2 -fdebug-prefix-map=/home/thomas/Projets/json2txt/json2txt/debian/json2txt-0.3=. -fstack-protector-strong -Wformat -Werror=format-security -Wall -pedantic -U STRICT_NUM -D EXPLICIT_SIGN -U __USE_XOPEN_EXTENDED -U __USE_XOPEN2K8
 CPP = gcc -E
 CPPFLAGS = -Wdate-time -D_FORTIFY_SOURCE=2
 CYGPATH_W = echo
