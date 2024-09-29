@@ -16,7 +16,7 @@ b8d0bc5fa34e9946420d3b4c06ef095f  ./lib/Makefile.in
 da2d3470840e12a25dfa832f1cdc850c  ./lib/json2txt.c
 c15e2c18bcadd1ec11be0662e02ca2c8  ./main/Makefile.in
 ef1fb8311a566c3fb468f4ce534368fe  ./main/Makefile.am
-b42d0b23bdddbc53b54a552961091a74  ./main/main.c
+67a36ca107d3c85dbcdb2ffbbe578be4  ./main/main.c
 2e8bdafecd787cb8d3ee1c38de858bae  ./Makefile.in
 e5f9da8b55623ead67f2bcfee03fb4d4  ./depcomp
 bcf35cdf761dd889ed083222464d3045  ./Makefile.am
