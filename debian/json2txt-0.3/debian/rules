@@ -9,9 +9,9 @@
 
 # see ENVIRONMENT in dpkg-buildflags(1)
 # package maintainers to append CFLAGS
-export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic -U STRICT_NUM -D EXPLICIT_SIGN -U __USE_XOPEN_EXTENDED
+#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
 # package maintainers to append LDFLAGS
-export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+#export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
 
 %:
@@ -21,6 +21,5 @@ export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 # dh_make generated override targets
 # This is example for Cmake (See https://bugs.debian.org/641051 )
 #override_dh_auto_configure:
-#	dh_auto_configure -- --prefix=/usr --includedir=/usr/include/json2txt --libdir=/usr/lib/x86_64-linux-gnu/json2txt
-#	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
+#	dh_auto_configure -- #	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
 

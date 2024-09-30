@@ -6,14 +6,14 @@ Build-Depends: debhelper-compat (= 12)
 Standards-Version: 4.4.1
 Homepage: http:/none
 
-Package: json2txt-dev
+Package: libjson2txt-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
-Depends: comunix-lib (= ${binary:Version}), ${misc:Depends}
+Depends: libjson2txt (= ${binary:Version}), ${misc:Depends}
 Description: Headers of json2txt
 
-Package: json2txt-lib
+Package: libjson2txt
 Architecture: any
 Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -22,5 +22,5 @@ Description: Library of json2txt
 Package: json2txt
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Convert json file
+Description: Reformat json file
 
