@@ -53,15 +53,15 @@ make[1] : on quitte le répertoire « /home/thomas/Projets/json2txt/json2txt/d
 Now running lintian json2txt_0.3-1_amd64.changes ...
 E: json2txt changes: bad-distribution-in-changes-file unstable
 E: json2txt: changelog-is-dh_make-template
+E: json2txt-dev: changelog-is-dh_make-template
 E: libjson2txt: changelog-is-dh_make-template
-E: libjson2txt-dev: changelog-is-dh_make-template
 E: json2txt: copyright-contains-dh_make-todo-boilerplate
+E: json2txt-dev: copyright-contains-dh_make-todo-boilerplate
 E: libjson2txt: copyright-contains-dh_make-todo-boilerplate
-E: libjson2txt-dev: copyright-contains-dh_make-todo-boilerplate
 E: json2txt source: debian-rules-is-dh_make-template
 E: json2txt: extended-description-is-empty
+E: json2txt-dev: extended-description-is-empty
 E: libjson2txt: extended-description-is-empty
-E: libjson2txt-dev: extended-description-is-empty
 E: json2txt source: readme-source-is-dh_make-template
 E: json2txt source: source-is-missing json2txt
 E: json2txt source: source-is-missing json2txt-static
@@ -69,8 +69,8 @@ E: json2txt source: source-is-missing lib/json2txt_shared.o
 E: json2txt source: source-is-missing lib/json2txt_static.o
 E: json2txt source: source-is-missing lib/libjson2txt.so
 W: json2txt: copyright-has-url-from-dh_make-boilerplate
+W: json2txt-dev: copyright-has-url-from-dh_make-boilerplate
 W: libjson2txt: copyright-has-url-from-dh_make-boilerplate
-W: libjson2txt-dev: copyright-has-url-from-dh_make-boilerplate
 W: json2txt source: dh-make-template-in-source debian/json2txt.cron.d.ex
 W: json2txt source: dh-make-template-in-source debian/json2txt.doc-base.EX
 W: json2txt source: dh-make-template-in-source debian/manpage.1.ex
@@ -82,18 +82,18 @@ W: json2txt source: dh-make-template-in-source debian/preinst.ex
 W: json2txt source: dh-make-template-in-source debian/prerm.ex
 W: json2txt source: dh-make-template-in-source debian/salsa-ci.yml.ex
 W: json2txt source: dh-make-template-in-source debian/watch.ex
-W: libjson2txt-dev: manpage-has-bad-whatis-entry usr/share/man/man3/json2txt.3.gz
+W: json2txt-dev: manpage-has-bad-whatis-entry usr/share/man/man3/json2txt.3.gz
 W: json2txt: manpage-has-errors-from-man usr/share/man/man1/json2txt.1.gz 1: warning: macro 'npage' not defined
-W: libjson2txt-dev: manpage-has-errors-from-man usr/share/man/man3/json2txt.3.gz 1: warning: macro 'npage' not defined
+W: json2txt-dev: manpage-has-errors-from-man usr/share/man/man3/json2txt.3.gz 1: warning: macro 'npage' not defined
 W: json2txt: new-package-should-close-itp-bug
+W: json2txt-dev: new-package-should-close-itp-bug
 W: libjson2txt: new-package-should-close-itp-bug
-W: libjson2txt-dev: new-package-should-close-itp-bug
 W: libjson2txt: non-dev-pkg-with-shlib-symlink usr/lib/x86_64-linux-gnu/libjson2txt.so.0.0.0 usr/lib/x86_64-linux-gnu/libjson2txt.so
 W: libjson2txt: package-name-doesnt-match-sonames libjson2txt0
-W: libjson2txt-dev: readme-debian-contains-debmake-template
+W: json2txt-dev: readme-debian-contains-debmake-template
 W: json2txt: wrong-bug-number-in-closes l3:#nnnn
+W: json2txt-dev: wrong-bug-number-in-closes l3:#nnnn
 W: libjson2txt: wrong-bug-number-in-closes l3:#nnnn
-W: libjson2txt-dev: wrong-bug-number-in-closes l3:#nnnn
 Finished running lintian.
 Now signing changes and any dsc files...
 The .changes file is already signed.
