@@ -102,7 +102,8 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state){
 			}
 			break;
 		case ARGP_KEY_ARG:
-			a->fd = open(arg, O_RDONLY);
+			if((a->fd = open(arg, O_RDONLY)) < 0)
+				err(255, "open()");
 			break;
 		default:
 			return ARGP_ERR_UNKNOWN;
