@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/usr/lib/x86_64-linux-gnu/json2txt'
+libdir='/usr/lib/x86_64-linux-gnu'

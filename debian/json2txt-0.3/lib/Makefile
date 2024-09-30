@@ -217,7 +217,7 @@ AUTOMAKE = ${SHELL} /home/thomas/Projets/json2txt/json2txt/debian/json2txt-0.3/m
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=none
-CFLAGS = -g -O2 -fdebug-prefix-map=/home/thomas/Projets/json2txt/json2txt/debian/json2txt-0.3=. -fstack-protector-strong -Wformat -Werror=format-security -Wall -pedantic -U STRICT_NUM -D EXPLICIT_SIGN -U __USE_XOPEN_EXTENDED
+CFLAGS = -g -O2 -fdebug-prefix-map=/home/thomas/Projets/json2txt/json2txt/debian/json2txt-0.3=. -fstack-protector-strong -Wformat -Werror=format-security
 CPP = gcc -E
 CPPFLAGS = -Wdate-time -D_FORTIFY_SOURCE=2
 CXX = g++
@@ -243,7 +243,7 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
-LDFLAGS = -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,--as-needed
+LDFLAGS = -Wl,-Bsymbolic-functions -Wl,-z,relro
 LIBOBJS = 
 LIBS = 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
@@ -306,10 +306,10 @@ host_cpu = x86_64
 host_os = linux-gnu
 host_vendor = pc
 htmldir = ${docdir}
-includedir = /usr/include/json2txt
+includedir = ${prefix}/include
 infodir = ${prefix}/share/info
 install_sh = ${SHELL} /home/thomas/Projets/json2txt/json2txt/debian/json2txt-0.3/install-sh
-libdir = /usr/lib/x86_64-linux-gnu/json2txt
+libdir = ${prefix}/lib/x86_64-linux-gnu
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = /var

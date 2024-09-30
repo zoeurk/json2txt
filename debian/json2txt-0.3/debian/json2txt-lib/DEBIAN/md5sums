@@ -1,5 +1,5 @@
-b901df317f3935cc1a5ed3e1c4e40af2  usr/lib/x86_64-linux-gnu/json2txt/libjson2txt.a
-f518b012cd6bfb565c1ebd3c878b80a0  usr/lib/x86_64-linux-gnu/json2txt/libjson2txt.la
-34e94f875658d963a9188042f2998a35  usr/lib/x86_64-linux-gnu/json2txt/libjson2txt.so.0.0.0
-aaf9dfbfb918c871abbf210fc964cc5d  usr/share/doc/json2txt-lib/changelog.Debian.gz
+c86b2b2dcf2e64211af84cf217f272cf  usr/lib/x86_64-linux-gnu/libjson2txt.a
+41ea7490c1d7376e269c42e911c4eb34  usr/lib/x86_64-linux-gnu/libjson2txt.la
+f7403bbb13fe1504efdf0ecc20c0fdb6  usr/lib/x86_64-linux-gnu/libjson2txt.so.0.0.0
+941ef8a2cb84db1479a5182ecafef1cb  usr/share/doc/json2txt-lib/changelog.Debian.gz
 2043d24ce8a81b4c26f7b791200d4ef6  usr/share/doc/json2txt-lib/copyright

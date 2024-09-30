@@ -3,7 +3,7 @@ Source: json2txt
 Version: 0.3-1
 Architecture: amd64
 Maintainer: Thomas Marsaleix <zoeurk@gmail.com>
-Installed-Size: 18
+Installed-Size: 17
 Depends: comunix-lib (= 0.3-1)
 Section: libdevel
 Priority: optional

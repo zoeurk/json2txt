@@ -164,7 +164,7 @@ lock_old_archive_extraction=no
 LTCC="gcc"
 
 # LTCC compiler flags.
-LTCFLAGS="-g -O2 -fdebug-prefix-map=/home/thomas/Projets/json2txt/json2txt/debian/json2txt-0.3=. -fstack-protector-strong -Wformat -Werror=format-security -Wall -pedantic -U STRICT_NUM -D EXPLICIT_SIGN -U __USE_XOPEN_EXTENDED"
+LTCFLAGS="-g -O2 -fdebug-prefix-map=/home/thomas/Projets/json2txt/json2txt/debian/json2txt-0.3=. -fstack-protector-strong -Wformat -Werror=format-security"
 
 # Take the output of nm and produce a listing of raw symbols and C names.
 global_symbol_pipe="sed -n -e 's/^.*[	 ]\\([ABCDGIRSTW][ABCDGIRSTW]*\\)[	 ][	 ]*\\([_A-Za-z][_A-Za-z0-9]*\\)\$/\\1 \\2 \\2/p' | sed '/ __gnu_lto/d'"
