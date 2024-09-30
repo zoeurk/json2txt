@@ -1,0 +1,3 @@
+debian/tmp/usr/include/*
+debian/tmp/usr/share/man/man3/json2txt.3
+
