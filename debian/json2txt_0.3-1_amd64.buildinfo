@@ -3,33 +3,33 @@ Hash: SHA512
 
 Format: 1.0
 Source: json2txt
-Binary: libjson2txt-dev libjson2txt json2txt
+Binary: json2txt-dev libjson2txt json2txt
 Architecture: amd64 source
 Version: 0.3-1
 Checksums-Md5:
- f6d257cc8f44155b6f57fbcce9583a3d 1647 json2txt_0.3-1.dsc
- 3b0b000af01d32a6921ee814d5085ba8 5808 json2txt-dbgsym_0.3-1_amd64.ddeb
- cc3d70416d84ab7d6ef931b88e9a676f 5820 json2txt_0.3-1_amd64.deb
+ f7e501c2405a679d4eb86aa8cda1e540 1641 json2txt_0.3-1.dsc
+ 49be298de033eb86803cff0138febb8c 7372 json2txt-dbgsym_0.3-1_amd64.ddeb
+ 0a5d8e3c3a2ab29dc3b6584036115302 4496 json2txt-dev_0.3-1_amd64.deb
+ aaaff41e87f3147fc887210185fcd101 5920 json2txt_0.3-1_amd64.deb
  ab09ec8900a731848532f54a70ae00e3 16952 libjson2txt-dbgsym_0.3-1_amd64.ddeb
- a8f0cbaf2429258474f4191a35c5db9c 4512 libjson2txt-dev_0.3-1_amd64.deb
  b5d45235d82155963481e5b5461958dc 12360 libjson2txt_0.3-1_amd64.deb
 Checksums-Sha1:
- 39656c000e9802f2ce8ba3482bb82ee2eb68f346 1647 json2txt_0.3-1.dsc
- 8f6ba1a6e4e9c81882c891e1c317f947b1de7d5f 5808 json2txt-dbgsym_0.3-1_amd64.ddeb
- 5c2a3509da807d5e8902433aa0a730913f10bba8 5820 json2txt_0.3-1_amd64.deb
+ 114f87f5d584acad47ae50e8f60f68860b25c282 1641 json2txt_0.3-1.dsc
+ 2f2e52854229ed19bc63c2b65b10fd90902f3e0f 7372 json2txt-dbgsym_0.3-1_amd64.ddeb
+ 02d19a09662064d55a9e7a4d14ef74853c412df5 4496 json2txt-dev_0.3-1_amd64.deb
+ 21d887903090182feb742c830ef05d127b830dd2 5920 json2txt_0.3-1_amd64.deb
  3c6ec108676ec6caee4b919107281b1a5252efaf 16952 libjson2txt-dbgsym_0.3-1_amd64.ddeb
- 6bc7814708e9a694bf34052980a1be490dab8b77 4512 libjson2txt-dev_0.3-1_amd64.deb
  22784287c71bc1cd7ace4447bf8bf2f30872b33e 12360 libjson2txt_0.3-1_amd64.deb
 Checksums-Sha256:
- c7bdc96009b41865e70ef3165846365a2fba458af57b5d6a955e7fc957ccf742 1647 json2txt_0.3-1.dsc
- 84061322044c8266dab1f0937830484185d18ae413c550b2fd0b1c95ed575de9 5808 json2txt-dbgsym_0.3-1_amd64.ddeb
- 704d2ae30e76c834dc626126266f60cec96a51de40f87430e7d95b0bd13c0e12 5820 json2txt_0.3-1_amd64.deb
+ 2fdeb68a3a73d5533bba8ad1be5230378ca3b1a9f3e949823943f8627660a909 1641 json2txt_0.3-1.dsc
+ 25fa17f6c82d7b00c013c57a0ea33ce2fcc1f9456c2a0c2d52ae45dcb7dda592 7372 json2txt-dbgsym_0.3-1_amd64.ddeb
+ 9841a9ece6acced4b84436bdf82e5b57ab212840be9cbd286737c10322f29ecf 4496 json2txt-dev_0.3-1_amd64.deb
+ 1a0569c0b42d34a9da43c0546e69fd960e3d31346aeb2c7c9322442d4a906000 5920 json2txt_0.3-1_amd64.deb
  48cbcab8ba39697e4ec22ab1b5b2f235e630923886daa95abf2311e19f1710a8 16952 libjson2txt-dbgsym_0.3-1_amd64.ddeb
- 45c4c0259abe5ced7bd0376057369ad08240d7625d6739cbeaf18e0e3ae9cb48 4512 libjson2txt-dev_0.3-1_amd64.deb
  8ab377395a60ce961a7afb5b057ae89798c971bb042e1663bed9f35beab1a612 12360 libjson2txt_0.3-1_amd64.deb
 Build-Origin: Ubuntu
 Build-Architecture: amd64
-Build-Date: Mon, 30 Sep 2024 19:25:37 +0200
+Build-Date: Tue, 01 Oct 2024 11:08:32 +0200
 Build-Tainted-By:
  merged-usr-via-symlinks
  usr-local-has-includes
@@ -188,15 +188,15 @@ Environment:
 
 -----BEGIN PGP SIGNATURE-----
 
-iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb63xIRHHpvZXVya0Bn
-bWFpbC5jb20ACgkQ5SbKMk2fAI5IOwv/XeTQrzZoTtQV8Ebz3QX2vI+w5gP1IDP1
-uPRkQz79LP3iRlW2KeoB3NclxBABK9Zu7KDa0aBTu/Jns/yr5yvwwt/Dkglag8lp
-2hfrsZ9hefQ8abS6TjuE4BPgjpM87PNDGEJHmYGCvfg/ZdvX1HdGGs50Ph8rq67K
-sOC1NyRDGgL3t2bmDRZMHHSXOh6LJGZ52cAz7qUzim6zXtNqGEAlsCmHhqWgEdPv
-PcidFqye3T9Sp11hIN89DFoiY00qeyaEDYcqB95Yb6hNpOTb9y7FxCKdQMFeK5cX
-r3+N8CugnwtffVXjDxrGd4eh25bpezWKTi0RnB+Y/52dJ0Yv4KbhsqCF4jtLjfRj
-ONuVQ2BwsFXoQdTWAcmpJsCGCbThH0TdbaYZRisuhuo7fUJKf9BmbvJ3uQIF4ku/
-dgketjM4wwaKfV+r70ltc15oYsh8YB2EGH9ppV45lzOd8dtg/bTj+zSCZ3zj593M
-r4OYfU/VOaJ3q3a1cDLD/gbMakoxBdgH
-=On14
+iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb7vBoRHHpvZXVya0Bn
+bWFpbC5jb20ACgkQ5SbKMk2fAI6kyQv/cWqfDdqGURBCA7YndzsrCcEa1i+JaW+u
+69/00v3ttvI41+nq1rMjmmMM8FRdi52hotM14ESk68ODwtjRKmjoCJ9FrR1im9j9
+/LW9NcNqliL4Akjik0AVOW4aymH21Mii1QG0hInMcDchQpuS1hFDLBcvjXh7J9L9
+jthKSD8abtOkRVu55AuIAB4RoXDpcYcZLy+v0lhU8zLcKZ5xkBa1fWevyDCSMXUY
+kkwu7+pJWYCGTVAzZ3GOrVfma1NFhjVB/tFf/MwJNKCzcNlkh9tnI7l2G7GNr//x
+L6Yp+YtcPW95ieGEcWftYka+tP/H8tQwfW69WYXMfLxbNsbPZFZug4L6MqoNG3LE
+QuztCTrIB3mbVItgxC+G96X3WZl2+lm5R8U+1h5jlnS6D6FtfurzGIeW3cOk3Yez
+Y3gvnGDZfBRiqoQtSXqy1npDu+rcXe7jTL+/3V9VSCZ7mVQ6ZXsKdNrquFZ+TAt2
+fToR5icWzhnySm190POJq0c1+eGUKZpO
+=Bkde
 -----END PGP SIGNATURE-----

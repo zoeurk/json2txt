@@ -6,7 +6,7 @@ Build-Depends: debhelper-compat (= 12)
 Standards-Version: 4.4.1
 Homepage: http:/none
 
-Package: libjson2txt-dev
+Package: json2txt-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
