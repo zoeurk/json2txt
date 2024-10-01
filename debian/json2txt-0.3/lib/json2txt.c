@@ -115,13 +115,11 @@ void *getint(struct json_parser *p){
 				errx(255, "Invalid Number");
 			#endif
 			}
-			#ifdef EXPLICIT_SIGN
-				last = *p->buf;
-				STOCK_BUF(p);
-				p->len++;
-				p->buf++;
-				p->offset++;
-			#endif
+			last = *p->buf;
+			STOCK_BUF(p);
+			p->len++;
+			p->buf++;
+			p->offset++;
 	}
 	do
 		for(;(last = *p->buf);p->buf++, p->len++, p->offset++)
