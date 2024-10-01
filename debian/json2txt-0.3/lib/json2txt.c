@@ -111,9 +111,6 @@ void *getint(struct json_parser *p){
 		if(*p->buf == '-' || *p->buf == '+'){
 			if(*p->buf == '+'){
 				warnx("Value number: start by '+', this value is not valid (offset: %lu)", p->offset);
-			#ifndef EXPLICIT_SIGN
-				errx(255, "Invalid Number");
-			#endif
 			}
 			last = *p->buf;
 			STOCK_BUF(p);
@@ -128,10 +125,6 @@ void *getint(struct json_parser *p){
 					case 0:
 						if(zero == 0 && start == 0){
 							warnx("Value number: start by '(+|-)?.num', valid value should be '-?0.num' (offset: %lu)", p->offset);
-							#ifdef STRICT_NUM
-							errx("Invalid number.");
-							return p;
-							#endif
 						}
 						dot = 1;
 						start = 1;

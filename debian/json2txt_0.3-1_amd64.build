@@ -5,50 +5,6 @@ dpkg-buildpackage: info: distribution source unstable
 dpkg-buildpackage: info: source changé par Thomas Marsaleix <zoeurk@gmail.com>
  fakeroot debian/rules clean
 dh clean
-   dh_auto_clean
-	make -j4 distclean
-make[1] : on entre dans le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3 »
-Making distclean in lib
-make[2] : on entre dans le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3/lib »
-test -z "libjson2txt.la" || rm -f libjson2txt.la
-rm -rf .libs _libs
-rm -f *.o
-rm -f *.lo
-rm -f *.tab.c
-test -z "" || rm -f 
-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
-test . = "." || test -z "" || rm -f 
-rm -f ./so_locations
-rm -f ./.deps/json2txt.Plo
-rm -f Makefile
-make[2] : on quitte le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3/lib »
-Making distclean in main
-make[2] : on entre dans le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3/main »
-rm -rf .libs _libs
-rm -f *.o
-rm -f *.lo
- rm -f json2txt
-rm -f *.tab.c
-test -z "" || rm -f 
-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
-test . = "." || test -z "" || rm -f 
-rm -f ./.deps/main.Po
-rm -f Makefile
-make[2] : on quitte le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3/main »
-make[2] : on entre dans le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3 »
-rm -rf .libs _libs
-rm -f *.lo
-test -z "" || rm -f 
-rm -f config.h stamp-h1
-test . = "." || test -z "" || rm -f 
-rm -f libtool config.lt
-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
-rm -f cscope.out cscope.in.out cscope.po.out cscope.files
-make[2] : on quitte le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3 »
-rm -f config.status config.cache config.log configure.lineno config.status.lineno
-rm -f Makefile
-make[1] : on quitte le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3 »
-   dh_autoreconf_clean
    dh_clean
 Now running lintian json2txt_0.3-1_amd64.changes ...
 E: json2txt changes: bad-distribution-in-changes-file unstable
