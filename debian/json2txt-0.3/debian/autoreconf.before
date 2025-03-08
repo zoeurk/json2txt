@@ -1,0 +1,10 @@
+8207f246fbc0d1b6808b114a94af08a3  ./man/json2txt.1
+6bbdf69040a4344961b9700c0e9baafe  ./man/json2txt.3
+a56e0c73d8633651ca7c66f68cf151af  ./lib/json2txt.h
+37bde07f993fe9015c1dd3a60922f9b9  ./lib/Makefile.am
+e79ad1fca2ecf4eab9ddd9e255bca226  ./lib/json2txt.c
+ade26803081e8d0ce8ec5e200301f8ce  ./main/Makefile.am
+60f6817f437c015fef8cd942a80efa6f  ./main/main.c
+bcf35cdf761dd889ed083222464d3045  ./Makefile.am
+42e090e026f03a8a1de20e6866726383  ./configure.ac
+02ac34156b95ad21c5b855b47059d940  ./Makefile.src

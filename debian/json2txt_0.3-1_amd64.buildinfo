@@ -7,29 +7,29 @@ Binary: libjson2txt-dev libjson2txt json2txt
 Architecture: amd64 source
 Version: 0.3-1
 Checksums-Md5:
- f8cea62923f7d009093f2a203ec95c13 1647 json2txt_0.3-1.dsc
+ b7bd38f4acbff91dce227c3f988f5418 1380 json2txt_0.3-1.dsc
  49be298de033eb86803cff0138febb8c 7372 json2txt-dbgsym_0.3-1_amd64.ddeb
  aaaff41e87f3147fc887210185fcd101 5920 json2txt_0.3-1_amd64.deb
- 2640c50dc3fbdcf8078a67f254cfc101 16948 libjson2txt-dbgsym_0.3-1_amd64.ddeb
+ a36e92a35576f139ac1174f28a7437e4 16576 libjson2txt-dbgsym_0.3-1_amd64.ddeb
  a8f0cbaf2429258474f4191a35c5db9c 4512 libjson2txt-dev_0.3-1_amd64.deb
- 53af8a9004bf8a20d1726d9d09fd8c80 12368 libjson2txt_0.3-1_amd64.deb
+ ce8f335e70073b7b17251cc6b40f9959 12260 libjson2txt_0.3-1_amd64.deb
 Checksums-Sha1:
- 0647882be67442ad610ac89fbaf7d4433e4b6769 1647 json2txt_0.3-1.dsc
+ 5798c16a015d62fede2fbf75e13e0b2a7cfb8a29 1380 json2txt_0.3-1.dsc
  2f2e52854229ed19bc63c2b65b10fd90902f3e0f 7372 json2txt-dbgsym_0.3-1_amd64.ddeb
  21d887903090182feb742c830ef05d127b830dd2 5920 json2txt_0.3-1_amd64.deb
- 9a0f40f2b15fceeb7ddde7ec9d8e85cfbefc8694 16948 libjson2txt-dbgsym_0.3-1_amd64.ddeb
+ a78c280409ed20f30e30dd7b566d60711074929e 16576 libjson2txt-dbgsym_0.3-1_amd64.ddeb
  6bc7814708e9a694bf34052980a1be490dab8b77 4512 libjson2txt-dev_0.3-1_amd64.deb
- b7ece4c97f3ff21b2b2e4ea4126dd7a051756d01 12368 libjson2txt_0.3-1_amd64.deb
+ 0de5de83345451bbc5029734c8d8c7581f950af8 12260 libjson2txt_0.3-1_amd64.deb
 Checksums-Sha256:
- 13e37a77fd0b08bedb357ae5582bbdd520c57691fe2e3f2d07b9b50cc1427925 1647 json2txt_0.3-1.dsc
+ 7438a78bb60867bd3cf9ae03a403c11bc17e4c6b252026675079406a978eb6af 1380 json2txt_0.3-1.dsc
  25fa17f6c82d7b00c013c57a0ea33ce2fcc1f9456c2a0c2d52ae45dcb7dda592 7372 json2txt-dbgsym_0.3-1_amd64.ddeb
  1a0569c0b42d34a9da43c0546e69fd960e3d31346aeb2c7c9322442d4a906000 5920 json2txt_0.3-1_amd64.deb
- 4d4c6c2fadd36c27144e15dd2d5a5d5e103b662472c04e03760986a2f92378bf 16948 libjson2txt-dbgsym_0.3-1_amd64.ddeb
+ 4228f92d6eeb3d278d461e48e4ef5f8ed630e7964521b161e26c7b61fb6c8963 16576 libjson2txt-dbgsym_0.3-1_amd64.ddeb
  45c4c0259abe5ced7bd0376057369ad08240d7625d6739cbeaf18e0e3ae9cb48 4512 libjson2txt-dev_0.3-1_amd64.deb
- 14701d94b72d2450a995c0bffbddd0e7b60fe01b135971980249488275759c78 12368 libjson2txt_0.3-1_amd64.deb
+ e5d1a5313447c49bde85de3413e6faaa920d9521639564a0140fac164034f780 12260 libjson2txt_0.3-1_amd64.deb
 Build-Origin: Ubuntu
 Build-Architecture: amd64
-Build-Date: Tue, 01 Oct 2024 18:34:54 +0200
+Build-Date: Sat, 08 Mar 2025 12:45:45 +0100
 Build-Tainted-By:
  merged-usr-via-symlinks
  usr-local-has-includes
@@ -43,9 +43,9 @@ Installed-Build-Depends:
  base-files (= 11ubuntu5.4),
  base-passwd (= 3.5.47),
  bash (= 5.0-6ubuntu1.2),
- binutils (= 2.34-6ubuntu1.9),
- binutils-common (= 2.34-6ubuntu1.9),
- binutils-x86-64-linux-gnu (= 2.34-6ubuntu1.9),
+ binutils (= 2.34-6ubuntu1.10),
+ binutils-common (= 2.34-6ubuntu1.10),
+ binutils-x86-64-linux-gnu (= 2.34-6ubuntu1.10),
  bsdmainutils (= 11.1.2ubuntu3),
  bsdutils (= 1:2.34-0.1ubuntu9.6),
  build-essential (= 12.8ubuntu1.1),
@@ -88,21 +88,21 @@ Installed-Build-Depends:
  libattr1 (= 1:2.4.48-5),
  libaudit-common (= 1:2.8.5-2ubuntu6),
  libaudit1 (= 1:2.8.5-2ubuntu6),
- libbinutils (= 2.34-6ubuntu1.9),
+ libbinutils (= 2.34-6ubuntu1.10),
  libblkid1 (= 2.34-0.1ubuntu9.6),
  libbsd0 (= 0.10.0-1),
  libbz2-1.0 (= 1.0.8-2),
- libc-bin (= 2.31-0ubuntu9.16),
- libc-dev-bin (= 2.31-0ubuntu9.16),
- libc6 (= 2.31-0ubuntu9.16),
- libc6-dev (= 2.31-0ubuntu9.16),
+ libc-bin (= 2.31-0ubuntu9.17),
+ libc-dev-bin (= 2.31-0ubuntu9.17),
+ libc6 (= 2.31-0ubuntu9.17),
+ libc6-dev (= 2.31-0ubuntu9.17),
  libcap-ng0 (= 0.7.9-2.1build1),
  libcc1-0 (= 10.5.0-1ubuntu1~20.04),
  libcroco3 (= 0.6.13-1ubuntu0.1),
  libcrypt-dev (= 1:4.4.10-10ubuntu4),
  libcrypt1 (= 1:4.4.10-10ubuntu4),
- libctf-nobfd0 (= 2.34-6ubuntu1.9),
- libctf0 (= 2.34-6ubuntu1.9),
+ libctf-nobfd0 (= 2.34-6ubuntu1.10),
+ libctf0 (= 2.34-6ubuntu1.10),
  libdb5.3 (= 5.3.28+dfsg1-0.6ubuntu2),
  libdebconfclient0 (= 0.251ubuntu1),
  libdebhelper-perl (= 12.10ubuntu1),
@@ -115,7 +115,7 @@ Installed-Build-Depends:
  libgcrypt20 (= 1.8.5-5ubuntu1.1),
  libgdbm-compat4 (= 1.18.1-5),
  libgdbm6 (= 1.18.1-5),
- libglib2.0-0 (= 2.64.6-1~ubuntu20.04.7),
+ libglib2.0-0 (= 2.64.6-1~ubuntu20.04.8),
  libgmp10 (= 2:6.2.0+dfsg-4ubuntu0.1),
  libgomp1 (= 10.5.0-1ubuntu1~20.04),
  libgpg-error0 (= 1.37-1),
@@ -156,9 +156,9 @@ Installed-Build-Depends:
  libudev1 (= 245.4-4ubuntu3.20),
  libunistring2 (= 0.9.10-2),
  libuuid1 (= 2.34-0.1ubuntu9.6),
- libxml2 (= 2.9.10+dfsg-5ubuntu0.20.04.7),
+ libxml2 (= 2.9.10+dfsg-5ubuntu0.20.04.9),
  libzstd1 (= 1.4.4+dfsg-3ubuntu0.1),
- linux-libc-dev (= 5.4.0-196.216),
+ linux-libc-dev (= 5.4.0-208.228),
  login (= 1:4.8.1-1ubuntu5.20.04.5),
  lsb-base (= 11.1.0ubuntu2),
  m4 (= 1.4.18-4),
@@ -177,7 +177,7 @@ Installed-Build-Depends:
  sensible-utils (= 0.0.12+nmu1),
  sysvinit-utils (= 2.96-2.1ubuntu1),
  tar (= 1.30+dfsg-7ubuntu0.20.04.4),
- tzdata (= 2024a-0ubuntu0.20.04),
+ tzdata (= 2024b-0ubuntu0.20.04.1),
  util-linux (= 2.34-0.1ubuntu9.6),
  xz-utils (= 5.2.4-1ubuntu1.1),
  zlib1g (= 1:1.2.11.dfsg-2ubuntu1.5)
@@ -188,15 +188,15 @@ Environment:
 
 -----BEGIN PGP SIGNATURE-----
 
-iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmb8JK8RHHpvZXVya0Bn
-bWFpbC5jb20ACgkQ5SbKMk2fAI5UWgv9GCT7emydSWIN2Eqrc66sax1m50pGrhUR
-VFwiMYp0R1VRcnp8UuFZxgHWKoFSMzX0nmQpXlyS7EVLmDw+rq14Oa/aAvKiz/N1
-xv99OJSvWK7XqBTgqZ0r1H0khbLA+WBwp6B8J3ySOxcDt7mF1r/Jq5qk5LgFJROD
-4mDKrA+STu/cX5QY/9FqtUtRKyVeTuUBLnYZkeLarQjc9k3U89r/cL2G4UIhvCM+
-e0UbwkW0cEFRHfxB9DtXFGAPpgDvgg+ErbSIgGFFe/tKmSzvYJaWuN70Ib0i6kyL
-ZwjD5CLLRedM+r1oYQTeqFUlNjsL7ub8/lGVG+Ocv+7coiM1dQHmXxpVk3emZKX8
-IJ9/VbC2K1YPC0NVfIiWASF22EBXdS+p79laBwz97waqDzelkttKGbteHTvXkNm7
-L1ImLnRjNYiDCmFxK51Uh6E2PT2Xw9bnNNLfK1vXdnMcD1Q3oEYtDVnkHXdr7Peh
-c8LA79RpxsXQ+qWvMckKemv59aqfmhca
-=AEfe
+iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmfMLg8RHHpvZXVya0Bn
+bWFpbC5jb20ACgkQ5SbKMk2fAI6EgAv8CX0+/jh6GzE7QRy22SXFReFuGgXcXsSi
+NyZ4aNOGhI/WbwOLStJCqdBE6Nfb306EMoiqCxfasDHSyryLrZh0zdOKZ94rL/JG
+LcV+O+lQxJijeBAJIjRcR/fSw0sP9KSi/gqgpOQ+rlMZrpbiWDvnfReQgm8XLoMF
+SVb/4m4tX2EIhWPIZMjAFssNdoHyqPySz7/BJ+G815ABpCacWfq0Y9Tr2QGP6HZQ
+AW94FKbkIH1sJ3Z7TKyhD5CwTAQzS6UYVUNgxtkQM5eu4jSH6i69wooC5zcdHXGb
+BQuVNmwZRNOqeBusfXM4BdFCEWoJZWnvC8SBapikkpRtlcvLMa28ppwzJRlfqvVu
+LqW+aHyUbVD7w3xQnMqAIrwOebZTuvoyWOImTDX7gEYqLkuONPCHvgiuLYc8kN1Y
+kC4euJqj7hpAXbX1T/GM1XhkkKFAyanRpvMm6cmNElrIfUHBJyF2JnN59M6zbHFA
+cfM5r7lHTi6Y/kf+lrWrrroh0L7eT4V0
+=MQ/N
 -----END PGP SIGNATURE-----
