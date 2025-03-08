@@ -17,8 +17,8 @@ rm -f *.lo
 rm -f *.tab.c
 test -z "" || rm -f 
 rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
-rm -f ./so_locations
 test . = "." || test -z "" || rm -f 
+rm -f ./so_locations
 rm -f ./.deps/json2txt.Plo
 rm -f Makefile
 make[2] : on quitte le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3/lib »
