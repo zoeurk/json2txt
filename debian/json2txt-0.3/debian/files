@@ -1,6 +1,0 @@
-json2txt-dbgsym_0.3-1_amd64.ddeb debug optional automatic=yes
-json2txt_0.3-1_amd64.buildinfo utils optional
-json2txt_0.3-1_amd64.deb utils optional
-libjson2txt-dbgsym_0.3-1_amd64.ddeb debug optional automatic=yes
-libjson2txt-dev_0.3-1_amd64.deb libdevel optional
-libjson2txt_0.3-1_amd64.deb utils optional
