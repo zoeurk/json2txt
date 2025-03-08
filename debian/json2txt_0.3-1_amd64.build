@@ -1,0 +1,86 @@
+ dpkg-buildpackage -us -uc -ui -T clean
+dpkg-buildpackage: info: paquet source json2txt
+dpkg-buildpackage: info: version source 0.3-1
+dpkg-buildpackage: info: distribution source unstable
+dpkg-buildpackage: info: source changé par Thomas Marsaleix <zoeurk@gmail.com>
+ fakeroot debian/rules clean
+dh clean
+   dh_auto_clean
+	make -j4 distclean
+make[1] : on entre dans le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3 »
+Making distclean in lib
+make[2] : on entre dans le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3/lib »
+test -z "libjson2txt.la" || rm -f libjson2txt.la
+rm -rf .libs _libs
+rm -f *.o
+rm -f *.lo
+rm -f *.tab.c
+test -z "" || rm -f 
+rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
+rm -f ./so_locations
+test . = "." || test -z "" || rm -f 
+rm -f ./.deps/json2txt.Plo
+rm -f Makefile
+make[2] : on quitte le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3/lib »
+Making distclean in main
+make[2] : on entre dans le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3/main »
+rm -rf .libs _libs
+rm -f *.o
+rm -f *.lo
+ rm -f json2txt
+rm -f *.tab.c
+test -z "" || rm -f 
+rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
+test . = "." || test -z "" || rm -f 
+rm -f ./.deps/main.Po
+rm -f Makefile
+make[2] : on quitte le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3/main »
+make[2] : on entre dans le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3 »
+rm -rf .libs _libs
+rm -f *.lo
+test -z "" || rm -f 
+rm -f config.h stamp-h1
+test . = "." || test -z "" || rm -f 
+rm -f libtool config.lt
+rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
+rm -f cscope.out cscope.in.out cscope.po.out cscope.files
+make[2] : on quitte le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3 »
+rm -f config.status config.cache config.log configure.lineno config.status.lineno
+rm -f Makefile
+make[1] : on quitte le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3 »
+   dh_autoreconf_clean
+   dh_clean
+Now running lintian json2txt_0.3-1_amd64.changes ...
+E: json2txt changes: bad-distribution-in-changes-file unstable
+E: json2txt: changelog-is-dh_make-template
+E: libjson2txt: changelog-is-dh_make-template
+E: libjson2txt-dev: changelog-is-dh_make-template
+E: json2txt: copyright-contains-dh_make-todo-boilerplate
+E: libjson2txt: copyright-contains-dh_make-todo-boilerplate
+E: libjson2txt-dev: copyright-contains-dh_make-todo-boilerplate
+E: json2txt source: debian-rules-is-dh_make-template
+E: json2txt: extended-description-is-empty
+E: libjson2txt: extended-description-is-empty
+E: libjson2txt-dev: extended-description-is-empty
+E: json2txt source: malformed-debian-changelog-version 0.3-1 (for native)
+E: json2txt source: readme-source-is-dh_make-template
+W: json2txt: copyright-has-url-from-dh_make-boilerplate
+W: libjson2txt: copyright-has-url-from-dh_make-boilerplate
+W: libjson2txt-dev: copyright-has-url-from-dh_make-boilerplate
+W: libjson2txt-dev: manpage-has-bad-whatis-entry usr/share/man/man3/json2txt.3.gz
+W: json2txt: manpage-has-errors-from-man usr/share/man/man1/json2txt.1.gz 1: warning: macro 'npage' not defined
+W: libjson2txt-dev: manpage-has-errors-from-man usr/share/man/man3/json2txt.3.gz 1: warning: macro 'npage' not defined
+W: json2txt source: missing-debian-source-format
+W: json2txt: new-package-should-close-itp-bug
+W: libjson2txt: new-package-should-close-itp-bug
+W: libjson2txt-dev: new-package-should-close-itp-bug
+W: libjson2txt: non-dev-pkg-with-shlib-symlink usr/lib/x86_64-linux-gnu/libjson2txt.so.0.0.0 usr/lib/x86_64-linux-gnu/libjson2txt.so
+W: libjson2txt: package-name-doesnt-match-sonames libjson2txt0
+W: libjson2txt-dev: readme-debian-contains-debmake-template
+W: json2txt: wrong-bug-number-in-closes l3:#nnnn
+W: libjson2txt: wrong-bug-number-in-closes l3:#nnnn
+W: libjson2txt-dev: wrong-bug-number-in-closes l3:#nnnn
+Finished running lintian.
+Now signing changes and any dsc files...
+The .changes file is already signed.
+Would you like to use the current signature? [Yn]Leaving current signature unchanged.

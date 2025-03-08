@@ -67,7 +67,7 @@ void *json_create(struct json **j, enum KIND kind, enum TYPE type){
 	*p->pstock = *p->buf; \
 	p->pstock++;
 void *getint(struct json_parser *p){
-	int dot  = 0, start = 0, zero = 0;
+	int i, dot  = 0, start = 0, zero = 0;
 	char *fboolean[2] = { "false", "FALSE" },
 		*tboolean[2] = { "true", "TRUE" },
 		*pbool = NULL, *Pbool = NULL, last;
@@ -143,14 +143,14 @@ void *getint(struct json_parser *p){
 						return p;
 				}
 			}else{
-				/*i = *p->buf - (3 << 4);*/
-				if(start == 0 && *p->buf == '0' && zero++ > 0){
+				i = *p->buf - (3 << 4);
+				if(start == 0 && i == 0 && zero++ > 0){
 					warnx("Invalid number.");
 					return p;
 				}
-				if(*p->buf != '0')
+				if(i != '0')
 					start = 1;
-				if(*p->buf < '0' || *p->buf > '9'){
+				if(i < 0 || i > 9){
 					return p;
 				}
 				STOCK_BUF(p);
@@ -256,8 +256,8 @@ void *array(struct json_parser *p, struct json **j){
 					end = 1;
 					next = 0;
 					getint(p);
-					c_char = *(p->pstock -1);
-					if(c_char == '.' || c_char == '+' || c_char == '-' || c_char < '0' || c_char > '9'){
+					if((c_char = *(p->buf-1)) < '0' || c_char > '9' ||
+						(c_char = *(p->pstock -1)) == '.' || c_char == '+' || c_char == '-'){
 						errx(255, "Unexpected chararcter (bad number) before offset %lu.", p->offset);
 					}
 					c_char = *p->stock;
@@ -375,10 +375,14 @@ void *pair(struct json_parser *p, struct json **j){
 					end = 1;
 					next = 0;
 					getint(p);
-					c_char = *(p->pstock -1);
-					if(c_char == '.' || c_char == '+' || c_char == '-'|| c_char < '0' || c_char > '9'){
+					if((c_char = *(p->buf-1)) < '0' || c_char > '9' ||
+						(c_char = *(p->pstock -1)) == '.' || c_char == '+' || c_char == '-'){
 						errx(255, "Unexpected chararcter (bad number) before offset %lu.", p->offset);
 					}
+					/*c_char = *(p->pstock -1);
+					if(c_char == '.' || c_char == '+' || c_char == '-'|| c_char < '0' || c_char > '9'){
+						errx(255, "Unexpected chararcter (bad number) before offset %lu.", p->offset);
+					}*/
 					c_char = *p->stock;
 					if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.')
 						(*j)->t_val = INT | WARN;
