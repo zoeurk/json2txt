@@ -40,9 +40,9 @@ rm -rf .libs _libs
 rm -f *.lo
 test -z "" || rm -f 
 rm -f config.h stamp-h1
-test . = "." || test -z "" || rm -f 
 rm -f libtool config.lt
 rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
+test . = "." || test -z "" || rm -f 
 rm -f cscope.out cscope.in.out cscope.po.out cscope.files
 make[2] : on quitte le répertoire « /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3 »
 rm -f config.status config.cache config.log configure.lineno config.status.lineno
