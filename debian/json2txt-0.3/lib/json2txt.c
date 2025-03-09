@@ -67,7 +67,7 @@ void *json_create(struct json **j, enum KIND kind, enum TYPE type){
 	*p->pstock = *p->buf; \
 	p->pstock++;
 void *getint(struct json_parser *p){
-	int i, dot  = 0, start = 0, zero = 0;
+	int dot  = 0, start = 0, zero = 0;
 	char *fboolean[2] = { "false", "FALSE" },
 		*tboolean[2] = { "true", "TRUE" },
 		*pbool = NULL, *Pbool = NULL, last;
