@@ -143,14 +143,14 @@ void *getint(struct json_parser *p){
 						return p;
 				}
 			}else{
-				i = *p->buf - (3 << 4);
-				if(start == 0 && i == 0 && zero++ > 0){
+				/*i = *p->buf - (3 << 4);*/
+				if(start == 0 && *p->buf == '0' && zero++ > 0){
 					warnx("Invalid number.");
 					return p;
 				}
-				if(i != '0')
+				if(*p->buf != '0')
 					start = 1;
-				if(i < 0 || i > 9){
+				if(*p->buf < '0' || *p->buf > '9'){
 					return p;
 				}
 				STOCK_BUF(p);
@@ -365,16 +365,16 @@ void *pair(struct json_parser *p, struct json **j){
 				case 0:
 					break;
 				default:
+					if(need_key == 1)
+						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+					if(need_value != 2)
+						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
 					getint(p);
 					if((c_char = *p->buf) < '0' || c_char > '9' ||
 						(c_char = *(p->pstock -1)) == '.' || c_char == '+' || c_char == '-'){
 						errx(255, "Unexpected chararcter (bad number) before offset %lu.", p->offset);
 					}
-					if(need_key == 1)
-						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
 					if(end)
-						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
-					if(need_value != 2)
 						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
 					need_value = 0;
 					need_key = 1;
