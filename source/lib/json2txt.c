@@ -353,11 +353,12 @@ void *pair(struct json_parser *p, struct json **j){
 						errx(255, "Unexpected ',' at offset %lu.", p->offset);
 					end = 0;
 					next = 1;
+					need_key = 1;
 					p->offset++;
 					p->buf++;
 					break;
 				case '}':
-					if(next)
+					if(next || need_value)
 						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
 					end = 0;
 					p->offset++;
