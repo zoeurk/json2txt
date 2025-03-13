@@ -221,6 +221,8 @@ void *array(struct json_parser *p, struct json **j){
 					p->buf++;
 					break;
 				case ']':
+					if(next)
+						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
 					p->offset++;
 					p->buf++;
 					return p;
@@ -252,13 +254,12 @@ void *array(struct json_parser *p, struct json **j){
 					break;
 				default:
 					getint(p);
-					printf("%c\n", *p->buf);
-					if((c_char = *p->buf) < '0' || c_char > '9' ||
+					if((c_char = *(p->buf-1)) < '0' || c_char > '9' ||
 						(c_char = *(p->pstock -1)) == '.' || c_char == '+' || c_char == '-'){
-						errx(255, "Unexpected chararcter (bad number) before offset %lu.", p->offset);
+						errx(255, "Unexpected chararcter (bad number) near offset %lu.", p->offset);
 					}
-					if(end)
-						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+					/*if(end)
+						errx(255, "Unexpected chararcter at offset %lu.", p->offset);*/
 					end = 1;
 					next = 0;
 					c_char = *p->stock;
@@ -356,6 +357,8 @@ void *pair(struct json_parser *p, struct json **j){
 					p->buf++;
 					break;
 				case '}':
+					if(next)
+						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
 					end = 0;
 					p->offset++;
 					p->buf++;
@@ -370,12 +373,12 @@ void *pair(struct json_parser *p, struct json **j){
 					if(need_value != 2)
 						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
 					getint(p);
-					if((c_char = *p->buf) < '0' || c_char > '9' ||
+					if((c_char = *(p->buf-1)) < '0' || c_char > '9' ||
 						(c_char = *(p->pstock -1)) == '.' || c_char == '+' || c_char == '-'){
-						errx(255, "Unexpected chararcter (bad number) before offset %lu.", p->offset);
+						errx(255, "Unexpected chararcter (bad number) near offset %lu.", p->offset);
 					}
-					if(end)
-						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+					/*if(end)
+						errx(255, "Unexpected chararcter at offset %lu.", p->offset);*/
 					need_value = 0;
 					need_key = 1;
 					end = 1;
