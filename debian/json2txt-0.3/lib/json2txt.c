@@ -635,8 +635,8 @@ void json_print(struct json *j, int sort, size_t space, char c_sp, size_t count,
 			for(sp = 0; sp < space; sp++)
 				putchar(c_sp);
 	(type == ARRAY) ? putchar(']') : putchar('}');
-	/*if(space == 0)
-		putchar('\n');*/
+	if(space == 0)
+		putchar('\n');
 }
 void json2txt(struct json *j, int sort, char *string, int warn_only){
 	struct json *pj = j;
