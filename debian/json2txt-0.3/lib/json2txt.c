@@ -84,8 +84,11 @@ void *getint(struct json_parser *p){
 		Pbool++;
 		do{
 			for(;*p->buf;p->buf++, p->len++, p->offset++, pbool++, Pbool++){
-				if(*p->buf != *pbool && *p->buf != *Pbool)
+				if(*p->buf != *pbool && *p->buf != *Pbool){
+					if(*pbool != 0 && *Pbool != 0)
+						*p->pstock = 1;
 					return p;
+				}
 				STOCK_BUF(p);
 			}
 			if(*pbool == 0 || *Pbool == 0)
@@ -104,8 +107,11 @@ void *getint(struct json_parser *p){
 		Pbool++;
 		do{
 			for(;*p->buf;p->buf++, p->len++, p->offset++, pbool++, Pbool++){
-				if(*p->buf != *pbool && *p->buf != *Pbool)
+				if(*p->buf != *pbool && *p->buf != *Pbool){
+					if(*pbool != 0 && *Pbool != 0)
+						*p->pstock = 1;
 					return p;
+				}
 				STOCK_BUF(p);
 			}
 			if(*pbool == 0 || *Pbool == 0)
@@ -124,9 +130,15 @@ void *getint(struct json_parser *p){
 		Pbool++;
 		do{
 			for(;*p->buf;p->buf++, p->len++, p->offset++, pbool++, Pbool++){
-				if(*p->buf != *pbool && *p->buf != *Pbool){
+				if(/**pbool != 0 && *Pbool != 0 &&*/ *p->buf != *pbool && *p->buf != *Pbool){
+					if(*pbool != 0 && *Pbool != 0)
+						*p->pstock = 1;
+					/**p->pstock = 1;*/
 					return p;
 				}
+				/*if(*p->buf != *pbool && *p->buf != *Pbool){
+					return p;
+				}*/
 				STOCK_BUF(p);
 			}
 			if(*pbool == 0 || *Pbool == 0)
