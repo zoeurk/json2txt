@@ -149,17 +149,17 @@ void *getint(struct json_parser *p){
 		if(*p->buf == '-' || *p->buf == '+'){
 			if(*p->buf == '+'){
 				warnx("Value number: start by '+', this value is not valid (offset: %lu)", p->offset);
-			#ifndef EXPLICIT_SIGN
+			/*#ifndef EXPLICIT_SIGN
 				errx(255, "Invalid Number");
-			#endif
+			#endif*/
 			}
-			#ifdef EXPLICIT_SIGN
-				last = *p->buf;
-				STOCK_BUF(p);
-				p->len++;
-				p->buf++;
-				p->offset++;
-			#endif
+			/*#ifdef EXPLICIT_SIGN*/
+			last = *p->buf;
+			STOCK_BUF(p);
+			p->len++;
+			p->buf++;
+			p->offset++;
+			/*#endif*/
 	}
 	do
 		for(;(last = *p->buf);p->buf++, p->len++, p->offset++)
