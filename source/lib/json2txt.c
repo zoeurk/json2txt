@@ -293,7 +293,7 @@ void *array(struct json_parser *p, struct json **j){
 				default:
 					getint(p);
 					if(((c_char = *(p->buf)) < '0' || c_char > '9'  || c_char == '+' || c_char == '-' ) &&
-						(*(p->pstock) != 0)){
+						(!p->stock || *(p->pstock) != 0)){
 						errx(255, "Unexpected chararcter (bad number) near offset %lu.", p->offset);
 					}
 					/*if(end)
@@ -415,7 +415,7 @@ void *pair(struct json_parser *p, struct json **j){
 						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
 					getint(p);
 					if(((c_char = *(p->buf)) < '0' || c_char > '9'|| c_char == '+' || c_char == '-') &&
-						(*(p->pstock) != 0 )){
+						(!p->stock || *(p->pstock) != 0)){
 						errx(255, "Unexpected chararcter (bad number) near offset %lu.", p->offset);
 					}
 					/*if(end)
