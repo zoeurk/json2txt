@@ -70,8 +70,29 @@ void *getint(struct json_parser *p){
 	int dot  = 0, start = 0, zero = 0;
 	char *fboolean[2] = { "false", "FALSE" },
 		*tboolean[2] = { "true", "TRUE" },
+		*tnull[2] = { "null", "NULL" },
 		*pbool = NULL, *Pbool = NULL, last;
 	p->len = 0;
+	if(*p->buf == 'n' || *p->buf == 'N'){
+		pbool = tnull[0];
+		Pbool = tnull[1];
+		STOCK_BUF(p);
+		p->len++;
+		p->buf++;
+		p->offset++;
+		pbool++;
+		Pbool++;
+		do{
+			for(;*p->buf;p->buf++, p->len++, p->offset++, pbool++, Pbool++){
+				if(*p->buf != *pbool && *p->buf != *Pbool)
+					return p;
+				STOCK_BUF(p);
+			}
+			if(*pbool == 0 || *Pbool == 0)
+				return p;
+		}while(read_fn(p));
+		return p;
+	}
 	if(*p->buf == 't' || *p->buf == 'T'){
 		pbool = tboolean[0];
 		Pbool = tboolean[1];
@@ -81,13 +102,15 @@ void *getint(struct json_parser *p){
 		p->offset++;
 		pbool++;
 		Pbool++;
-		do
+		do{
 			for(;*p->buf;p->buf++, p->len++, p->offset++, pbool++, Pbool++){
 				if(*p->buf != *pbool && *p->buf != *Pbool)
 					return p;
 				STOCK_BUF(p);
 			}
-		while(read_fn(p));
+			if(*pbool == 0 || *Pbool == 0)
+				return p;
+		}while(read_fn(p));
 		return p;
 	}
 	if(*p->buf == 'f' || *p->buf == 'F'){
@@ -99,13 +122,16 @@ void *getint(struct json_parser *p){
 		p->offset++;
 		pbool++;
 		Pbool++;
-		do
+		do{
 			for(;*p->buf;p->buf++, p->len++, p->offset++, pbool++, Pbool++){
-				if(*p->buf != *pbool && *p->buf != *Pbool)
+				if(*p->buf != *pbool && *p->buf != *Pbool){
 					return p;
+				}
 				STOCK_BUF(p);
 			}
-		while(read_fn(p));
+			if(*pbool == 0 || *Pbool == 0)
+				return p;
+		}while(read_fn(p));
 		return p;
 	}
 		if(*p->buf == '-' || *p->buf == '+'){
@@ -186,7 +212,7 @@ void *array(struct json_parser *p, struct json **j){
 	struct json *pj;
 	size_t index = 0;
 	ssize_t offset = p->offset;
-	int next = 1, end = 0;
+	int next = 0, end = 0;
 	char c_char;
 	p->buf++;
 	p->offset++;
@@ -254,8 +280,8 @@ void *array(struct json_parser *p, struct json **j){
 					break;
 				default:
 					getint(p);
-					if((c_char = *(p->buf-1)) < '0' || c_char > '9' ||
-						(c_char = *(p->pstock -1)) == '.' || c_char == '+' || c_char == '-'){
+					if(((c_char = *(p->buf)) < '0' || c_char > '9') &&
+						(*(p->pstock) != 0 || c_char == '+' || c_char == '-')){
 						errx(255, "Unexpected chararcter (bad number) near offset %lu.", p->offset);
 					}
 					/*if(end)
@@ -272,6 +298,7 @@ void *array(struct json_parser *p, struct json **j){
 					index++;
 					p->stock = NULL;
 					p->stock_size = 0;
+					next = 0;
 					break;
 			}
 		} 
@@ -317,6 +344,7 @@ void *pair(struct json_parser *p, struct json **j){
 					p->stock_size = 0;
 					p->buf++;
 					p->offset++;
+					next = 0;
 					break;
 				case ':':
 					if(need_value == 1)
@@ -374,8 +402,8 @@ void *pair(struct json_parser *p, struct json **j){
 					if(need_value != 2)
 						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
 					getint(p);
-					if((c_char = *(p->buf-1)) < '0' || c_char > '9' ||
-						(c_char = *(p->pstock -1)) == '.' || c_char == '+' || c_char == '-'){
+					if(((c_char = *(p->buf)) < '0' || c_char > '9') &&
+						(*(p->pstock) != 0 || c_char == '+' || c_char == '-')){
 						errx(255, "Unexpected chararcter (bad number) near offset %lu.", p->offset);
 					}
 					/*if(end)
@@ -595,8 +623,8 @@ void json_print(struct json *j, int sort, size_t space, char c_sp, size_t count,
 			for(sp = 0; sp < space; sp++)
 				putchar(c_sp);
 	(type == ARRAY) ? putchar(']') : putchar('}');
-	if(space == 0)
-		putchar('\n');
+	/*if(space == 0)
+		putchar('\n');*/
 }
 void json2txt(struct json *j, int sort, char *string, int warn_only){
 	struct json *pj = j;
