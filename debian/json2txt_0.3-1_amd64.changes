@@ -20,28 +20,28 @@ Changes:
  .
    * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
 Checksums-Sha1:
- dc1b85a8210af0e80ce86f585e08c9928369206c 1383 json2txt_0.3-1.dsc
- ac53ed8b28ffb53851cdc1f7e4eb8f7e49b1a387 10130 json2txt_0.3-1.tar.gz
+ f4bd09d91bcd110e6ce621e78ba37d7ca539b4c4 1383 json2txt_0.3-1.dsc
+ 393979261fddc5bb8ddb9a64bc29545be809e36c 10126 json2txt_0.3-1.tar.gz
  2f2e52854229ed19bc63c2b65b10fd90902f3e0f 7372 json2txt-dbgsym_0.3-1_amd64.ddeb
- 2d700b22bb179fea994f5b95ac2c9c64f13b8546 7341 json2txt_0.3-1_amd64.buildinfo
+ ab21cbaec98affbbe62b57de2117e0c1c063a9b5 7341 json2txt_0.3-1_amd64.buildinfo
  21d887903090182feb742c830ef05d127b830dd2 5920 json2txt_0.3-1_amd64.deb
  de2e6307d38de25f2e50a27868a3567ac759efc7 17380 libjson2txt-dbgsym_0.3-1_amd64.ddeb
  6bc7814708e9a694bf34052980a1be490dab8b77 4512 libjson2txt-dev_0.3-1_amd64.deb
  1315d0f43d226bf27ff2237b6a123c6e28291094 12540 libjson2txt_0.3-1_amd64.deb
 Checksums-Sha256:
- 44d8cab8107cf0a86d1850ec06175ab5c65f35572a1aecb7c0905402cc0bf405 1383 json2txt_0.3-1.dsc
- 14a26a3ecf3f2a845517c63d767e0fda48336cfe82df137ed4d94901f75ec039 10130 json2txt_0.3-1.tar.gz
+ fd4c91aeda21b4e61e18d4d86ba8306989df9e0a756df5e2fb81a1c05d45e610 1383 json2txt_0.3-1.dsc
+ f86fc7f6e461a7d993f734b95d4980f00cc3e612b82fc251ddd65f9e1a5a779a 10126 json2txt_0.3-1.tar.gz
  25fa17f6c82d7b00c013c57a0ea33ce2fcc1f9456c2a0c2d52ae45dcb7dda592 7372 json2txt-dbgsym_0.3-1_amd64.ddeb
- 12905e37b5e651300f39365280855e28f1eca1cdb8077e57e42f433a817c440c 7341 json2txt_0.3-1_amd64.buildinfo
+ 8d0c14f5104a7e333cfa9b444c3e59914e79c2c6f93deb9c32cfb21f187d4b49 7341 json2txt_0.3-1_amd64.buildinfo
  1a0569c0b42d34a9da43c0546e69fd960e3d31346aeb2c7c9322442d4a906000 5920 json2txt_0.3-1_amd64.deb
  9948f09d0df6c5af5d06cc82378d57b6f8551bdd0feca8d38206901f9c517cb0 17380 libjson2txt-dbgsym_0.3-1_amd64.ddeb
  45c4c0259abe5ced7bd0376057369ad08240d7625d6739cbeaf18e0e3ae9cb48 4512 libjson2txt-dev_0.3-1_amd64.deb
  4cc6f8c93ec3b58b5a41f7dec05fab99f7bcfcab74d9735315031c21a1f1468e 12540 libjson2txt_0.3-1_amd64.deb
 Files:
- f3dcc2f1eca505ec7dc065692b116dbf 1383 utils optional json2txt_0.3-1.dsc
- 08c29dbc79409b4e69e76f69c1817ea1 10130 utils optional json2txt_0.3-1.tar.gz
+ e92dc4753125087a5840161be71889bb 1383 utils optional json2txt_0.3-1.dsc
+ 1ad3840e113e5ac4d31c191e8c0e50c2 10126 utils optional json2txt_0.3-1.tar.gz
  49be298de033eb86803cff0138febb8c 7372 debug optional json2txt-dbgsym_0.3-1_amd64.ddeb
- 52786ff5bfe740c978aea5aff9d5155a 7341 utils optional json2txt_0.3-1_amd64.buildinfo
+ db3e2efab20af79ab1f6e480d0fb7305 7341 utils optional json2txt_0.3-1_amd64.buildinfo
  aaaff41e87f3147fc887210185fcd101 5920 utils optional json2txt_0.3-1_amd64.deb
  b1e7537de9b9fe6135c4a72923207860 17380 debug optional libjson2txt-dbgsym_0.3-1_amd64.ddeb
  a8f0cbaf2429258474f4191a35c5db9c 4512 libdevel optional libjson2txt-dev_0.3-1_amd64.deb
@@ -49,15 +49,15 @@ Files:
 
 -----BEGIN PGP SIGNATURE-----
 
-iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmfZ1uURHHpvZXVya0Bn
-bWFpbC5jb20ACgkQ5SbKMk2fAI7M0QwAxWU1CmkAv4bwZNQuV8QXUvx/i9EStLlm
-na+556RE4XF/BN6xt7Bqz+XEemX/xu7B78Aq8yb8M3s8uhxxwfgtaSXM39Z4qBRp
-t8VZ0BxFw3h3P15ntqpiq6F9S6Zg6fks19/uk9PABqrWi8wb10iBkWK8acf2gOgn
-PiVex6i21LAqgZC/N7ZC6k0Zh4BChbgZkvrtcAGFqZ9/c2h1Cz+376Q0mLNia6G8
-BnNeCrEsfQn0MMCosoQpgg7Aq4fJeWxMRmJrL9aeKXYAZNrVDsf0WfUbQzWv9rHi
-02u+YEubVOsBWhyOBJ1nq4XM9Kdwl1akJbG2HWwyGaMnzjiBIBqz0phPbdRxogdU
-HOBaUi1L+7O3SYG01Be3J272IBkI26hstnvkpUyOqXGChsgcBzBwZGOPqU2mNsjx
-3DzAhmF3+XzxBf0k9hOD9wBzRbRAFS00l00B36D5eNPFoq+6w2MnqAjAaM8nsEHb
-eEd42tAavAOjFfLKHRA9qCCljliPOSgW
-=66fD
+iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmfajzcRHHpvZXVya0Bn
+bWFpbC5jb20ACgkQ5SbKMk2fAI4sWAv/bpElktS5aYwKFELZDRXZJb89eZs9fAmM
+pRZLDe9K2RKAEWPn+iO2AlGUn72JglW4n+CDoMZL9CjcxYaa4Vuex+gn+65tztSR
+KhLzzPkHWLAIr8ttqDfhMgUA2O1zpjlSwf56QmxYHzq+wVkSfy/e3oqQucRNUUkx
+6MQVfbJ0ElC5sEOAWbO0PhsHqJxRKEPPDzl8YdnuBzgZCL9ByvvL1IskHKaf50s0
+sXqu3eDGu+xW0lKAb0arGpPAsx3M7+zPcG1mxXC3RLNg/rtLRE2NJ+2HiHVlEXlG
+6rzA4fXAktSvPhY5KDiZdHUwb6P0BUYYKIqDkNqh/SBZZ4+GmkxQwTMWmT20kxYI
+NdEcXTCqH/o6Qdqbk+JHt5gTUPlO75AaCO6SvSM2lDKTA4h526LdUiv+DmGlITWg
+qDD5aXqrk7B3yjKNoxufqud8xAsdQAkezuhm7Z/E3zPrIveYDTq1JiDtR3jtApyo
+Od++OZ63m7LY7OcjgDpTgZlzHFBjwNWj
+=Mdk9
 -----END PGP SIGNATURE-----
