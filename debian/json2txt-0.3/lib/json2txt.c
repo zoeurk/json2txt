@@ -333,9 +333,10 @@ void *array(struct json_parser *p, struct json **j){
 					end = 1;
 					next = 0;
 					c_char = *p->stock;
-					if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.'|| *(p->pstock -1) == '.')
+					if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.'|| *(p->pstock -1) == '.'){
+						warnx("Invalid number before offset: %lu",p->offset -1);
 						(*j)->t_val = INT | WARN;
-					else
+					}else
 						(*j)->t_val = INT;
 					(*j)->value.name.index = index;
 					(*j)->value.value = p->stock;
@@ -494,9 +495,10 @@ void *pair(struct json_parser *p, struct json **j){
 						errx(255, "Unexpected chararcter (bad number) before offset %lu.", p->offset);
 					}*/
 					c_char = *p->stock;
-					if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.' || *(p->pstock -1) == '.')
+					if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.' || *(p->pstock -1) == '.'){
+						warnx("Invalid number before offset: %lu",p->offset -1);
 						(*j)->t_val = INT | WARN;
-					else
+					}else
 						(*j)->t_val = INT;
 					(*j)->value.value = p->stock;
 					p->stock = NULL;
