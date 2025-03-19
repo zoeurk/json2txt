@@ -50,6 +50,16 @@ void *json_create(struct json **j, enum KIND kind, enum TYPE type){
 	(*j)->type = type;
 	return rj;
 }
+struct json *go_first(struct json *j){
+	struct json *pj = j;
+	while(pj->prev || pj->up){
+		if(pj->up)
+			pj = pj->up;
+		if(pj->prev)
+			pj = pj->prev;
+	}
+	return pj;
+}
 #define STOCK_BUF(p) \
 	if(p->len == 0){ \
 		allocstr(&p->stock, p->stock_buf); \
@@ -233,8 +243,12 @@ void *array(struct json_parser *p, struct json **j){
 			readchar(&p->offset, &p->buf, p->chars);
 			switch(*p->buf){
 				case '"':
-					if(end)
+					if(end){
+						*j = go_first(*j);
+						free(p->stock);
+						json_destroy(j);
 						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+					}
 					end = 1;
 					next = 0;
 					p->buf++;
@@ -251,16 +265,24 @@ void *array(struct json_parser *p, struct json **j){
 					break;
 				case ',':
 					json_create(j, NEXT, ARRAY);
-					if(next)
+					if(next){
+						*j = go_first(*j);
+						free(p->stock);
+						json_destroy(j);
 						errx(255, "Unexpected ',' at offset %lu.", p->offset);
+					}
 					end = 0;
 					next = 1;
 					p->offset++;
 					p->buf++;
 					break;
 				case ']':
-					if(next)
+					if(next){
+						*j = go_first(*j);
+						free(p->stock);
+						json_destroy(j);
 						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+					}
 					p->offset++;
 					p->buf++;
 					return p;
@@ -269,8 +291,12 @@ void *array(struct json_parser *p, struct json **j){
 					(*j)->value.name.index = index;
 					index++;
 					pj = json_create(j, SUB, ARRAY);
-					if(!next)
+					if(!next){
+						*j = go_first(*j);
+						free(p->stock);
+						json_destroy(j);
 						errx(255, "Unexpected '[' at offset %lu.", p->offset);
+					}
 					array(p, j);
 					*j = pj;
 					next = 0;
@@ -287,6 +313,9 @@ void *array(struct json_parser *p, struct json **j){
 					end = 1;
 					break;
 				case '}':
+					*j = go_first(*j);
+					free(p->stock);
+					json_destroy(j);
 					errx(255, "Unexpected '}' at offset %lu.\n\t'[' at offset %lu not close.", p->offset, offset);
 				case 0:
 					break;
@@ -294,6 +323,9 @@ void *array(struct json_parser *p, struct json **j){
 					getint(p);
 					if(((c_char = *(p->buf)) < '0' || c_char > '9'  || c_char == '+' || c_char == '-' ) &&
 						(!p->stock || *(p->pstock) != 0)){
+						*j = go_first(*j);
+						free(p->stock);
+						json_destroy(j);
 						errx(255, "Unexpected chararcter (bad number) near offset %lu.", p->offset);
 					}
 					/*if(end)
@@ -301,7 +333,7 @@ void *array(struct json_parser *p, struct json **j){
 					end = 1;
 					next = 0;
 					c_char = *p->stock;
-					if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.')
+					if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.'|| *(p->pstock -1) == '.')
 						(*j)->t_val = INT | WARN;
 					else
 						(*j)->t_val = INT;
@@ -315,6 +347,8 @@ void *array(struct json_parser *p, struct json **j){
 			}
 		} 
 	while(read_fn(p));
+	*j = go_first(*j);
+	json_destroy(j);
 	errx(255, "Expected ']' at offset %lu.\n\t'[' at offset %lu not close.", p->offset, offset);
 	return p;
 }
@@ -332,15 +366,23 @@ void *pair(struct json_parser *p, struct json **j){
 				case '"':
 					if(need_key == 1)
 						need_key = 0;
-					if(end)
+					if(end){
+						*j = go_first(*j);
+						free(p->stock);
+						json_destroy(j);
 						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+					}
 					if(need_value == 0)
 						need_value = 1;
 					else
 						if(need_value == 2)
 							need_value = 0;
-						else
+						else{
+							*j = go_first(*j);
+							free(p->stock);
+							json_destroy(j);
 							errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+						}
 					next = 0;
 					end = 0;
 					p->buf++;
@@ -361,8 +403,12 @@ void *pair(struct json_parser *p, struct json **j){
 				case ':':
 					if(need_value == 1)
 						need_value = 2;
-					else
+					else{
+						*j = go_first(*j);
+						free(p->stock);
+						json_destroy(j);
 						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+					}
 					need_key = 0;
 					p->offset++;
 					p->buf++;
@@ -389,8 +435,12 @@ void *pair(struct json_parser *p, struct json **j){
 					break;
 				case ',':
 					json_create(j, NEXT, PAIR);
-					if(next)
+					if(next){
+						*j = go_first(*j);
+						free(p->stock);
+						json_destroy(j);
 						errx(255, "Unexpected ',' at offset %lu.", p->offset);
+					}
 					end = 0;
 					next = 1;
 					need_key = 1;
@@ -398,24 +448,39 @@ void *pair(struct json_parser *p, struct json **j){
 					p->buf++;
 					break;
 				case '}':
-					if(next || need_value)
-						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+					if(next || need_value){
+						offset = p->offset;
+						*j = go_first(*j);
+						free(p->stock);
+						json_destroy(j);
+						errx(255, ">Unexpected chararcter at offset %lu.", offset);
+					}
 					end = 0;
 					p->offset++;
 					p->buf++;
 					return p;
 				case ']':
+					*j = go_first(*j);
+					free(p->stock);
+					json_destroy(j);
 					errx(255, "Unexpected ']' at offset %lu.\n\t'{' at offset %lu not close.", p->offset, offset);
 				case 0:
 					break;
 				default:
-					if(need_key == 1)
+					/*if(need_key == 1)
+						errx(255, "Unexpected chararcter at offset %lu.", p->offset);*/
+					if(need_value != 2 || need_key == 1){
+						*j = go_first(*j);
+						free(p->stock);
+						json_destroy(j);
 						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
-					if(need_value != 2)
-						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+					}
 					getint(p);
 					if(((c_char = *(p->buf)) < '0' || c_char > '9'|| c_char == '+' || c_char == '-') &&
 						(!p->stock || *(p->pstock) != 0)){
+						*j = go_first(*j);
+						free(p->stock);
+						json_destroy(j);
 						errx(255, "Unexpected chararcter (bad number) near offset %lu.", p->offset);
 					}
 					/*if(end)
@@ -429,7 +494,7 @@ void *pair(struct json_parser *p, struct json **j){
 						errx(255, "Unexpected chararcter (bad number) before offset %lu.", p->offset);
 					}*/
 					c_char = *p->stock;
-					if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.')
+					if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.' || *(p->pstock -1) == '.')
 						(*j)->t_val = INT | WARN;
 					else
 						(*j)->t_val = INT;
@@ -440,6 +505,9 @@ void *pair(struct json_parser *p, struct json **j){
 			}
 		}
 	while(read_fn(p));
+	*j = go_first(*j);
+	/*free(p->stock);*/
+	json_destroy(j);
 	errx(255, "Expected '}' at offset %lu.\n\t'{' at offset %lu not close.", p->offset, offset);
 	return p;
 }

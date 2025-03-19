@@ -55,6 +55,7 @@ struct json{
 	struct json *sub;
 	struct json *up;
 };
+struct json *go_first(struct json *j);
 ssize_t read_fn(struct json_parser *p);
 void readchar(ssize_t *offset, char **str, const char *not);
 void allocstr(char **buffer, size_t lentoadd);
