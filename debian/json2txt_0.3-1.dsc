@@ -15,23 +15,23 @@ Package-List:
  libjson2txt deb utils optional arch=any
  libjson2txt-dev deb libdevel optional arch=any
 Checksums-Sha1:
- 307b3472ae2a9a1b3661ab56a0a5a65402bbdc22 10268 json2txt_0.3-1.tar.gz
+ 8babf05e917181d9d92262ae7c0ddbaefb2526f1 10402 json2txt_0.3-1.tar.gz
 Checksums-Sha256:
- a9cd3db515f031915b4d0b53a377f05572c02b30287c30fa59b87fe8d2e0204a 10268 json2txt_0.3-1.tar.gz
+ 36937acc687861e530bd936daa3cb70d975a69d1c9c082d4ec92182f20b7e3c7 10402 json2txt_0.3-1.tar.gz
 Files:
- 38b8d46f73fd6ab494cf995aba28094d 10268 json2txt_0.3-1.tar.gz
+ 15664413a38983babe7d7eef47b9a9f5 10402 json2txt_0.3-1.tar.gz
 
 -----BEGIN PGP SIGNATURE-----
 
-iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmfasZgRHHpvZXVya0Bn
-bWFpbC5jb20ACgkQ5SbKMk2fAI48cAwAxlSpj5XUA0MroYwKFa5hod686lf08Pky
-ytq5vzd4LqffJPYfRWRwhVC5JPylc9bhrMBXg1NYr9ADSwaDLDSARsqNN0AUNU0t
-XBAGbhFhoNo3RnbCCEeQlHzfsDzXPfmANoHUsIBP81ELvW5ajZ8RGSCZlUu+bZ1r
-oHKKM/QFTPj+gUvM0rMjdFBQPgVpafrLAVMNQ/fD4xmMAguAIQ9H39ZPjHz00o6E
-Cjw7/2a8AFh4i7kUZWKLLnvbGR6b+8frFqkFH2uFkCQiNP3d+AV4gfeaFvmIYnGy
-nqgWRkwg6Rgs54zYagtESR0x1eiDVbPzak07krn6/p2IRtY24wshukDbjyg1yJBj
-2fzptIvrSa+ZlU8vzEbSHpazQsQaEdjJZevk10CiWTaw1Nm4mgJIbmMXloVKhc/v
-g8Ic2hoCIpLWOB99n3fi1jV5ov+FBOKniDPsHI3+pUqRh/osPEJ2ado26OKXkqr0
-vGrS9o7GewoxAjg921vlDBSOrByVwzid
-=JLS1
+iQHFBAEBCgAvFiEEgnh2EWglF7jJm3HO5SbKMk2fAI4FAmfb4sgRHHpvZXVya0Bn
+bWFpbC5jb20ACgkQ5SbKMk2fAI7X8Av/fPQ5RCKU5JoDsi4fTVgVGcrFsXTwOgiE
+0iKRa9hsvb+qYoyz62KHFSbs7NS3uyVeM+uD0ebfO8aWclqq/qgiqLCHg3sDh6dw
+sQZU1d8/Kp8O2dQKDF+bDum2cgEdnehFIVaLo0yRKNVQVDbP4vgKdjEzG+/7uf2n
+DHDE0mHp8usI9uKSbVKOeJoUbVGDrfpSm5UHkvZ5VHHOA5I6hsO4ryh07fuIkaYD
+7E+2D+9e5T6V4FRdd67pc04rxfHkM87VeFsemXe+LTDgzUsUO5D6fm59Ub30pQKP
+OuVjUhfdkBLiBdA4SDyXpquMYr9hMjaT0hLWiTiZ99wG2tnpD1076tEjvS9rIBmw
+HeejrMLxacMQfqmNmYh31eJhgiEs+yCD8TSLVkrHbJIIGItXNHu+hBQ5WVebEIGT
+F9Mj8HmDeEvSr/L5NedYWKHfS+TxSY/FQPQOjoOZ1RDlhdUJ0RCzMv920Xw4mKZU
+p4pulWW+y9Wh7GSyVrKhnYqxC8jLAhQD
+=JWFD
 -----END PGP SIGNATURE-----
