@@ -5,9 +5,9 @@ Version: 0.3~1-1
 Auto-Built-Package: debug-symbols
 Architecture: amd64
 Maintainer: Thomas Marsaleix <zoeurk@gmail.com>
-Installed-Size: 22
+Installed-Size: 23
 Depends: json2txt (= 0.3~1-1)
 Section: debug
 Priority: optional
 Description: debug symbols for json2txt
-Build-Ids: 8b753b0c7d81056ccdad6d2db3462974accadc07
+Build-Ids: ec9559a81fdd4f4ed335aa1a3dda5703e944c9b2

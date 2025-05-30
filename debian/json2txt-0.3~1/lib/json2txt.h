@@ -39,6 +39,8 @@ struct json_parser{
 	char *pstock;
 	char *stock;
 	size_t stock_size;
+	/*int err;
+	int ___;*/
 };
 struct json{
 	enum TYPE type;
@@ -63,10 +65,10 @@ struct json_new_lst{
 struct fn{
 	size_t index;
 	ssize_t offset;
-	int c_next;
-	int c_end;
 	int key;
 	int value;
+	int c_end;
+	int err;
 	void *(*do_it)(struct json_parser *, struct json **, struct json_new_lst **, struct fn **);
 	struct fn *next;
 	struct fn *prev;

@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([json2txt], [0.3~1], [zoeurk@gmail.com])
+AC_INIT([json2txt], [0.3], [zoeurk@gmail.com])
 AC_CONFIG_SRCDIR([lib/json2txt.h])
 AC_CONFIG_HEADERS([config.h])
 

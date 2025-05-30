@@ -253,8 +253,24 @@ void *getstr(struct json_parser *p){
 		free(*pj); \
 		*pj = NULL; \
 	}
+#define DESTROY_fn(ptr, reader) \
+	while(ptr){ \
+		reader = ptr->prev; \
+		free(ptr); \
+		ptr = reader; \
+	}
+/*enum CHARS{
+	'{',
+	'[',
+	',',
+	':',
+	'}',
+	']',
+};*/
 void *starting(struct json_parser *p, struct json **j, struct json_new_lst **pj, struct fn **f){
 	static struct json *spj;
+	struct fn *rf;
+	struct json_new_lst *lst;
 	switch(*p->buf){
 		case '{':
 			NEW_PJ(pj);
@@ -262,11 +278,11 @@ void *starting(struct json_parser *p, struct json **j, struct json_new_lst **pj,
 			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
 				err(255, "calloc()");
 			}
+			(*f)->offset = p->offset;
+			(*f)->err = '{';
 			(*f)->next->prev = *f;
 			*f = (*f)->next;
-			(*f)->offset = p->offset;
-			(*f)->c_next = 0;
-			(*f)->c_end = 0;
+			(*f)->c_end = '{';
 			(*f)->key = 1;
 			(*f)->value = 0;
 			(*f)->do_it = &pair;
@@ -279,325 +295,364 @@ void *starting(struct json_parser *p, struct json **j, struct json_new_lst **pj,
 			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
 				err(255, "calloc()");
 			}
+			(*f)->err = '[';
+			(*f)->offset = p->offset;
 			(*f)->next->prev = *f;
 			*f = (*f)->next;
-			(*f)->offset = p->offset;
-			(*f)->c_next = 1;
-			(*f)->c_end = 0;
+			(*f)->c_end = '[';
+			(*f)->do_it = &array;
 			p->buf++;
 			p->offset++;
-			(*f)->do_it = &array;
 			break;
 		case 0:
 			break;
 		default:
+			DESTROY_fn((*f), rf);
+			DESTROY_fn((*pj), lst);
 			errx(255, "Unexpected character at offset %lu.", p->offset);
 	}
 	*j = spj;
 	return p;
 }
 void *array(struct json_parser *p, struct json **j, struct json_new_lst **pj, struct fn **f){
-	/*static struct json *pj;
-	static struct json_new_lst *pj = NULL;*/
-	/*size_t index = 0;*/
-	/*ssize_t offset = p->offset;*/
-	/*int next = 1, end = 0;*/
+	struct fn *rf;
+	struct json_new_lst *lst;
 	char c_char;
-	/*do
-		while(*p->buf){
-			readchar(&p->offset, &p->buf, p->chars);*/
-			switch(*p->buf){
-				case '"':
-					if((*f)->c_end){
-						DESTROY_ALL(j, p);
-						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
-					}
-					(*f)->c_end = 1;
-					(*f)->c_next = 0;
-					p->buf++;
-					p->offset++;
-					if(!getstr(p)){
-						DESTROY_ALL(j, p);
-						_exit(255);
-					}
-					(*j)->value.name.index = (*f)->index;
-					(*j)->value.value = (p->stock) ? p->stock : "";
-					(*j)->t_val = STRING;
-					p->stock = NULL;
-					p->stock_size = 0;
-					p->buf++;
-					p->offset++;
-					(*f)->index++;
-					break;
-				case ',':
-					json_create(j, NEXT, ARRAY);
-					if((*f)->c_next){
-						DESTROY_ALL(j, p);
-						errx(255, "Unexpected ',' at offset %lu.", p->offset);
-					}
-					(*f)->c_end = 0;
-					(*f)->c_next = 1;
-					p->offset++;
-					p->buf++;
-					break;
-				case ']':
-					if((*f)->c_next){
-						DESTROY_ALL(j, p);
-						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
-					}
-					*f = (*f)->prev;
-					free((*f)->next);
-					(*f)->next = NULL;
-					(*f)->key = 0;
-					(*f)->value = 0;
-					(*f)->c_next = 0;
-					(*f)->c_end = 0;
-					*j = (*pj)->j;
-					DEL_PJ(pj);
-					/**j = (*pj)->j;*/
-					p->offset++;
-					p->buf++;
-					return p;
-				case '[':
-					NEW_PJ(pj);
-					/*pj = *j;*/
-					(*j)->value.name.index = (*f)->index;
-					(*f)->index++;
-					(*pj)->j = json_create(j, SUB, ARRAY);
-					if(!(*f)->c_next){
-						DESTROY_ALL(j, p);
-						errx(255, "Unexpected '[' at offset %lu.", p->offset);
-					}
-					if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
-						err(255, "calloc()");
-					}
-					(*f)->next->prev = *f;
-					*f = (*f)->next;
-					(*f)->offset = p->offset;
-					(*f)->do_it = &array;
-					p->buf++;
-					p->offset++;
-					/**j = pj;*/
-					(*f)->c_next = 1;
-					(*f)->c_end = 0;
-					break;
-				case '{':
-					/*pj = *j;*/
-					NEW_PJ(pj);
-					(*j)->value.name.index = (*f)->index;
-					(*f)->index++;
-					(*pj)->j = json_create(j, SUB, PAIR);
-					if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
-						err(255, "calloc()");
-					}
-					(*f)->next->prev = *f;
-					*f = (*f)->next;
-					(*f)->do_it = &pair;
-					(*f)->c_next = 1;
-					(*f)->c_end = 0;
-					(*f)->key = 1;
-					(*f)->value = 0;
-					(*f)->offset = p->offset;
-					p->buf++;
-					p->offset++;
-					break;
-				case '}':
-					DESTROY_ALL(j, p);
-					errx(255, "Unexpected '}' at offset %lu.\n\t'[' at offset %lu not close.", p->offset, (*f)->offset);
-				case 0:
-					break;
-				default:
-					getint(p);
-					if(((c_char = *(p->buf)) < '0' || c_char > '9'  || c_char == '+' || c_char == '-' ) &&
-						(!p->stock || *(p->pstock) != 0)){
-						DESTROY_ALL(j, p);
-						errx(255, "Unexpected chararcter (bad number) near offset %lu :<%c>.", p->offset, c_char);
-					}
-					(*f)->c_end = 1;
-					(*f)->c_next = 0;
-					c_char = *p->stock;
-					if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.'|| *(p->pstock -1) == '.'){
-						warnx("Invalid number before offset: %lu",p->offset -1);
-						(*j)->t_val = INT | WARN;
-					}else
-						(*j)->t_val = INT;
-					(*j)->value.name.index = (*f)->index;
-					(*j)->value.value = p->stock;
-					(*f)->index++;
-					p->stock = NULL;
-					p->stock_size = 0;
-					break;
+	switch(*p->buf){
+		case '"':
+			if((*f)->c_end != '[' &&(*f)->c_end != ','){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
 			}
-		/*} 
-	while(read_fn(p));*/
-	/**j = go_first(*j);
-	json_destroy(j);
-	errx(255, "Expected ']' at offset %lu.\n\t'[' at offset %lu not close.", p->offset, offset);*/
+			(*f)->c_end = 0;
+			p->buf++;
+			p->offset++;
+			if(!getstr(p)){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				_exit(255);
+			}
+			(*j)->value.name.index = (*f)->index;
+			(*j)->value.value = (p->stock) ? p->stock : "";
+			(*j)->t_val = STRING;
+			p->stock = NULL;
+			p->stock_size = 0;
+			p->buf++;
+			p->offset++;
+			(*f)->index++;
+			break;
+		case ',':
+			(*f)->offset = p->offset;
+			(*f)->err = ',';
+			json_create(j, NEXT, ARRAY);
+			if((*f)->c_end != 0 && (*f)->c_end != ']' && (*f)->c_end != '}'){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected ',' at offset %lu.", p->offset);
+			}
+			(*f)->c_end = ',';
+			p->offset++;
+			p->buf++;
+			break;
+		case ']':
+			if((*f)->c_end != 0 && (*f)->c_end != '[' && (*f)->c_end != '}' && (*f)->c_end != ']'){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+			}
+			*f = (*f)->prev;
+			free((*f)->next);
+			(*f)->next = NULL;
+			(*f)->key = 0;
+			(*f)->value = 0;
+			(*f)->c_end = ']';
+			*j = (*pj)->j;
+			DEL_PJ(pj);
+			p->offset++;
+			p->buf++;
+			return p;
+		case '[':
+			NEW_PJ(pj);
+			(*f)->offset = p->offset;
+			(*f)->err = '[';
+			(*j)->value.name.index = (*f)->index;
+			(*f)->index++;
+			(*pj)->j = json_create(j, SUB, ARRAY);
+			if((*f)->c_end != '{' && (*f)->c_end != '[' && (*f)->c_end != ','){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected '[' at offset %lu.", p->offset);
+			}
+			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				err(255, "calloc()");
+			}
+			(*f)->next->prev = *f;
+			*f = (*f)->next;
+			(*f)->c_end = '[';
+			(*f)->offset = p->offset;
+			(*f)->do_it = &array;
+			(*f)->offset = p->offset;
+			p->buf++;
+			p->offset++;
+			break;
+		case '{':
+			(*f)->offset = p->offset;
+			(*f)->err = '{';
+			if((*f)->c_end != '[' && (*f)->c_end != ','){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected '{' at offset %lu.", p->offset);
+			}
+			NEW_PJ(pj);
+			(*j)->value.name.index = (*f)->index;
+			(*f)->index++;
+			(*pj)->j = json_create(j, SUB, PAIR);
+			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				err(255, "calloc()");
+			}
+			(*f)->next->prev = *f;
+			*f = (*f)->next;
+			(*f)->c_end = '{';
+			(*f)->do_it = &pair;
+			(*f)->key = 1;
+			(*f)->value = 0;
+			p->buf++;
+			p->offset++;
+			break;
+		case '}':
+			warnx("Unexpected '}' at offset %lu.", p->offset);
+			DESTROY_fn((*pj), lst);
+			DESTROY_fn((*f), rf);
+			DESTROY_ALL(j, p);
+			_exit(255);
+		case 0:
+			break;
+		default:
+			if((*f)->c_end != '[' && (*f)->c_end != ','){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+			}
+			getint(p);
+			if(((c_char = *(p->buf)) < '0' || c_char > '9'  || c_char == '+' || c_char == '-' ) &&
+				(!p->stock || *(p->pstock) != 0)){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected chararcter (bad number) near offset %lu: %c", p->offset, c_char);
+			}
+			(*f)->c_end = 0;
+			c_char = *p->stock;
+			if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.'|| *(p->pstock -1) == '.'){
+				warnx("Invalid number before offset: %lu",p->offset -1);
+				(*j)->t_val = INT | WARN;
+			}else
+				(*j)->t_val = INT;
+			(*j)->value.name.index = (*f)->index;
+			(*j)->value.value = p->stock;
+			(*f)->index++;
+			p->stock = NULL;
+			p->stock_size = 0;
+			break;
+	}
 	return p;
 }
 void *pair(struct json_parser *p, struct json **j, struct json_new_lst **pj, struct fn **f){
-	/*ssize_t offset = p->offset;*/
-	int /*need_key = 1, need_value = 0,
-		next = 0, end = 0,*/ c_char;
-	/*p->offset++;
-	p->buf++;*/
-	/*do
-		while(*p->buf){
-			readchar(&p->offset, &p->buf, p->chars);*/
-			switch(*p->buf){
-				case '"':
-					if((*f)->key == 1)
-						(*f)->key = 0;
-					if((*f)->c_end){
-						DESTROY_ALL(j, p);
-						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
-					}
-					if((*f)->value == 0)
-						(*f)->value = 1;
-					else
-						if((*f)->value == 2)
-							(*f)->value = 0;
-						else{
-							DESTROY_ALL(j, p);
-							errx(255, "Unexpected chararcter at offset %lu.", p->offset);
-						}
-					(*f)->c_next = 0;
-					(*f)->c_end = 0;
-					p->buf++;
-					p->offset++;
-					(*f)->c_next = 0;
-					if(!getstr(p)){
-						DESTROY_ALL(j, p);
-						_exit(0);
-					}
-					if((*j)->value.name.key == NULL)
-						(*j)->value.name.key = (p->stock) ? p->stock : "";
-					else{
-						(*j)->value.value = (p->stock) ? p->stock : "";
-						(*j)->t_val = STRING;
-					}
-					p->stock = NULL;
-					p->stock_size = 0;
-					p->buf++;
-					p->offset++;
-					break;
-				case ':':
-					if((*f)->value == 1)
-						(*f)->value = 2;
-					else{
-						DESTROY_ALL(j, p);
-						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
-					}
-					(*f)->key = 0;
-					p->offset++;
-					p->buf++;
-					break;
-				case '{':
-					/*pj = *j;*/
-					NEW_PJ(pj);
-					(*pj)->j = json_create(j, SUB, PAIR);
-					if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
-						err(255, "calloc()");
-					}
-					(*f)->next->prev = *f;
-					*f = (*f)->next;
-					(*f)->do_it = &pair;
-					(*f)->key = 1;
-					(*f)->value = 0;
-					(*f)->c_next = 0;
-					(*f)->c_end = 0;
-					p->buf++;
-					p->offset++;
-					break;
-				case '[':
-					/*pj = *j;*/
-					NEW_PJ(pj);
-					(*pj)->j = json_create(j, SUB, ARRAY);
-					if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
-						err(255, "calloc()");
-					}
-					(*f)->next->prev = *f;
-					*f = (*f)->next;
-					(*f)->do_it = &array;
-					/**j = (*pj)->j;*/
-					(*f)->offset = p->offset;
-					(*f)->key = 1;
-					(*f)->value = 0;
-					(*f)->c_next = 0;
-					(*f)->c_end = 1;
-					p->buf++;
-					p->offset++;
-					break;
-				case ',':
-					json_create(j, NEXT, PAIR);
-					if((*f)->c_next){
-						DESTROY_ALL(j, p);
-						errx(255, "Unexpected ',' at offset %lu.", p->offset);
-					}
-					(*f)->c_end = 0;
-					(*f)->c_next = 1;
-					(*f)->key = 1;
-					/*end = 0;
-					next = 1;
-					need_key = 1;*/
-					p->offset++;
-					p->buf++;
-					break;
-				case '}':
-					/*printf("OLD PJ\n");*/
-					if((*f)->c_next || (*f)->value){
-						DESTROY_ALL(j, p);
-						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
-					}
-					*f = (*f)->prev;
-					free((*f)->next);
-					(*f)->next = NULL;
-					(*f)->c_end = 0;
-					(*f)->c_next = 0;
-					(*f)->key = 0;
-					(*f)->value = 0;
-					*j = (*pj)->j;
-					DEL_PJ(pj);
-					p->offset++;
-					p->buf++;
-					return p;
-				case ']':
-					DESTROY_ALL(j, p);
-					errx(255, "Unexpected ']' at offset %lu.\n\t'{' at offset %lu not close.", p->offset, (*f)->offset);
-				case 0:
-					break;
-				default:
-					if((*f)->value != 2 || (*f)->key == 1){
-						DESTROY_ALL(j, p);
-						errx(255, "Unexpected chararcter at offset %lu.", p->offset);
-					}
-					getint(p);
-					if(((c_char = *(p->buf)) < '0' || c_char > '9'|| c_char == '+' || c_char == '-') &&
-						(!p->stock || *(p->pstock) != 0)){
-						DESTROY_ALL(j, p);
-						errx(255, "Unexpected chararcter (bad number) near offset %lu.", p->offset);
-					}
-					(*f)->value = 0;
-					(*f)->key = 1;
-					(*f)->c_end = 1;
-					(*f)->c_next = 0;
-					c_char = *p->stock;
-					if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.' || *(p->pstock -1) == '.'){
-						warnx("Invalid number before offset: %lu",p->offset -1);
-						(*j)->t_val = INT | WARN;
-					}else
-						(*j)->t_val = INT;
-					(*j)->value.value = p->stock;
-					p->stock = NULL;
-					p->stock_size = 0;
-					break;
+	struct fn *rf;
+	struct json_new_lst *lst;
+	int c_char;
+	switch(*p->buf){
+		case '"':
+			if((*f)->key == 1)
+				(*f)->key = 0;
+			if((*f)->c_end != '{' && (*f)->c_end != ':' && (*f)->c_end != ','){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
 			}
-		/*}
-	while(read_fn(p));
-	*j = go_first(*j);*/
-	/*free(p->stock);*/
-	/*json_destroy(j);
-	errx(255, "Expected '}' at offset %lu.\n\t'{' at offset %lu not close.", p->offset, offset);*/
+			if((*f)->value == 0)
+				(*f)->value = 1;
+			else
+				if((*f)->value == 2)
+					(*f)->value = 0;
+				else{
+					DESTROY_fn((*pj), lst);
+					DESTROY_fn((*f), rf);
+					DESTROY_ALL(j, p);
+					errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+				}
+			(*f)->c_end = 0;
+			p->buf++;
+			p->offset++;
+			if(!getstr(p)){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				_exit(0);
+			}
+			if((*j)->value.name.key == NULL)
+				(*j)->value.name.key = (p->stock) ? p->stock : "";
+			else{
+				(*j)->value.value = (p->stock) ? p->stock : "";
+				(*j)->t_val = STRING;
+			}
+			p->stock = NULL;
+			p->stock_size = 0;
+			p->buf++;
+			p->offset++;
+			break;
+		case ':':
+			if((*f)->value == 1)
+				(*f)->value = 2;
+			else{
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+			}
+			(*f)->c_end = ':';
+			(*f)->key = 0;
+			p->offset++;
+			p->buf++;
+			break;
+		case '{':
+			if((*f)->c_end != '{' && (*f)->c_end != ',' && (*f)->c_end != ':'){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected '{' at offset %lu.", p->offset);
+			}
+			NEW_PJ(pj);
+			(*pj)->j = json_create(j, SUB, PAIR);
+			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				err(255, "calloc()");
+			}
+			(*f)->offset = p->offset;
+			(*f)->err = '{';
+			(*f)->next->prev = *f;
+			*f = (*f)->next;
+			(*f)->c_end = '{';
+			(*f)->do_it = &pair;
+			(*f)->key = 1;
+			(*f)->value = 0;
+			p->buf++;
+			p->offset++;
+			break;
+		case '[':
+			/*pj = *j;*/
+			if((*f)->c_end != ',' && (*f)->c_end != ':'){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected '[' at offset %lu.", p->offset);
+			}
+			NEW_PJ(pj);
+			(*pj)->j = json_create(j, SUB, ARRAY);
+			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				err(255, "calloc()");
+			}
+			(*f)->offset = p->offset;
+			(*f)->err = '[';
+			(*f)->next->prev = *f;
+			*f = (*f)->next;
+			(*f)->c_end = '[';
+			(*f)->do_it = &array;
+			(*f)->key = 1;
+			(*f)->value = 0;
+			p->buf++;
+			p->offset++;
+			break;
+		case ',':
+			json_create(j, NEXT, PAIR);
+			if((*f)->c_end != 0 && (*f)->c_end != ']' && (*f)->c_end != '}'){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected ',' at offset %lu.", p->offset);
+			}
+			(*f)->offset = p->offset;
+			(*f)->err = ',';
+			(*f)->c_end = ',';
+			(*f)->key = 1;
+			p->offset++;
+			p->buf++;
+			break;
+		case '}':
+			if(((*f)->c_end != 0 && (*f)->c_end != ']' && (*f)->c_end != '{') || (*f)->value){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+			}
+			*f = (*f)->prev;
+			free((*f)->next);
+			(*f)->next = NULL;
+			(*f)->key = 0;
+			(*f)->value = 0;
+			*j = (*pj)->j;
+			DEL_PJ(pj);
+			(*f)->c_end = '}';
+			p->offset++;
+			p->buf++;
+			return p;
+		case ']':
+			warnx("Unexpected ']' at offset %lu.", p->offset);
+			DESTROY_fn((*pj), lst);
+			DESTROY_fn((*f), rf);
+			DESTROY_ALL(j, p);
+			_exit(255);
+		case 0:
+			break;
+		default:
+			if((*f)->value != 2 || (*f)->key == 1){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+			}
+			getint(p);
+			if(((c_char = *(p->buf)) < '0' || c_char > '9'|| c_char == '+' || c_char == '-') &&
+				(!p->stock || *(p->pstock) != 0)){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				errx(255, "Unexpected chararcter (bad number) near offset %lu: %c", p->offset, c_char);
+			}
+			(*f)->value = 0;
+			(*f)->key = 1;
+			(*f)->c_end = 0;
+			c_char = *p->stock;
+			if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.' || *(p->pstock -1) == '.'){
+				warnx("Invalid number before offset: %lu",p->offset -1);
+				(*j)->t_val = INT | WARN;
+			}else
+				(*j)->t_val = INT;
+			(*j)->value.value = p->stock;
+			p->stock = NULL;
+			p->stock_size = 0;
+			break;
+	}
 	return p;
 }
 ssize_t json_sort(struct json *j, char ***order, int sort, int warn_only){
@@ -716,6 +771,8 @@ void json_print(struct json *j, int sort, size_t space, char c_sp, size_t count,
 	for(k = 0; k < idx; k++)
 		for(pj = j; pj; pj = pj->next){
 			if((pj->type&PAIR) == PAIR && sort){
+				if(!pj->value.name.key)
+					continue;
 				if(strcmp(pj->value.name.key, order[k]))
 					continue;
 				if((pj->type&SET) == SET)

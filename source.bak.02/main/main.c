@@ -116,8 +116,8 @@ int main(int argc, char **argv){
 	struct args a = { 1, 1, 0, 1, 1, STDIN_FILENO };
 	struct json_parser p = INIT_JSON(BUFSIZE, ALLOC_SIZE, CHARS, NULL);
 	struct json *j = NULL, *pj = NULL;
-	struct fn *f;
-	struct json_new_lst *pj_lst = NULL;
+	struct fn *f, *pf;
+	struct json_new_lst *pj_lst = NULL,*lst;
 	char buffer[BUFSIZE];
 	argp_parse(&argp, argc, argv, 0, 0, &a);
 	p.buffer = buffer;
@@ -133,41 +133,29 @@ int main(int argc, char **argv){
 			readchar(&p.offset, &p.buf, p.chars);
 			f->do_it(&p , &j, &pj_lst, &f);
 		}while(*p.buf);
+	if(f->err == ',' || (f && (pf = f->prev))){
+		if(f->err == ',' || (pf->err == '[' && pf->c_end != ']') || (pf->err == '{' && pf->c_end != '}')){
+			if(f->err == ',')
+				warnx("At offset %lu: Expected character '%c'.",f->offset, f->err);
+			else
+				warnx("At offset %lu: '%c' not close",pf->offset, pf->err);
+			j = go_first(j);
+			json_destroy(&j);
+			while(f){
+				pf = f->prev;
+				free(f);
+				f = pf;
+			}
+			while(pj_lst){
+				lst = pj_lst->prev;
+				free(pj_lst);
+				pj_lst = lst;
+			}
+			exit(255);
+		}
+	}
 	free(f);
 	pj = j;
-	/*exit(0);*/
-	/*for(j = pj; j; j = j->sub){
-		if(!j->next)
-			printf("\t%lu\n", j->value.name.index);
-		for(ppj = j; ppj; ppj = ppj->next)
-			switch(ppj->type){
-				case ARRAY:
-					printf("%lu => %s\n", ppj->value.name.index, ppj->value.value);
-					break;
-				case PAIR:
-					printf("%s => %s\n", ppj->value.name.key, ppj->value.value);
-					break;
-			}
-	}
-	exit(0);*/
-	/*while(read_fn(&p))
-		do{
-			readchar(&p.offset, &p.buf, p.chars);
-			switch(*p.buf){
-				case '{':
-					pj = json_create(&j, NEW, PAIR);
-					pair(&p, &j);
-					break;
-				case '[':
-					pj = json_create(&j, NEW, ARRAY);
-					array(&p, &j);
-					break;
-				case 0:
-					break;
-				default:
-					errx(255, "Unexpected character at offset %lu.", p.offset);
-			}
-		}while(*p.buf);*/
 	if(p.file != STDIN_FILENO && p.file != STDERR_FILENO)
 		close(p.file);
 	if(a.test){
