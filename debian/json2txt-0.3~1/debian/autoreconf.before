@@ -1,9 +1,3 @@
-symlink  ./m4/lt~obsolete.m4
-symlink  ./m4/ltsugar.m4
-symlink  ./m4/ltoptions.m4
-symlink  ./m4/ltversion.m4
-symlink  ./m4/libtool.m4
-symlink  ./ltmain.sh
 28e27b0082703426127843fe36c96cc0  ./compile
 83033bdc5ec203b69a7046b5cb2b4522  ./config.sub
 8207f246fbc0d1b6808b114a94af08a3  ./man/json2txt.1
@@ -13,10 +7,10 @@ d20ca664c55f1ef08816469eb1ec53bf  ./config.h.in
 e355f4ba1b3c9230b2335892ec1e1844  ./lib/json2txt.h
 b8d0bc5fa34e9946420d3b4c06ef095f  ./lib/Makefile.in
 65cf31bde79b071ec2d6032dd8a2d6ae  ./lib/Makefile.am
-9e77c2a6d8520a68245fc9b227fd95d5  ./lib/json2txt.c
+4a312b68db7b99e7653fc568bfacf159  ./lib/json2txt.c
 c15e2c18bcadd1ec11be0662e02ca2c8  ./main/Makefile.in
 ef1fb8311a566c3fb468f4ce534368fe  ./main/Makefile.am
-58ab6326edfb378bcc7106653e758c2f  ./main/main.c
+ba1817c7e547e357b2e2abbbaf3d17d2  ./main/main.c
 2e8bdafecd787cb8d3ee1c38de858bae  ./Makefile.in
 e5f9da8b55623ead67f2bcfee03fb4d4  ./depcomp
 bcf35cdf761dd889ed083222464d3045  ./Makefile.am

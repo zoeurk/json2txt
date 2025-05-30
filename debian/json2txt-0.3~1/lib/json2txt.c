@@ -342,6 +342,7 @@ void *array(struct json_parser *p, struct json **j, struct json_new_lst **pj, st
 			p->stock_size = 0;
 			p->buf++;
 			p->offset++;
+			(*f)->offset = p->offset;
 			(*f)->index++;
 			break;
 		case ',':
@@ -515,6 +516,7 @@ void *pair(struct json_parser *p, struct json **j, struct json_new_lst **pj, str
 			p->stock_size = 0;
 			p->buf++;
 			p->offset++;
+			(*f)->offset = p->offset;
 			break;
 		case ':':
 			if((*f)->value == 1)
@@ -525,6 +527,8 @@ void *pair(struct json_parser *p, struct json **j, struct json_new_lst **pj, str
 				DESTROY_ALL(j, p);
 				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
 			}
+			(*f)->offset = p->offset;
+			(*f)->err = ':';
 			(*f)->c_end = ':';
 			(*f)->key = 0;
 			p->offset++;

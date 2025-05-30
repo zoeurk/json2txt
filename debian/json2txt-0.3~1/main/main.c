@@ -133,12 +133,21 @@ int main(int argc, char **argv){
 			readchar(&p.offset, &p.buf, p.chars);
 			f->do_it(&p , &j, &pj_lst, &f);
 		}while(*p.buf);
-	if(f->err == ',' || (f && (pf = f->prev))){
-		if(f->err == ',' || (pf->err == '[' && pf->c_end != ']') || (pf->err == '{' && pf->c_end != '}')){
-			if(f->err == ',')
-				warnx("At offset %lu: Expected character '%c'.",f->offset, f->err);
-			else
-				warnx("At offset %lu: '%c' not close",pf->offset, pf->err);
+	if(f->err == ',' || f->err == ':' || (f && (pf = f->prev))){
+		if(f->err == ',' || f->err == ':' || (pf->err == '[' && pf->c_end != ']') || (pf->err == '{' && pf->c_end != '}')){
+			if(f->c_end && (f->err == ',' || f->err == ':')){
+				if(f->c_end == ':')
+					warnx("At offset %lu: Unexpected character '%c'.",f->offset, f->err);
+				else
+					warnx("At offset %lu: Expected character '%c'.",f->offset, f->err);
+			}else{
+				if(f->err == 0){
+					warnx("At offset %lu: Expected character '%c'.", f->offset, (f->prev->err == '{') ? ':' : ',');
+				}else{
+					pf = f->prev;
+					warnx("At offset %lu: '%c' not close",pf->offset, pf->err);
+				}
+			}
 			j = go_first(j);
 			json_destroy(&j);
 			while(f){
