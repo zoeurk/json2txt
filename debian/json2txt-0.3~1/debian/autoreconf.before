@@ -7,7 +7,7 @@ symlink  ./ltmain.sh
 28e27b0082703426127843fe36c96cc0  ./compile
 83033bdc5ec203b69a7046b5cb2b4522  ./config.sub
 8207f246fbc0d1b6808b114a94af08a3  ./man/json2txt.1
-cb4dd1788c3a1efbbf41cca32d443104  ./man/json2txt.3
+4e762b526552d6b6e717d3315c75157f  ./man/json2txt.3
 a1e2ac1c7b1a059b3839844edba8e158  ./aclocal.m4
 d20ca664c55f1ef08816469eb1ec53bf  ./config.h.in
 e355f4ba1b3c9230b2335892ec1e1844  ./lib/json2txt.h

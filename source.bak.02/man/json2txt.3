@@ -84,10 +84,11 @@ struct json_new_lst{
 struct fn{
 	\fBsize_t\fR index;
 	\fBssize_t\fR offset;
-	\fBint\fR c_next;
 	\fBint\fR c_end;
 	\fBint\fR key;
 	\fBint\fR value;
+	\fBint\fR c_end;
+	\fBint\fR err;
 	void *(*do_it)(\fBstruct json_parser\fR *, \fBstruct json\fR **, \fBstruct json_new_lst\fR **, \fBstruct fn\fR **);
 	\fBstruct fn\fR *next;
 	\fBstruct fn\fR *prev;
