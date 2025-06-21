@@ -203,7 +203,7 @@ int main(int argc, char **argv){
 							End of number, don't increment p.buf and p.offset.
 							Maybe an errors, we need to re-analyze it differently.
 						*/
-							goto PARSE;
+						goto PARSE;
 					}
 				}else
 					if(init && (j->t_val&INT))
@@ -237,9 +237,7 @@ int main(int argc, char **argv){
 								warnx("Invalid boolean start at(/before) offset: %lu", p.offset);
 							break;*/
 					}
-				}/*else
-				printf("%i\n", ret);
-				*/
+				}
 				init = 0;
 			}else{
 				PARSE:
@@ -250,7 +248,6 @@ int main(int argc, char **argv){
 					if(json_err > 0){
 						/* 
 							"[m|c|re]alloc() json_err = errno"
-							malloc() used by json_sort()
 						*/
 						DESTROY;
 						return json_err;
