@@ -272,7 +272,7 @@ int main(int argc, char **argv){
 							/* Don't increment p.buf and p.offset */
 							goto DATA;
 						}else{
-							/* '"' while be read: start of string prepare for next char */
+							/* '"' will be read: start of string prepare for next char */
 							a1 = f;
 							a2 = j;
 						}
