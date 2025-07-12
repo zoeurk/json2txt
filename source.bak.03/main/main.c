@@ -184,7 +184,7 @@ int main(int argc, char **argv){
 								goto ERRORS;
 							if(a.warning == 1)
 								json_errors(&p, &j, &f);
-							json_err = 0;
+							json_err = pj_lst->json_err;
 						}
 					}
 					init = 0;
@@ -204,7 +204,8 @@ int main(int argc, char **argv){
 							Maybe an errors, we need to re-analyze it differently.
 						*/
 						goto PARSE;
-					}
+					}else
+						json_err = pj_lst->json_err;
 				}else
 					if(init && (j->t_val&INT))
 						switch(ret){
@@ -285,8 +286,8 @@ int main(int argc, char **argv){
 	}
 	/* show errors, return json_err */
 	/* Compute error for a missing '}' or ']'*/
-	if(!json_err)
-		json_err = -1*(f->prev != NULL || f->err == 0);
+	/*if(!json_err)
+		json_err = -1*(f->prev != NULL || f->err == 0);*/
 	if((json_err || a.warning == 1) && json_errors(&p, &j, &f) < 0){
 		DESTROY;
 		return json_err;

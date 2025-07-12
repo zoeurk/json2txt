@@ -61,6 +61,10 @@ struct json{
 };
 struct json_new_lst{
 	struct json *j;
+	int json_err;
+	#if __WORDSIZE != 32
+		int ___;
+	#endif
 	struct json_new_lst *prev;
 	struct json_new_lst *next;
 };

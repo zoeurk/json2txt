@@ -28,7 +28,7 @@ int json_errors(struct json_parser *p, struct json **j, struct fn **f){
 				warnx("Invalid JSON data: at offset %lu unexpected '%c'.\n\tJSON data not starting by '{' or '['",
 					p->offset, *p->buf);
 			else{
-				if((*f)->err != '[' && (*f)->err != '{'){
+				/*if((*f)->err != '[' && (*f)->err != '{'){
 					if((*f)->prev->err == '{'){
 						warnx("OBJECT: Unexpected end, expected '}' after offset %lu", p->offset);
 						json_err = -3;
@@ -36,11 +36,15 @@ int json_errors(struct json_parser *p, struct json **j, struct fn **f){
 						warnx("ARRAY: Unexpected end, expected ']' after offset %lu", p->offset);
 						json_err = -2;
 					}
-				}else
+				}else*/
 					warnx("Unexpected '%c' at offset %lu.\n\tGarbage in JSON data.", *p->buf, p->offset);
 			}
 			break;
 		case -2:
+			if(*p->buf == 0){
+				warnx("ARRAY: Unexpected end, expected ']' after offset %lu", p->offset);
+				break;
+			}
 			if((*f)->c_end == ',')
 				warnx("ARRAY: Unexpected '%c' at offset %lu, expected 'number|bool|null|\"string\"'", *p->buf, p->offset);
 			else
@@ -48,6 +52,10 @@ int json_errors(struct json_parser *p, struct json **j, struct fn **f){
 						*p->buf, p->offset);
 			break;
 		case -3:
+			if(*p->buf == 0){
+				warnx("OBJECT: Unexpected end, expected '}' after offset %lu", p->offset);
+				break;
+			}
 			switch((*f)->err){
 				case ':':
 					if((*j)->value.name.key)
@@ -412,6 +420,7 @@ int starting(struct json_parser *p, struct json **j, struct fn **f, struct json_
 	switch(*p->buf){
 		case '{':
 			NEW_PJ(pj);
+			(*pj)->json_err = -3;
 			if((spj = (*pj)->j = json_create(j, NEW, PAIR)) == NULL){
 				DESTROY_fn((*pj), lst);
 				DESTROY_fn((*f), rf);
@@ -437,6 +446,7 @@ int starting(struct json_parser *p, struct json **j, struct fn **f, struct json_
 			break;
 		case '[':
 			NEW_PJ(pj);
+			(*pj)->json_err = -2;
 			if((spj = (*pj)->j = json_create(j, NEW, ARRAY)) == NULL){
 				DESTROY_fn((*pj), lst);
 				DESTROY_fn((*f), rf);
@@ -510,9 +520,14 @@ int array(struct json_parser *p, struct json **j, struct fn **f, struct json_new
 			(*f)->c_end = ']';
 			*j = (*pj)->j;
 			DEL_PJ(pj);
+			if(*pj)
+				json_err = (*pj)->json_err;
+			else
+				json_err = 0;
 			break;
 		case '[':
 			NEW_PJ(pj);
+			(*pj)->json_err = -2;
 			(*f)->offset = p->offset;
 			(*f)->err = '[';
 			(*j)->value.name.index = (*f)->index;
@@ -549,6 +564,7 @@ int array(struct json_parser *p, struct json **j, struct fn **f, struct json_new
 				return json_err = -2;
 			}
 			NEW_PJ(pj);
+			(*pj)->json_err = -3;
 			(*j)->value.name.index = (*f)->index;
 			(*f)->index++;
 			if(((*pj)->j = json_create(j, SUB, PAIR)) == NULL){
@@ -641,6 +657,7 @@ int pair(struct json_parser *p, struct json **j, struct fn **f, struct json_new_
 				return json_err = -3;
 			}
 			NEW_PJ(pj);
+			(*pj)->json_err = -3;
 			if(((*pj)->j = json_create(j, SUB, PAIR)) == NULL){
 				DESTROY_fn((*pj), lst);
 				DESTROY_fn((*f), rf);
@@ -671,6 +688,7 @@ int pair(struct json_parser *p, struct json **j, struct fn **f, struct json_new_
 				return json_err = -3;
 			}
 			NEW_PJ(pj);
+			(*pj)->json_err = -2;
 			if(((*pj)->j = json_create(j, SUB, ARRAY)) == NULL){
 				DESTROY_fn((*pj), lst);
 				DESTROY_fn((*f), rf);
@@ -722,6 +740,10 @@ int pair(struct json_parser *p, struct json **j, struct fn **f, struct json_new_
 			(*f)->value = 0;
 			*j = (*pj)->j;
 			DEL_PJ(pj);
+			if(*pj)
+				json_err = (*pj)->json_err;
+			else
+				json_err = 0;
 			(*f)->c_end = '}';
 			break;
 		case ']':
