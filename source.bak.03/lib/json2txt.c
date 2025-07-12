@@ -42,10 +42,11 @@ int json_errors(struct json_parser *p, struct json **j, struct fn **f){
 			break;
 		case -2:
 			if(*p->buf == 0){
-				if((*f)->c_end)
-					warnx("ARRAY: Unexpected end, expected 'number|bool|null|\"string\"' after offset %lu", p->offset);
-				else
+				/*if((*f)->c_end != ',')
 					warnx("ARRAY: Unexpected end, expected ']' after offset %lu", p->offset);
+				else*/
+					warnx("ARRAY: Unexpected %s, expected ']' after offset %lu",
+							((*f)->c_end == ',') ? "','" : "end", p->offset);
 				break;
 			}
 			if((*f)->c_end == ',')
@@ -55,7 +56,7 @@ int json_errors(struct json_parser *p, struct json **j, struct fn **f){
 						*p->buf, p->offset);
 			break;
 		case -3:
-			if(*p->buf == 0 && (*f)->err){
+			if(*p->buf == 0 && (*f)->err != ','){
 				warnx("OBJECT: Unexpected end, expected '}' after offset %lu", p->offset);
 				break;
 			}
