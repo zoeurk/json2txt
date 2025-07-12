@@ -532,10 +532,7 @@ int array(struct json_parser *p, struct json **j, struct fn **f, struct json_new
 			(*f)->c_end = ']';
 			*j = (*pj)->j;
 			DEL_PJ(pj);
-			if(*pj)
-				json_err = (*pj)->json_err;
-			else
-				json_err = 0;
+			json_err = (*pj) ? (*pj)->json_err : 0;
 			break;
 		case '[':
 			NEW_PJ(pj);
@@ -752,10 +749,7 @@ int pair(struct json_parser *p, struct json **j, struct fn **f, struct json_new_
 			(*f)->value = 0;
 			*j = (*pj)->j;
 			DEL_PJ(pj);
-			if(*pj)
-				json_err = (*pj)->json_err;
-			else
-				json_err = 0;
+			json_err = (*pj) ? (*pj)->json_err : 0;
 			(*f)->c_end = '}';
 			break;
 		case ']':
