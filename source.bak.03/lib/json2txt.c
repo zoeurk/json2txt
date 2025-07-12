@@ -929,16 +929,18 @@ void json_print(struct json *j, size_t space, char *sep, char c_sp, size_t count
 				}
 				break;
 			case PAIR:
-				printf("\"%s\"%s", pj->value.name.key, sep);
-				switch(pj->t_val^(pj->t_val&(SET|WARN|WARN_NBR|WARN_BOOL))){
-					case INT: 
-						printf("%s", pj->value.value);
-						break;
-					case STRING:
-						printf("\"%s\"", pj->value.value);
-						break;
-					default:
-						break;
+				if(pj->value.name.key){
+					printf("\"%s\"%s", pj->value.name.key, sep);
+					switch(pj->t_val^(pj->t_val&(SET|WARN|WARN_NBR|WARN_BOOL))){
+						case INT: 
+							printf("%s", pj->value.value);
+							break;
+						case STRING:
+							printf("\"%s\"", pj->value.value);
+							break;
+						default:
+							break;
+					}
 				}
 				break;
 		}
