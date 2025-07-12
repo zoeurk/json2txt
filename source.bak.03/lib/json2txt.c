@@ -42,7 +42,10 @@ int json_errors(struct json_parser *p, struct json **j, struct fn **f){
 			break;
 		case -2:
 			if(*p->buf == 0){
-				warnx("ARRAY: Unexpected end, expected ']' after offset %lu", p->offset);
+				if((*f)->c_end)
+					warnx("ARRAY: Unexpected end, expected 'number|bool|null|\"string\"' after offset %lu", p->offset);
+				else
+					warnx("ARRAY: Unexpected end, expected ']' after offset %lu", p->offset);
 				break;
 			}
 			if((*f)->c_end == ',')
@@ -52,19 +55,23 @@ int json_errors(struct json_parser *p, struct json **j, struct fn **f){
 						*p->buf, p->offset);
 			break;
 		case -3:
-			if(*p->buf == 0){
+			if(*p->buf == 0 && (*f)->err){
 				warnx("OBJECT: Unexpected end, expected '}' after offset %lu", p->offset);
 				break;
 			}
 			switch((*f)->err){
 				case ':':
-					if((*j)->value.name.key)
+					if((*j)->value.name.key && !(*j)->value.value)
 						warnx(
 					"OBECT: Unexpected '%c' at offset %lu, expected 'number|bool|null|\"string\"' for key \"%s\"",
 							*p->buf, p->offset, (*j)->value.name.key);
 					else
-						warnx("OBJECT: Unexpected ':' at offset %lu, expected '}' no \"key\" detected",
-							p->offset);
+						if(!(*j)->value.name.key)
+							warnx("OBJECT: Unexpected ':' at offset %lu, expected '}' no \"key\" detected",
+								p->offset);
+						else
+							warnx("OBJECT: Unexpected '%c' at offset %lu, expected '}' or ','",
+								*p->buf, p->offset);
 					break;
 				case ',':
 					if(!(*j)->value.name.key)
@@ -73,13 +80,18 @@ int json_errors(struct json_parser *p, struct json **j, struct fn **f){
 							p->offset
 						);
 					else
-						warnx(
+						if((*f)->c_end != ':')
+							warnx(
 					"OBJECT: Unexpected '%c' at offset %lu, expected ':number|bool|null|\"string\"' for key \"%s\"",
+							*p->buf, p->offset, (*j)->value.name.key);
+						else
+							warnx(
+					"OBJECT: Unexpected '%c' at offset %lu, expected 'number|bool|null|\"string\"' for key \"%s\"",
 							*p->buf, p->offset, (*j)->value.name.key);
 					break;
 				default:
 					if(*p->buf == '}'){
-						if((*j)->value.name.key){
+						if((*j)->value.name.key && !(*j)->value.value){
 							warnx(
 					"OBJECT: Unexpected '%c' at offset %lu, expected ':number|bool|null|\"string\"' for key \"%s\"",
 							*p->buf, p->offset, (*j)->value.name.key);
