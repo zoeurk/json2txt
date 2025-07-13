@@ -285,9 +285,6 @@ int main(int argc, char **argv){
 		return json_err;
 	}
 	/* show errors, return json_err */
-	/* Compute error for a missing '}' or ']'*/
-	/*if(!json_err)
-		json_err = -1*(f->prev != NULL || f->err == 0);*/
 	if((json_err || a.warning == 1) && json_errors(&p, &j, &f) < 0){
 		DESTROY;
 		return json_err;

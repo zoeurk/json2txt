@@ -27,26 +27,13 @@ int json_errors(struct json_parser *p, struct json **j, struct fn **f){
 			if(*p->buf && (*f)->err == 0 && (*f)->c_end == (*f)->err)
 				warnx("Invalid JSON data: at offset %lu unexpected '%c'.\n\tJSON data not starting by '{' or '['",
 					p->offset, *p->buf);
-			else{
-				/*if((*f)->err != '[' && (*f)->err != '{'){
-					if((*f)->prev->err == '{'){
-						warnx("OBJECT: Unexpected end, expected '}' after offset %lu", p->offset);
-						json_err = -3;
-					}else{
-						warnx("ARRAY: Unexpected end, expected ']' after offset %lu", p->offset);
-						json_err = -2;
-					}
-				}else*/
-					warnx("Unexpected '%c' at offset %lu.\n\tGarbage in JSON data.", *p->buf, p->offset);
-			}
+			else
+				warnx("Unexpected '%c' at offset %lu.\n\tGarbage in JSON data.", *p->buf, p->offset);
 			break;
 		case -2:
 			if(*p->buf == 0){
-				/*if((*f)->c_end != ',')
-					warnx("ARRAY: Unexpected end, expected ']' after offset %lu", p->offset);
-				else*/
-					warnx("ARRAY: Unexpected %s, expected ']' after offset %lu",
-							((*f)->c_end == ',') ? "','" : "end", p->offset);
+				warnx("ARRAY: Unexpected %s, expected ']' after offset %lu",
+					((*f)->c_end == ',') ? "','" : "end", p->offset);
 				break;
 			}
 			if((*f)->c_end == ',')
@@ -430,6 +417,8 @@ int starting(struct json_parser *p, struct json **j, struct fn **f, struct json_
 	static struct json *spj;
 	struct json_new_lst *lst;
 	struct fn *rf;
+	if(*j)
+		return json_err = -1;
 	switch(*p->buf){
 		case '{':
 			NEW_PJ(pj);

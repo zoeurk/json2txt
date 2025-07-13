@@ -80,6 +80,10 @@ json_new_lst, fn: for function:
 .EX
 \fBstruct json_new_lst\fR{
 	\fBstruct json\fR *j;		/*new sub json*/
+	\fBint\fB json_err;
+	#if __WORDSIZE != 32
+		int ___;
+	#endif
 	\fBstruct json_new_lst\fR *prev;
 	\fBstruct json_new_lst\fR *next;
 };
