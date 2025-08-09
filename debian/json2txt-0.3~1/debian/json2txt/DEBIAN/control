@@ -2,7 +2,7 @@ Package: json2txt
 Version: 0.3~1-1
 Architecture: amd64
 Maintainer: Thomas Marsaleix <zoeurk@gmail.com>
-Installed-Size: 28
+Installed-Size: 32
 Depends: libc6 (>= 2.4), libjson2txt (>= 0.3~1)
 Section: utils
 Priority: optional

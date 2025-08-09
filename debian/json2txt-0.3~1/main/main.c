@@ -6,7 +6,7 @@
 #include <strings.h>
 
 #include "../lib/json2txt.h"
-#define ALLOC_SIZE 56
+#define ALLOC_SIZE 16
 #define BUFSIZE 56
 #define CHARS " \t\n\r"
 
@@ -39,6 +39,8 @@ static struct argp_option options[] = {
 	{ "sort", 's', "asc|dsc|none", 0, "Sort keys, ", 1},
 	{ "test", 't', NULL, 0, "No test", 2},
 	{ "warn", 'w', "true|false|none", 0, "Exit on duplicate key", 2},
+	{ "empty", 'e', NULL, 0, "Print empty array in text format", 2},
+	{ "rfc", 'r', NULL, 0, "try to be RFC 8259 compliant", 2},
 	{ NULL, 0, NULL, 0, "Help", 3},
 	{ NULL, '?', NULL, 0, "Alias for --usage", 4},
 	{ NULL, 'h', NULL, 0, "Alias for --help", 4},
@@ -50,6 +52,8 @@ struct args{
 	int sort;
 	int test;
 	int warning;
+	int rfc;
+	int empty;
 	int fd;
 }args;
 static error_t parse_opt(int key, char *arg, struct argp_state *state){
@@ -101,6 +105,12 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state){
 					errx(255, "Invalid argument for '-w(/--warning)'");
 			}
 			break;
+		case 'e':
+			a->empty = 1;
+			break;
+		case 'r':
+			a->rfc = 1;
+			break;
 		case ARGP_KEY_ARG:
 			if((a->fd = open(arg, O_RDONLY)) < 0)
 				err(255, "open()");
@@ -111,75 +121,197 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state){
 	return 0;
 }
 static struct argp argp = { options, parse_opt, args_doc, doc, NULL, NULL, NULL };
-
+#define DESTROY \
+	if(j){ \
+		j = go_first(j); \
+		json_destroy(&j); \
+	} \
+	if(p.stock) \
+		free(p.stock); \
+	while(f){ \
+		pf = f->prev; \
+		free(f); \
+		f = pf; \
+	} \
+	while(pj_lst){ \
+		lst = pj_lst->prev; \
+		free(pj_lst); \
+		pj_lst = lst; \
+	}
+union test{
+	int (*test)(char *, ...);
+	int (*test_int)(char *, char *);
+	int (*test_bool)(char *);
+};
 int main(int argc, char **argv){
-	struct args a = { 1, 1, 0, 1, 1, STDIN_FILENO };
+	struct args a = { 1, 1, 0, 1, 1, 0, 0, STDIN_FILENO };
 	struct json_parser p = INIT_JSON(BUFSIZE, ALLOC_SIZE, CHARS, NULL);
-	struct json *j = NULL, *pj = NULL;
+	struct json *j = NULL;
 	struct fn *f, *pf;
 	struct json_new_lst *pj_lst = NULL,*lst;
+	union test t;
+	int ret, init = 0;
 	char buffer[BUFSIZE];
+	void *a1, *a2; 
 	argp_parse(&argp, argc, argv, 0, 0, &a);
+	if(!a.tojson && !a.totext && !a.test)
+		warnx("Parsing only will be do.");
 	p.buffer = buffer;
 	p.file = a.fd;
 	if((f = calloc(1, sizeof(struct fn))) == NULL){
 		err(255, "calloc()");
 	}
-	f->do_it = &starting;
-	if(!a.tojson && !a.totext && !a.test)
-		warnx("Parsing only is done");
+	f->fns.do_it.read_with_this = &starting;
 	while(read_fn(&p))
 		do{
-			readchar(&p.offset, &p.buf, p.chars);
-			f->do_it(&p , &j, &pj_lst, &f);
-		}while(*p.buf);
-	if(f->err == ',' || f->err == ':' || (f && (pf = f->prev))){
-		if(f->err == ',' || f->err == ':' || (pf->err == '[' && pf->c_end != ']') || (pf->err == '{' && pf->c_end != '}')){
-			if(f->c_end && (f->err == ',' || f->err == ':')){
-				if(f->c_end == ':')
-					warnx("At offset %lu: Unexpected character '%c'.",f->offset, f->err);
-				else
-					warnx("At offset %lu: Expected character '%c'.",f->offset, f->err);
+			if(f->fns.get.get_it){
+				/* DATA:
+					Start of number don't increment p.offset and p.buf the first time,
+					it was not analyzed
+				*/
+				DATA:
+				if((ret = (*f->fns.get.get_it)(&p, init)) == 0){
+					if(j->t_val&INT && (ret = t.test(p.stock, p.pstock))){
+						/* ERRORS
+							Same for all errors: at the end of loop
+							Don't increment again
+						*/
+						if(json_err != -6 && json_err != -7)
+							goto ERRORS;
+						else{
+							if(a.rfc || a.warning == 0)
+								goto ERRORS;
+							if(a.warning == 1)
+								json_errors(&p, &j, &f);
+							json_err = pj_lst->json_err;
+						}
+					}
+					init = 0;
+					(*f->fns.up.up_it)(&j, &p, f);
+					(*f->fns.structure.up_int)(&p, a1, a2);
+					f->fns.get.get_it = NULL;
+					if((j->t_val&WARN_NBR) && a.warning != -1){
+						warnx("Invalid number at offset: %lu",p.offset -1);
+						if(a.warning == 0){
+							DESTROY;
+							return -255;
+						}
+					}
+					if((j->t_val&INT)){
+						/* PARSE:
+							End of number, don't increment p.buf and p.offset.
+							Maybe an errors, we need to re-analyze it differently.
+						*/
+						goto PARSE;
+					}else
+						json_err = pj_lst->json_err;
+				}else
+					if(init && (j->t_val&INT))
+						switch(ret){
+							case 1:
+								t.test_bool = &json_bool_test;
+								f->fns.up.up_int = &up_from_bool;
+								break;
+							case 2:
+								t.test_int = &json_int_test;
+								break;
+						}
+
+				if(json_err > 0){
+					DESTROY;
+					return json_err;
+				}
+				if(ret < 0 && a.warning == 1){
+					switch(ret){
+						case -1:
+							warnx("Value number: start by '+',\n\tthis value is not valid (offset: %lu)",
+								p.offset);
+							break;
+						case -2:
+							warnx(
+						"Value number: start by '(+|-)?.num',\n\tValid value should be '-?0.num' (offset: %lu)"
+								,p.offset);
+							break;
+						/*case -3:
+							if(bool_err != 1)
+								warnx("Invalid boolean start at(/before) offset: %lu", p.offset);
+							break;*/
+					}
+				}
+				p.data_size++;
+				init = 0;
 			}else{
-				if(f->err == 0){
-					warnx("At offset %lu: Expected character '%c'.", f->offset, (f->prev->err == '{') ? ':' : ',');
+				PARSE:
+				readchar(&p.offset, &p.buf, p.chars);
+				if(!*p.buf)
+					continue;
+				if((ret = (*f->fns.do_it.do_it)(&p , &j, &f, &pj_lst))){
+					if(json_err > 0){
+						/* 
+							"[m|c|re]alloc() json_err = errno"
+						*/
+						DESTROY;
+						return json_err;
+					}
+					/* ERRORS:
+						Same for all errors: at the end of loop
+						Don't increment again.
+						(It's the same that recall this function)
+					*/
+					goto ERRORS;
 				}else{
-					pf = f->prev;
-					warnx("At offset %lu: '%c' not close",pf->offset, pf->err);
+					if(f->fns.get.get_it){
+						/*Next char is INT or STRING */
+						if(j->t_val&INT){
+							t.test_int = &json_int_test;
+							init = 1;
+							a1 = j;
+							a2 = f;
+							/* Don't increment p.buf and p.offset */
+							goto DATA;
+						}else{
+							/* '"' has just been read: start of string prepare for next char */
+							a1 = f;
+							a2 = j;
+						}
+					}
+					p.data_size++;
 				}
 			}
-			j = go_first(j);
-			json_destroy(&j);
-			while(f){
-				pf = f->prev;
-				free(f);
-				f = pf;
-			}
-			while(pj_lst){
-				lst = pj_lst->prev;
-				free(pj_lst);
-				pj_lst = lst;
-			}
-			exit(255);
-		}
-	}
-	free(f);
-	pj = j;
+		}while(*p.buf && *(++p.buf) && ++p.offset > 0);
+	ERRORS:
 	if(p.file != STDIN_FILENO && p.file != STDERR_FILENO)
 		close(p.file);
-	if(a.test){
-		if(duplicate_keys(pj, (a.warning > -1) ? a.warning : 1) == 1){
-			json_destroy(&pj);
-			exit(255);
-		}
+	if(p.r_len < 0){
+		DESTROY;
+		return json_err;
 	}
+	/* show errors, return json_err */
+	if((json_err || a.warning == 1) && json_errors(&p, &j, &f) < 0){
+		DESTROY;
+		return json_err;
+	}
+	free(f);
+	if(p.offset <= 0){
+		DESTROY;
+		errx(-6, "File too long !!!");
+	}
+	if(a.test)
+		if(json_test_sort(	&j,
+					(a.sort == 0) ? &json_test 
+						: (a.sort == -1) ? &json_sort_dsc
+						: &json_sort_asc, (a.rfc) ? 0
+						: a.warning)
+		){
+			json_errors(&p, &j, &f);
+			json_destroy(&j);
+			return json_err;
+		}
 	if(a.tojson)
-		json_print(pj, 1, 0, ' ', 3, a.warning);
-	if(a.tojson && a.totext)
-		json_reset_flags(pj);
+		json_print(j, 0, " : ", ' ', 3);
 	if(a.totext)
-		json2txt(pj, a.sort, NULL, a.warning);
-	json_destroy(&pj);
-	return 0;
+		(void)json2txt(j, NULL, a.empty);
+	json_destroy(&j);
+	return json_err;
 }
 

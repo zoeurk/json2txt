@@ -1,6 +1,6 @@
 .\Manpage pour json2txt header.
 .\Contact zoeurk.gmail.com
-.TH man 3 "29 may 2025" "0.3-1" "json2txt header man page"
+.TH man 3 "9 Aout 2025" "0.3-1" "json2txt header man page"
 .SH NAME
 json2txt.h
 .SH SYNOPSIS
@@ -12,23 +12,26 @@ json2txt library documentation
 .EE
 .TP
 .EX
-enum TYPE{
+\fBenum TYPE\fR{
 	ARRAY = 1,
-	PAIR = 2,
-	SET = 4
+	PAIR = 2
 };
 .EE
 .TP
 .EX
-enum VAL{
-	INT = 0,
+\fBenum VAL\fR{
+	VOID = 0,
 	STRING = 1,
-	VOID = 2
+	INT = 2,
+	WARN = 4,
+	WARN_NBR = 8,
+	WARN_BOOL = 16,
+	SET = 32
 };
 .EE
 .TP
 .EX
-enum KIND{
+\fBenum KIND\fR{
 	NEW,
 	SUB,
 	NEXT
@@ -45,11 +48,13 @@ struct json_parser
 	\fBchar\fR *buffer;			/*buffer used tor read the FD*/
 	\fBchar\fR *buf;			/*pointer used for read buffer*/
 	\fBsize\fR_t len;			/*len of stock*/
-	\fBssize\fR_t r_len;			/*len read by read_fn*/
-	\fBssize\fR_t offset;		/*position in the FD*/
+	\fBssize_t\fR r_len;			/*len read by read_fn*/
+	\fBssize_t\fR offset;		/*position in the FD*/
 	\fBchar\fR *pstock;			/*pointer to stock for write in stock*/
 	\fBchar\fR *stock;			/*the stockage buffer*/
-	\fBsize\fR_t stock_size;		/*size of stock*/
+	\fBsize_t\fR stock_size;		/*size of stock*/
+	\fBsize_t\fR depth;			/*Depth of JSON object*/
+	\fBsize_t\fB data_size;			/*Size of JSON data*/
 };
 .EE
 .BR
@@ -58,9 +63,9 @@ struct json
 .EX
 \fBstruct json\fR{
 	\fBenum TYPE\fR type;			/*Type of data*/
-	\fBenum VAL\fR t_val;			/*Type of Value of the data*/
-	struct{
-		union{
+	\fBint\fR t_val;				/*Type of Value of the data*/
+	\fBstruct\fR{
+		\fBunion\fR{
 			\fBsize_t\fR index;		/*index in array*/
 			\fBchar\fR *key;		/*key name of this entry*/
 		}name;
@@ -74,107 +79,230 @@ struct json
 .EE
 .BR
 .TP
-\fBjson_new_lst, fn: for function:\fR
+json_new_lst, fn: for function:
 .EX
-struct json_new_lst{
+\fBstruct json_new_lst\fR{
 	\fBstruct json\fR *j;		/*new sub json*/
+	\fBint\fR json_err;			/*stock the current possible error*/
+	#if __WORDSIZE != 32
+		int ___;
+	#endif
 	\fBstruct json_new_lst\fR *prev;
 	\fBstruct json_new_lst\fR *next;
 };
-struct fn{
+\fBstruct fn\fR{
 	\fBsize_t\fR index;
 	\fBssize_t\fR offset;
-	\fBint\fR c_end;
 	\fBint\fR key;
 	\fBint\fR value;
 	\fBint\fR c_end;
 	\fBint\fR err;
-	void *(*do_it)(\fBstruct json_parser\fR *, \fBstruct json\fR **, \fBstruct json_new_lst\fR **, \fBstruct fn\fR **);
+	\fBstruct\fR{
+		\fBunion\fR{
+			\fBint\fR (*get_it)(\fBstruct json_parser\fR *, ...);
+			\fBint\fR (*get_str)(\fBstruct json_parser\fR *);
+			\fBint\fR (*get_int)(\fBstruct json_parser\fR *, \fBint\fR);
+		}get;
+		\fBunion\fR{
+			\fBvoid\fR (*up_it)(\fBstruct json\fR **,...);
+			\fBvoid\fR (*up_from_array)(\fBstruct json\fR **, \fBstruct json_parser\fR *, \fBstruct fn\fR *);
+			\fBvoid\fR (*up_from_pair)(\fBstruct json\fR **, \fBstruct json_parser\fR *);
+			\fBvoid\fR (*up_int)(\fBstruct json\fR **, \fBstruct json_parser\fR *, \fBstruct fn\fR *);
+		}up;
+		\fBunion\fR{
+			\fBvoid\fR (*up_string)(\fBstruct json_parser\fR *, ...);
+			\fBvoid\fR (*up_int)(\fBstruct json_parser\fR *, ...);
+			\fBvoid\fR (*up_from_string)(\fBstruct json_parser\fR *, \fBstruct fn\fR *);
+			\fBvoid\fR (*up_int_from_array)(\fBstruct json_parser\fR *, \fBstruct json\fR *, \fBstruct fn\fR *);
+			\fBvoid\fR (*up_int_from_pair)(\fBstruct json_parser\fR *, \fBstruct json\fR *);
+		}structure;
+		union{
+			\fBint\fR (*do_it)(\fBstruct json_parser\fR *, ...);
+			\fBint\fR (*read_with_this)(\fBstruct json_parser\fR *, \fBstruct json\fR **,
+									\fBstruct fn\fR **, \fBstruct json_new_lst\fR **);
+			\fBint\fR (*do_errors)(\fBstruct json_parser\fR *, \fBstruct json\fR **, \fBstruct fn\fR **);
+		}do_it;
+		union{
+			\fBint\fR (*do_it)(\fBstruct json_parser\fR *, ...);
+			\fBint\fR (*read_with_this)(\fBstruct json_parser\fR *, \fBstruct json\fR **,
+									\fBstruct fn\fR **, \fBstruct json_new_lst\fR **);
+			\fBint\fR (*do_errors)(\fBstruct json_parser\fR *, \fBstruct json\fR **, \fBstruct fn\fR **);
+		}do_it;
+	}fns;
 	\fBstruct fn\fR *next;
 	\fBstruct fn\fR *prev;
 };
-.EX
+.EE
+.BR
+.TP
+\fBextern int json_err\fR;
+0 < json_err < 128	libc errors
+    json_err < 0	json library errors 
 .BR
 .TP
 \fBssize_t\fR read_fn(\fBstruct json_parser\fR *p);
 Read the json FD;
+.EX
+return: 	-1 => on error
+		0  => Success
+.EE
 .BR
 .TP
 \fBvoid\fR readchar(\fBssize_t\fR *offset, \fBchar\fR **str, const \fBchar\fR *not);
 Read the json buffer and squize chars, update the offset
 .BR
 .TP
-\fBvoid\fR allocstr(\fBchar\fR **buffer, \fBsize_t\fR lentoadd);
+\fBvoid *\fR allocstr(\fBchar\fR **buffer, \fBsize_t\fR lentoadd);
 Alloc/realloc buffer with lentoadd
+.EX
+return: 	NULL	=> libc error
+		*buffer => Success
+.EE
 .BR
 .TP
 \fBvoid\fR *json_create(\fBstruct json\fR **j, \fBenum KIND\fR kind, \fBenum TYPE\fR type);
 Create a json structure by kind, and set type. *j is set to the new position and return the entering *json.
-.BR
-.TP
-\fBvoid\fR *getint(\fBstruct json_parser\fR *p);
-Read an integer(/boolean) from the json buffer and return it.
-.BR
-.TP
-\fBvoid\fR *getstr(\fBstruct json_parser\fR *p);
-Read an string from the json buffer and return it.
-.BR
-.TP
-\fBvoid\fR *starting(\fBstruct json_parser\fR *p, \fBstruct json\fR **j, \fBstruct json_new_lst\fR **nj, \fBstruct fn\fR **f);
-Function for start parsing.
-.BR
-.TP
-\fBvoid\fR *array(\fBstruct json_parser\fR *p, \fBstruct json_new_lst **nj\fR,\fB struct json\fR **j);
-Read an array detected in json buffer.
-.BR
-.TP
-\fBvoid\fR *pair(\fBstruct json_parser\fR *p, \fBstruct json_new_lst **nj\fR, \fBstruct json\fR **j);
-Read an pair(keys) detected in json buffer.
-.BR
-.TP
-\fBssize_t\fR json_sort(\fBstruct json\fR *j, \fBchar\fR ***order, \fBint\fR sort, \fBint\fR warn_only);
-Sort the current *j, and sort it in an array 'order'. Return the number elements in the array.
 .EX
-sort is how:
-1	=> ascendant.
--1	=> descendent
-0	=> none (is used for check duplicate keys)
+return:	NULL		=> libc error
+		struct json *	=> Success
+.EE
+.BR
+.TP
+\fBint\fR json_bool_test(\fBchar\fR *stock);
+Test validity of boolean.
+.EX
+return:	0  => Success
+		-6 => Invalid Boolean
+.EE
+.BR
+.TP
+\fBint\fR get_int(\fBstruct json_parser\fR *p, \fBint\fR init);
+Read an number(/boolean) from the json buffer and return it.
+.EX
+return:	2 => Number need next character
+		1 => Boolean need next chararcter
+		0 => End of number/boolean (*p->stock != 0 invalid boolean)
+		-1 => Number error fatal for RFC
+		-2 => Invalid Number
+.EE
+.BR
+.TP
+\fBint\fR json_int_test(\fBchar\fR *stock, \fBchar\fR *pstock);
+After \fIget_int()\fR, test the number.
+.EX
+return:	0  => Success
+		-5 => Invalid number
+		-7 => Invalid number fatal for RFC
+.EE
+.BR
+.TP
+\fBint\fR get_str(\fBstruct json_parser\fR *p);
+Read an string from the json buffer and return it.
+.EX
+return:	0	=> end of string
+		else	=> string length '\\' not computed inside
+.EE
+.BR
+.TP
+After the en of \fIget_int()\fR or \fIget_str()\fR
+.EX
+The first function to use is one of them:
+\fBvoid\fR up_str_from_array(\fBstruct json\fR **j, \fBstruct json_parser\fR *p, \fBstruct fn\fR *f);
+\fBvoid\fR up_str_from_pair(\fBstruct json\fR **j, \fBstruct json_parser\fR *p);
+\fBvoid\fR up_from_int(\fBstruct json\fR **j, \fBstruct json_parser\fR *p, \fBstruct fn\fR *f);
+The next function to use is one of them:
+\fBvoid\fR up_structure_from_int_pair(\fBstruct json_parser\fR *p, \fBstruct json\fR *j);
+\fBvoid\fR up_structure_from_int_array(\fBstruct json_parser\fR *p, \fBstruct json\fR *j, \fBstruct fn\fR *f);
+\fBvoid\fR up_structure_from_str(\fBstruct json_parser\fR *p, \fBstruct fn\fR *f);
+.EE
+.BR
+.TP
+\fBint\fR starting(\fBstruct json_parser\fR *p, \fBstruct json\fR **j, \fBstruct fn\fR **f, \fBstruct json_new_lst\fR **nj);
+Function for start parsing.
+.EX
+return:	-1 => Invalid data in JSON stream
+		0  => Success
+.EE
+.BR
+.TP
+\fBint\fR array(\fBstruct json_parser\fR *p, \fBstruct json\fR **j, \fBstruct fn\fR **f, \fBstruct json_new_lst\fR **nj);
+Read an array detected in json buffer.
+.EX
+return	-2 => Array error
+		0 => Success
+.EE
+.BR
+.TP
+\fBint\fR pair(\fBstruct json_parser\fR *p, \fBstruct json\fR **j, \fBstruct fn\fR **f, \fBstruct json_new_lst\fR **nj);
+Read an pair(keys) detected in json buffer.
+.EX
+return	-3 => JSON object error
+		0 => Success
+.EE
+.BR
+.TP
+\fBint\fR json_errors(\fBstruct json_parser\fR *p, \fBstruct json\fR **j, \fBstruct fn\fR **f);
+Print to stderr the json error string
+.EX
+return json_err.
+.EE
+.BR
+.TP
+\fBint\fR json_sort_asc(\fBstruct json\fR **j, \fBint\fR warn_only);
+Sort a json pair list in ascendent.
+return 0 or 1 if duplicate key found.
+.BR
+.TP
+\fBint\fR json_sort_dsc(\fBstruct json\fR **j, \fBint\fR warn_only);
+Sort a json pair list in descendent.
+return 0 or 1 if duplicate key found.
+.BR
+.TP
+\fBint\fR json_test(\fBstruct json\fR **j, \fBint\fR warn_only);
+Test for duplicate keys.
+.EX
+Do in \fIjson_sort_*()\fR
+return 0 or 1 if a duplicate key is found.
+.EE
+.BR
+.TP
+\fBssize_t\fR json_test_sort(\fBstruct json\fR **j, \fBint\fR (*sorting)(struct json **, int), \fBint\fR warn_only);
+Sort the current *j.
+.EX
+\fB(*sorting)()\fR can be one of them:
+\fBint\fR json_sort_asc(\fBstruct json\fR **j, \fBint\fR warn_only);
+\fBint\fR json_sort_dsc(\fBstruct json\fR **j, \fBint\fR warn_only);
+\fBint\fR json_test(\fBstruct json\fR **j, \fBint\fR warn_only);
 .EE
 .EX
 warn_only:
 1	=> just emit warning.
-0	=> return -1 on duplicate entry
+0	=> return -1 on duplicate key or malformed number
 -1	=> no warning, never return -1
 .EE
 .BR
 .TP
-\fBint\fR duplicate_keys(\fBstruct json\fR *j, \fBint\fR warning_only);
-Search for duplicate keys and bad numbers. Use json_sort().
-.BR
-.TP
-\fBvoid\fR json_print(\fBstruct json\fR *j, \fBint\fR sort, \fBsize_t\fR space, \fBchar\fR c_sp, \fBsize_t\fR count, \fBint\fR warn_only);
-Print FD in json format. Use json_sort().
+\fBvoid\fR json_print(\fBstruct json\fR *j, \fBsize_t\fR space, \fBchar\fR *sep, \fBchar\fR c_sp, \fBsize_t\fR count);
+Print FD in json format.
 .EX
 \fIspace\fR is the number of \fIc_sp\fR used for space.
 if \fIc_sp\fR == 0 no space are appliqued
+char *sep = ":" : at minimal and good.
 .EE
 .BR
 .TP
-\fBvoid\fR json2txt(\fBstruct json\fR *j, \fBint\fR sort, \fBchar\fR *string, \fBint\fR warn_only);
-Print FD in the form text. Use json_sort().
+\fBint\fR json2txt(\fBstruct json\fR *j, \fBchar\fR *string);
+Print FD in the form text.
 .BR
 .TP
-\fBvoid\fR json_reset_flags(\fBstruct json\fR *j);
-Reset type (with SET) in all the json structure.
-.BR
-.TP
-\fBvoid\fR json_destroy(\fBstruct json\fR **j);
+\fBint\fR json_destroy(\fBstruct json\fR **j);
 Destroy the json structure
 .BR
 .SH BUGS
 .EX
-Doesn't check limits
-	NO WARANTY WARNING
+	\fBWARNING\fR: NO WARANTY
+	Anglais ~= approximatif, à voir (Mdr)
+	limites variables selon les architectures.
 .EE
 .SH AUTHORS
 ZoeurK (zoeurk@gmail.com)

@@ -1,0 +1,13 @@
+Package: json2txt-dbgsym
+Package-Type: ddeb
+Source: json2txt
+Version: 0.3~1-1
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: Thomas Marsaleix <zoeurk@gmail.com>
+Installed-Size: 23
+Depends: json2txt (= 0.3~1-1)
+Section: debug
+Priority: optional
+Description: debug symbols for json2txt
+Build-Ids: 4d76ad351b46af9dea173d38625ff458c099963f

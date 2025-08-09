@@ -1,6 +1,6 @@
 .\Manpage pour json2txt header.
 .\Contact zoeurk.gmail.com
-.TH man 3 "29 may 2025" "0.3-1" "json2txt header man page"
+.TH man 3 "9 Aout 2025" "0.3-1" "json2txt header man page"
 .SH NAME
 json2txt.h
 .SH SYNOPSIS
@@ -25,7 +25,8 @@ json2txt library documentation
 	INT = 2,
 	WARN = 4,
 	WARN_NBR = 8,
-	SET = 16
+	WARN_BOOL = 16,
+	SET = 32
 };
 .EE
 .TP
@@ -47,11 +48,13 @@ struct json_parser
 	\fBchar\fR *buffer;			/*buffer used tor read the FD*/
 	\fBchar\fR *buf;			/*pointer used for read buffer*/
 	\fBsize\fR_t len;			/*len of stock*/
-	\fBssize\fR_t r_len;			/*len read by read_fn*/
-	\fBssize\fR_t offset;		/*position in the FD*/
+	\fBssize_t\fR r_len;			/*len read by read_fn*/
+	\fBssize_t\fR offset;		/*position in the FD*/
 	\fBchar\fR *pstock;			/*pointer to stock for write in stock*/
 	\fBchar\fR *stock;			/*the stockage buffer*/
-	\fBsize\fR_t stock_size;		/*size of stock*/
+	\fBsize_t\fR stock_size;		/*size of stock*/
+	\fBsize_t\fR depth;			/*Depth of JSON object*/
+	\fBsize_t\fB data_size;			/*Size of JSON data*/
 };
 .EE
 .BR
@@ -80,7 +83,7 @@ json_new_lst, fn: for function:
 .EX
 \fBstruct json_new_lst\fR{
 	\fBstruct json\fR *j;		/*new sub json*/
-	\fBint\fB json_err;
+	\fBint\fR json_err;			/*stock the current possible error*/
 	#if __WORDSIZE != 32
 		int ___;
 	#endif
@@ -129,44 +132,76 @@ json_new_lst, fn: for function:
 	\fBstruct fn\fR *next;
 	\fBstruct fn\fR *prev;
 };
+.EE
 .BR
 .TP
-\fBIextern int json_err\fR;
-0 < json_err < 128	C errors (malloc, calloc, realloc...)
+\fBextern int json_err\fR;
+0 < json_err < 128	libc errors
     json_err < 0	json library errors 
-	-1 : Unexpected chararcter until parsing
-	-2 : malformed number/unexpected EOF(string)
-	-3 : duplicate key
-.TP
 .BR
+.TP
 \fBssize_t\fR read_fn(\fBstruct json_parser\fR *p);
 Read the json FD;
+.EX
+return: 	-1 => on error
+		0  => Success
+.EE
 .BR
 .TP
 \fBvoid\fR readchar(\fBssize_t\fR *offset, \fBchar\fR **str, const \fBchar\fR *not);
 Read the json buffer and squize chars, update the offset
 .BR
 .TP
-\fBvoid\fR allocstr(\fBchar\fR **buffer, \fBsize_t\fR lentoadd);
+\fBvoid *\fR allocstr(\fBchar\fR **buffer, \fBsize_t\fR lentoadd);
 Alloc/realloc buffer with lentoadd
+.EX
+return: 	NULL	=> libc error
+		*buffer => Success
+.EE
 .BR
 .TP
 \fBvoid\fR *json_create(\fBstruct json\fR **j, \fBenum KIND\fR kind, \fBenum TYPE\fR type);
 Create a json structure by kind, and set type. *j is set to the new position and return the entering *json.
+.EX
+return:	NULL		=> libc error
+		struct json *	=> Success
+.EE
+.BR
+.TP
+\fBint\fR json_bool_test(\fBchar\fR *stock);
+Test validity of boolean.
+.EX
+return:	0  => Success
+		-6 => Invalid Boolean
+.EE
 .BR
 .TP
 \fBint\fR get_int(\fBstruct json_parser\fR *p, \fBint\fR init);
-Read an integer(/boolean) from the json buffer and return it.
-return
+Read an number(/boolean) from the json buffer and return it.
+.EX
+return:	2 => Number need next character
+		1 => Boolean need next chararcter
+		0 => End of number/boolean (*p->stock != 0 invalid boolean)
+		-1 => Number error fatal for RFC
+		-2 => Invalid Number
+.EE
 .BR
 .TP
 \fBint\fR json_int_test(\fBchar\fR *stock, \fBchar\fR *pstock);
 After \fIget_int()\fR, test the number.
+.EX
+return:	0  => Success
+		-5 => Invalid number
+		-7 => Invalid number fatal for RFC
+.EE
 .BR
 .TP
 \fBint\fR get_str(\fBstruct json_parser\fR *p);
 Read an string from the json buffer and return it.
-return
+.EX
+return:	0	=> end of string
+		else	=> string length '\\' not computed inside
+.EE
 .BR
 .TP
 After the en of \fIget_int()\fR or \fIget_str()\fR
@@ -184,23 +219,34 @@ The next function to use is one of them:
 .TP
 \fBint\fR starting(\fBstruct json_parser\fR *p, \fBstruct json\fR **j, \fBstruct fn\fR **f, \fBstruct json_new_lst\fR **nj);
 Function for start parsing.
-return
+.EX
+return:	-1 => Invalid data in JSON stream
+		0  => Success
+.EE
 .BR
 .TP
 \fBint\fR array(\fBstruct json_parser\fR *p, \fBstruct json\fR **j, \fBstruct fn\fR **f, \fBstruct json_new_lst\fR **nj);
 Read an array detected in json buffer.
-return
+.EX
+return	-2 => Array error
+		0 => Success
+.EE
 .BR
 .TP
 \fBint\fR pair(\fBstruct json_parser\fR *p, \fBstruct json\fR **j, \fBstruct fn\fR **f, \fBstruct json_new_lst\fR **nj);
 Read an pair(keys) detected in json buffer.
-return
+.EX
+return	-3 => JSON object error
+		0 => Success
+.EE
 .BR
 .TP
 \fBint\fR json_errors(\fBstruct json_parser\fR *p, \fBstruct json\fR **j, \fBstruct fn\fR **f);
+Print to stderr the json error string
+.EX
+return json_err.
+.EE
 .BR
-Send to output why parsing failed.
-return
 .TP
 \fBint\fR json_sort_asc(\fBstruct json\fR **j, \fBint\fR warn_only);
 Sort a json pair list in ascendent.
@@ -255,7 +301,8 @@ Destroy the json structure
 .SH BUGS
 .EX
 	\fBWARNING\fR: NO WARANTY
-	Page man non terminée (ex: valeurs retournés)...
+	Anglais ~= approximatif, à voir (Mdr)
+	limites variables selon les architectures.
 .EE
 .SH AUTHORS
 ZoeurK (zoeurk@gmail.com)

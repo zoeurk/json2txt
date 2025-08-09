@@ -2,25 +2,19 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([json2txt], [0.3], [zoeurk@gmail.com])
+AC_INIT([json2txt], [0.3~1], [zoeurk@gmail.com])
 AC_CONFIG_SRCDIR([lib/json2txt.h])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
-AC_PROG_CXX
-AC_PROG_AWK
 AC_PROG_CC
-AC_PROG_CPP
-AC_PROG_INSTALL
-AC_PROG_LN_S
-AC_PROG_MAKE_SET
-AC_PROG_RANLIB
 
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-ljson2txt':
-#AC_CHECK_LIB([json2txt], [main])
+AC_CHECK_LIB([json2txt], [main])
 
 # Checks for header files.
+AC_CHECK_HEADERS([fcntl.h stdlib.h string.h strings.h unistd.h])
 AC_CHECK_HEADERS([fcntl.h stdlib.h string.h strings.h unistd.h])
 LT_INIT
 AM_INIT_AUTOMAKE([foreign])
@@ -32,7 +26,6 @@ AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
 
 # Checks for library functions.
-AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset strcasecmp])
 

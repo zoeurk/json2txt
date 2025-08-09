@@ -1,0 +1,12 @@
+Package: libjson2txt-dev
+Source: json2txt
+Version: 0.3~1-1
+Architecture: amd64
+Maintainer: Thomas Marsaleix <zoeurk@gmail.com>
+Installed-Size: 18
+Depends: libjson2txt (= 0.3~1-1)
+Section: libdevel
+Priority: optional
+Multi-Arch: same
+Homepage: http:/none
+Description: Headers of json2txt

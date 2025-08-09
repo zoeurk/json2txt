@@ -208,25 +208,35 @@ void *getint(struct json_parser *p){
 }
 void *getstr(struct json_parser *p){
 	ssize_t start = p->offset -1;
+	int jump = 0;
 	p->len = 0;
-	do
-		for(;*p->buf;){
+	do{
+		if(jump){
+			STOCK_BUF(p);
+			p->buf++;
+			p->len++;
+			p->offset++;
+			jump = 0;
+		}
+		for(;*p->buf;p->buf++, p->offset++, p->len++){
 			switch(*p->buf){
 				case '\\':
 					STOCK_BUF(p);
 					p->buf++;
 					p->offset++;
 					p->len++;
+					jump = 1;
 					continue;
 				case '"':
 					return p;
 			}
 			STOCK_BUF(p);
-			p->buf++;
+			/*p->buf++;
 			p->len++;
-			p->offset++;
+			p->offset++;*/
+			jump = 0;
 		}
-	while(read_fn(p));
+	}while(read_fn(p));
 	warnx("Unexpected EOF\n\t'\"' at offset %lu.", start);
 	return NULL;
 }

@@ -39,6 +39,7 @@ static struct argp_option options[] = {
 	{ "sort", 's', "asc|dsc|none", 0, "Sort keys, ", 1},
 	{ "test", 't', NULL, 0, "No test", 2},
 	{ "warn", 'w', "true|false|none", 0, "Exit on duplicate key", 2},
+	{ "empty", 'e', NULL, 0, "Print empty array in text format", 2},
 	{ "rfc", 'r', NULL, 0, "try to be RFC 8259 compliant", 2},
 	{ NULL, 0, NULL, 0, "Help", 3},
 	{ NULL, '?', NULL, 0, "Alias for --usage", 4},
@@ -50,8 +51,9 @@ struct args{
 	int totext;
 	int sort;
 	int test;
-	short int warning;
-	short int rfc;
+	int warning;
+	int rfc;
+	int empty;
 	int fd;
 }args;
 static error_t parse_opt(int key, char *arg, struct argp_state *state){
@@ -103,6 +105,9 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state){
 					errx(255, "Invalid argument for '-w(/--warning)'");
 			}
 			break;
+		case 'e':
+			a->empty = 1;
+			break;
 		case 'r':
 			a->rfc = 1;
 			break;
@@ -133,19 +138,13 @@ static struct argp argp = { options, parse_opt, args_doc, doc, NULL, NULL, NULL 
 		free(pj_lst); \
 		pj_lst = lst; \
 	}
-/*
-goto =>
-	DATA (number)
-	PARSE (json chars)
-	ERRORS (if a fatal error)
-*/
 union test{
 	int (*test)(char *, ...);
 	int (*test_int)(char *, char *);
 	int (*test_bool)(char *);
 };
 int main(int argc, char **argv){
-	struct args a = { 1, 1, 0, 1, 1, 0, STDIN_FILENO };
+	struct args a = { 1, 1, 0, 1, 1, 0, 0, STDIN_FILENO };
 	struct json_parser p = INIT_JSON(BUFSIZE, ALLOC_SIZE, CHARS, NULL);
 	struct json *j = NULL;
 	struct fn *f, *pf;
@@ -239,6 +238,7 @@ int main(int argc, char **argv){
 							break;*/
 					}
 				}
+				p.data_size++;
 				init = 0;
 			}else{
 				PARSE:
@@ -259,7 +259,7 @@ int main(int argc, char **argv){
 						(It's the same that recall this function)
 					*/
 					goto ERRORS;
-				}else
+				}else{
 					if(f->fns.get.get_it){
 						/*Next char is INT or STRING */
 						if(j->t_val&INT){
@@ -275,6 +275,8 @@ int main(int argc, char **argv){
 							a2 = j;
 						}
 					}
+					p.data_size++;
+				}
 			}
 		}while(*p.buf && *(++p.buf) && ++p.offset > 0);
 	ERRORS:
@@ -308,7 +310,7 @@ int main(int argc, char **argv){
 	if(a.tojson)
 		json_print(j, 0, " : ", ' ', 3);
 	if(a.totext)
-		(void)json2txt(j, NULL);
+		(void)json2txt(j, NULL, a.empty);
 	json_destroy(&j);
 	return json_err;
 }

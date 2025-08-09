@@ -1,47 +1,189 @@
 #include "json2txt.h"
 /*functions*/
+int json_err = 0;
 ssize_t read_fn(struct json_parser *p){
-	if((p->r_len = read(p->file, p->buffer, p->buflen)) < 0)
-		err(255, "read()");
+	if((p->r_len = read(p->file, p->buffer, p->buflen)) < 0){
+		warn("read()");
+		json_err = errno;
+		return 0;
+	}
 	p->buffer[p->r_len] = 0;
 	p->buf = p->buffer;
 	return p->r_len;
 }
 void readchar(ssize_t *offset, char **str, const char *not){
-	const char *n;
+	static const char *n;
 	for(;**str;(*str)++,(*offset)++)
 		for(n = not;*n != **str;n++)
 			if(*n == 0)
 				return;
 }
-void allocstr(char **buffer, size_t lentoadd){
-	if(!*buffer){
-		if((*buffer = calloc(lentoadd, sizeof(char))) == NULL)
-			err(255, "calloc");
-	}else{
-		if((*buffer = realloc(*buffer, lentoadd * sizeof(char))) == NULL)
-			err(255, "realloc()");
+int json_errors(struct json_parser *p, struct json **j, struct fn **f){
+	switch(json_err){
+		case 0:
+			warnx("Parse is success");
+			break;
+		case -1:
+			if(*p->buf && (*f)->err == 0 && (*f)->c_end == (*f)->err)
+				warnx("Invalid JSON data: at offset %lu unexpected '%c'.\n\tJSON data not starting by '{' or '['",
+					p->offset, *p->buf);
+			else
+				warnx("Unexpected '%c' at offset %lu.\n\tGarbage in JSON data.", *p->buf, p->offset);
+			break;
+		case -2:
+			if(*p->buf == 0){
+				warnx("ARRAY: Unexpected %s, expected ']' after offset %lu",
+					((*f)->c_end == ',') ? "','" : "end", p->offset);
+				break;
+			}
+			if((*f)->c_end == ',')
+				warnx("ARRAY: Unexpected '%c' at offset %lu, expected 'number|bool|null|\"string\"'", *p->buf, p->offset);
+			else
+				warnx("ARRAY: Unexpected '%c' at offset %lu, expected ']' or ',number|bool|null|\"string\"(,...)]'",
+						*p->buf, p->offset);
+			break;
+		case -3:
+			if(*p->buf == 0 && (*f)->err != ','){
+				warnx("OBJECT: Unexpected end, expected '}' after offset %lu", p->offset);
+				break;
+			}
+			switch((*f)->err){
+				case ':':
+					if((*j)->value.name.key && !(*j)->value.value)
+						warnx(
+					"OBECT: Unexpected '%c' at offset %lu, expected 'number|bool|null|\"string\"' for key \"%s\"",
+							*p->buf, p->offset, (*j)->value.name.key);
+					else
+						if(!(*j)->value.name.key)
+							warnx("OBJECT: Unexpected ':' at offset %lu, expected '}' no \"key\" detected",
+								p->offset);
+						else
+							warnx("OBJECT: Unexpected '%c' at offset %lu, expected '}' or ','",
+								*p->buf, p->offset);
+					break;
+				case ',':
+					if(!(*j)->value.name.key)
+						warnx(
+					"OBJECT: Unexpected ',' at offset %lu, expected '}' or '\"key\":number|bool|null|\"string\"(,...)}'",
+							p->offset
+						);
+					else
+						if((*f)->c_end != ':')
+							warnx(
+					"OBJECT: Unexpected '%c' at offset %lu, expected ':number|bool|null|\"string\"' for key \"%s\"",
+							*p->buf, p->offset, (*j)->value.name.key);
+						else
+							warnx(
+					"OBJECT: Unexpected '%c' at offset %lu, expected 'number|bool|null|\"string\"' for key \"%s\"",
+							*p->buf, p->offset, (*j)->value.name.key);
+					break;
+				default:
+					if(*p->buf == '}'){
+						if((*j)->value.name.key && !(*j)->value.value){
+							warnx(
+					"OBJECT: Unexpected '%c' at offset %lu, expected ':number|bool|null|\"string\"' for key \"%s\"",
+							*p->buf, p->offset, (*j)->value.name.key);
+						}
+					}else{
+						warnx(
+					"OBJECT: Unexpected '%c' at offset %lu, expected '}' or ',\"key\":number|bool|null|\"string\"(,...)}'",
+						*p->buf, p->offset);
+					}
+					break;
+			}
+			break;
+		case -4:
+			warnx("Unexpected EOF, string start at offset %lu", (*f)->offset);
+			break;
+		case -5:
+			warnx("Unexpected '%c', invalid number or expected string at offset %lu", *p->buf, p->offset);
+			break;
+		case -6:
+			/*if(p->stock)*/
+			warnx("Invalid boolean or expected string at offset %lu : %s (start at %lu)",
+				p->offset -1, p->stock, p->offset - strlen(p->stock));
+			/*else
+				warnx("Unexpected '%c', or expected \".*%c.*\" at offset %lu", *p->buf, *p->buf, p->offset);*/
+			break;
+		case -7:
+			if(p->stock)
+				warnx("Invalid number|bool or expected string at offset %lu : %s (start at %lu)",
+					p->offset, p->stock, p->offset - strlen(p->stock) +1);
+			else{
+				if(((*j)->t_val&WARN_NBR))
+					warnx("Malformed number: %s", (*j)->value.value);
+				else
+					warnx("Duplicated key: \"%s\"", (*j)->value.name.key);
+			}
+			break;
+		default:
+			warnx("System error");
+			break;
 	}
+	return json_err;
+}
+int json_bool_test(char *stock){
+	static char *b_wanted[3] = { "true" , "false", "null" };
+	if(!strcmp(stock, b_wanted[0]) || !strcmp(stock, b_wanted[1]) || !strcmp(stock, b_wanted[2]))
+		return 0;
+	return json_err = -6;
+}
+int json_int_test(char *stock, char *pstock){
+	if(	(!stock || *pstock != 0)
+		|| (*(stock + (*stock == '+' || *stock == '-')) == '\0')
+		|| (
+			*(pstock-1) == *(stock + (*stock == '+' || *stock == '-'))
+			&& ((*(pstock -1) == '.') )
+		)
+	)	return json_err = -5;
+	if(*stock == '+' || *(stock + (*stock == '-')) == '.')
+		return json_err = -7;
+	return 0;
+}
+void *allocstr(char **buffer, size_t lentoadd){
+	if(!*buffer){
+		if((*buffer = calloc(lentoadd, sizeof(char))) == NULL){
+			json_err = errno;
+			warn("calloc");
+			return NULL;
+		}
+	}else{
+		if((*buffer = realloc(*buffer, lentoadd * sizeof(char))) == NULL){
+			json_err = errno;
+			warn("realloc()");
+			return NULL;
+		}
+	}
+	return *buffer;
 }
 void *json_create(struct json **j, enum KIND kind, enum TYPE type){
-	struct json *rj;
+	static struct json *rj;
 	switch(kind){
 		case NEW:
-			if(((*j) = calloc(1, sizeof(struct json))) == NULL)
-				err(255, "calloc()");
+			if(((*j) = calloc(1, sizeof(struct json))) == NULL){
+				json_err = errno;
+				warn("calloc()");
+				return NULL;
+			}
 			rj = *j;
 			break;
 		case SUB:
 			rj = *j;
-			if(((*j)->sub = calloc(1, sizeof(struct json))) == NULL)
-				err(255, "calloc()");
+			if(((*j)->sub = calloc(1, sizeof(struct json))) == NULL){
+				json_err = errno;
+				warn("calloc()");
+				return NULL;
+			}
 			(*j)->sub->up = *j;
 			(*j) = (*j)->sub;
 			break;
 		case NEXT:
 			rj = *j;
-			if(((*j)->next = calloc(1, sizeof(struct json))) == NULL)
-				err(255, "calloc()");
+			if(((*j)->next = calloc(1, sizeof(struct json))) == NULL){
+				json_err = errno;
+				warn("calloc()");
+				return NULL;
+			}
 			(*j)->next->prev = *j;
 			(*j) = (*j)->next;
 			break;
@@ -62,186 +204,204 @@ struct json *go_first(struct json *j){
 }
 #define STOCK_BUF(p) \
 	if(p->len == 0){ \
-		allocstr(&p->stock, p->stock_buf); \
+		if(allocstr(&p->stock, p->stock_buf) == NULL) \
+			return -3; \
 		p->stock_size = p->stock_buf; \
 		memset(p->stock, 0, p->stock_buf); \
 		p->pstock = p->stock; \
 	}else{ \
 		if(p->len +1 == p->stock_size){ \
-			allocstr(&p->stock, p->stock_buf + p->stock_size); \
+			if(allocstr(&p->stock, p->stock_buf + p->stock_size) == NULL) \
+				return -3; \
 			p->stock_size += p->stock_buf; \
 			memset(p->stock + p->len, 0, p->stock_buf+1); \
 			p->pstock = p->stock + p->len; \
 		} \
 	} \
 	*p->pstock = *p->buf; \
-	p->pstock++;
-void *getint(struct json_parser *p){
-	int dot  = 0, start = 0, zero = 0;
-	char *fboolean[2] = { "false", "FALSE" },
-		*tboolean[2] = { "true", "TRUE" },
-		*tnull[2] = { "null", "NULL" },
-		*pbool = NULL, *Pbool = NULL, last;
-	p->len = 0;
-	if(*p->buf == 'n' || *p->buf == 'N'){
-		pbool = tnull[0];
-		Pbool = tnull[1];
-		STOCK_BUF(p);
-		p->len++;
-		p->buf++;
-		p->offset++;
-		pbool++;
-		Pbool++;
-		do{
-			for(;*p->buf;p->buf++, p->len++, p->offset++, pbool++, Pbool++){
-				if(*p->buf != *pbool && *p->buf != *Pbool){
-					if(*pbool != 0 && *Pbool != 0)
-						*p->pstock = 1;
-					return p;
-				}
+	p->pstock++;\
+	p->len++;
+
+int get_int(struct json_parser *p, int init){
+	static const char *ib[4][2] = { { "true", "TRUE" }, { "false", "FALSE" }, { "null", "NULL" }, { NULL, NULL} };
+	static char **pib, *p1, *p2;
+	static int start, signe, zero, dot, i, bret;
+	if(init){
+		start = signe = zero = dot = bret = 0;
+		for(pib = (char **)ib[0]; *pib; pib += 2){
+			if(*p->buf == **pib || (bret = (*p->buf == **(pib+1)))){
+				p1 = *pib;
+				p2 = *(pib+1);
 				STOCK_BUF(p);
-			}
-			if(*pbool == 0 || *Pbool == 0)
-				return p;
-		}while(read_fn(p));
-		return p;
-	}
-	if(*p->buf == 't' || *p->buf == 'T'){
-		pbool = tboolean[0];
-		Pbool = tboolean[1];
-		STOCK_BUF(p);
-		p->len++;
-		p->buf++;
-		p->offset++;
-		pbool++;
-		Pbool++;
-		do{
-			for(;*p->buf;p->buf++, p->len++, p->offset++, pbool++, Pbool++){
-				if(*p->buf != *pbool && *p->buf != *Pbool){
-					if(*pbool != 0 && *Pbool != 0)
-						*p->pstock = 1;
-					return p;
+				if(bret){
+					warnx("Invalid boolean (Upper case) at offset %lu", p->offset);
 				}
-				STOCK_BUF(p);
+				return 1;
 			}
-			if(*pbool == 0 || *Pbool == 0)
-				return p;
-		}while(read_fn(p));
-		return p;
-	}
-	if(*p->buf == 'f' || *p->buf == 'F'){
-		pbool = fboolean[0];
-		Pbool = fboolean[1];
-		STOCK_BUF(p);
-		p->len++;
-		p->buf++;
-		p->offset++;
-		pbool++;
-		Pbool++;
-		do{
-			for(;*p->buf;p->buf++, p->len++, p->offset++, pbool++, Pbool++){
-				if(/**pbool != 0 && *Pbool != 0 &&*/ *p->buf != *pbool && *p->buf != *Pbool){
-					if(*pbool != 0 && *Pbool != 0)
-						*p->pstock = 1;
-					/**p->pstock = 1;*/
-					return p;
-				}
-				/*if(*p->buf != *pbool && *p->buf != *Pbool){
-					return p;
-				}*/
-				STOCK_BUF(p);
-			}
-			if(*pbool == 0 || *Pbool == 0)
-				return p;
-		}while(read_fn(p));
-		return p;
-	}
-		if(*p->buf == '-' || *p->buf == '+'){
-			if(*p->buf == '+'){
-				warnx("Value number: start by '+', this value is not valid (offset: %lu)", p->offset);
-			/*#ifndef EXPLICIT_SIGN
-				errx(255, "Invalid Number");
-			#endif*/
-			}
-			/*#ifdef EXPLICIT_SIGN*/
-			last = *p->buf;
-			STOCK_BUF(p);
-			p->len++;
-			p->buf++;
-			p->offset++;
-			/*#endif*/
-	}
-	do
-		for(;(last = *p->buf);p->buf++, p->len++, p->offset++)
-			if(*p->buf == '.'){
-				switch(dot){
-					case 0:
-						if(zero == 0 && start == 0){
-							warnx("Value number: start by '(+|-)?.num', valid value should be '-?0.num' (offset: %lu)", p->offset);
-							/*#ifdef STRICT_NUM
-							errx("Invalid number.");
-							return p;
-							#endif*/
-						}
-						dot = 1;
-						start = 1;
-						STOCK_BUF(p);
-						break;
-					default:
-						return p;
-				}
-			}else{
-				/*i = *p->buf - (3 << 4);*/
-				if(start == 0 && *p->buf == '0' && zero++ > 0){
-					warnx("Invalid number.");
-					return p;
-				}
-				if(*p->buf != '0')
-					start = 1;
-				if(*p->buf < '0' || *p->buf > '9'){
-					return p;
-				}
-				STOCK_BUF(p);
-			}
-	while(read_fn(p));
-	return p;
-}
-void *getstr(struct json_parser *p){
-	ssize_t start = p->offset -1;
-	p->len = 0;
-	do
-		for(;*p->buf;){
-			switch(*p->buf){
-				case '\\':
-					STOCK_BUF(p);
-					p->buf++;
-					p->offset++;
-					p->len++;
-					continue;
-				case '"':
-					return p;
-			}
-			STOCK_BUF(p);
-			p->buf++;
-			p->len++;
-			p->offset++;
 		}
-	while(read_fn(p));
-	warnx("Unexpected EOF\n\t'\"' at offset %lu.", start);
-	return NULL;
+	}
+	if(*pib){
+		p1++;
+		p2++;
+		if(*p->buf != *p1 && *p->buf != *p2){
+			if(*p1 != 0){
+				*p->pstock = 1;
+			}
+			return 0;
+		}
+		STOCK_BUF(p);
+		if(!bret && (bret = (*p->buf == *p2))){
+			warnx("Invalid boolean (Upper case) at offset %lu", p->offset);
+			return 1;
+		}
+		if(*p1 == 0){
+			*p->pstock = 1;
+			return 0;
+		}
+		return 1;
+	}
+	if(signe == 0 && (*p->buf == '-' || *p->buf == '+')){
+		STOCK_BUF(p);
+		signe = 1;
+		if(*p->buf == '+')
+			return -1;
+		return 2;
+	}
+	signe = 1;
+	if(*p->buf == '.'){
+		switch(dot){
+			case 0:
+				i = (zero == 0 && start == 0);
+				dot = 1;
+				start = 1;
+				STOCK_BUF(p);
+				if(i)
+					return -2;
+				return 2;
+			default:
+				dot = 1;
+				STOCK_BUF(p);
+				return 2;
+			}
+	}else{
+		if(start == 0 && *p->buf == '0' && zero++ > 0){
+			warnx("Invalid number.");
+			return 0;
+		}
+		if(*p->buf != '0')
+			start = 1;
+		if(*p->buf < '0' || *p->buf > '9'){
+			return 0;
+		}
+		STOCK_BUF(p);
+	}
+	return 2;
+}
+
+int get_str(struct json_parser *p){
+	static int jump = 0;
+	static ssize_t start = 0;
+	if(jump){
+		STOCK_BUF(p);
+		jump = 0;
+	}
+	if(!start)
+		start = p->offset -1;
+	switch(*p->buf){
+		case '\\':
+			STOCK_BUF(p);
+			jump = 1;
+			break;
+		case '"':
+			if(!jump){
+				start = 0;
+				json_err = 0;
+				return start;
+			}
+			STOCK_BUF(p);
+			jump = 0;
+			break;
+		default:
+			jump = 0;
+			STOCK_BUF(p);
+	}
+	return start;
+}
+void up_str_from_array(struct json **j, struct json_parser *p, struct fn *f){
+	char *stock = p->stock;
+	(*j)->value.name.index = (f->index)++;
+	(*j)->value.value = (stock) ? stock : "";
+}
+void up_str_from_pair(struct json **j, struct json_parser *p){
+	char *stock = p->stock;
+	if((*j)->value.name.key == NULL)
+		(*j)->value.name.key = (stock) ? stock : "";
+	else
+		(*j)->value.value = (stock) ? stock : "";
+}
+void up_from_bool(struct json **j, struct json_parser *p, struct fn *f){
+	static char *booleans[3] = {"true", "false", "null" };
+	f->value = 0;
+	f->key = 1;
+	f->c_end = 0;
+	if(!strcmp(booleans[0], p->stock)
+		|| 	!strcmp(booleans[1], p->stock)
+		||	!strcmp(booleans[2], p->stock)
+	)return;
+	(*j)->t_val |= WARN_BOOL;
+
+}
+void up_from_int(struct json **j, struct json_parser *p, struct fn *f){
+	static char c_char/*, *booleans[3] = {"true", "false", "null" }*/;
+	f->value = 0;
+	f->key = 1;
+	f->c_end = 0;
+	if((c_char = *p->stock) == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.' || *(p->pstock -1) == '.'){
+		(*j)->t_val |= WARN_NBR;
+		return;
+	}
+
+}
+void up_structure_from_int_pair(struct json_parser *p, struct json *j){
+	j->value.value = p->stock;
+	p->stock = NULL;
+	p->len = p->stock_size = 0;
+}
+void up_structure_from_int_array(struct json_parser *p, struct json *j, struct fn *f){
+	j->value.name.index = (f->index)++;
+	j->value.value = p->stock;
+	p->stock = NULL;
+	p->len = p->stock_size = 0;
+}
+void up_structure_from_str(struct json_parser *p, struct fn *f){
+	p->stock = NULL;
+	p->len = p->stock_size = 0;
+	f->offset = p->offset;
 }
 #define DESTROY_ALL(j, p) \
 	*j = go_first(*j); \
 	if(p->stock) \
 		free(p->stock); \
 	json_destroy(j);
+#define DESTROY_fn(ptr, reader) \
+	while(ptr){ \
+		reader = ptr->prev; \
+		free(ptr); \
+		ptr = reader; \
+	}
 #define NEW_PJ(pj) \
 	if(*pj == NULL){ \
-		if((*pj = calloc(1, sizeof(struct json_new_lst))) == NULL) \
-			err(255, "calloc()"); \
+		if((*pj = calloc(1, sizeof(struct json_new_lst))) == NULL){ \
+			json_err = errno; \
+			warn("calloc()"); \
+			return json_err; \
+		} \
 	}else{ \
-		if(((*pj)->next = calloc(1, sizeof(struct json_new_lst))) == NULL) \
-			err(255, "calloc()"); \
+		if(((*pj)->next = calloc(1, sizeof(struct json_new_lst))) == NULL){ \
+			json_err = errno; \
+			warn("calloc()"); \
+			return json_err; \
+		} \
 		(*pj)->next->prev = *pj; \
 		*pj = (*pj)->next; \
 	}
@@ -253,30 +413,30 @@ void *getstr(struct json_parser *p){
 		free(*pj); \
 		*pj = NULL; \
 	}
-#define DESTROY_fn(ptr, reader) \
-	while(ptr){ \
-		reader = ptr->prev; \
-		free(ptr); \
-		ptr = reader; \
-	}
-/*enum CHARS{
-	'{',
-	'[',
-	',',
-	':',
-	'}',
-	']',
-};*/
-void *starting(struct json_parser *p, struct json **j, struct json_new_lst **pj, struct fn **f){
+int starting(struct json_parser *p, struct json **j, struct fn **f, struct json_new_lst **pj){
 	static struct json *spj;
-	struct fn *rf;
 	struct json_new_lst *lst;
+	struct fn *rf;
+	if(*j)
+		return json_err = -1;
 	switch(*p->buf){
 		case '{':
 			NEW_PJ(pj);
-			spj = (*pj)->j = json_create(j, NEW, PAIR);
+			(*pj)->json_err = -3;
+			p->depth++;
+			if((spj = (*pj)->j = json_create(j, NEW, PAIR)) == NULL){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				return json_err;
+			}
 			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
-				err(255, "calloc()");
+				json_err = errno;
+				warn("calloc()");
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				return json_err;
 			}
 			(*f)->offset = p->offset;
 			(*f)->err = '{';
@@ -285,86 +445,75 @@ void *starting(struct json_parser *p, struct json **j, struct json_new_lst **pj,
 			(*f)->c_end = '{';
 			(*f)->key = 1;
 			(*f)->value = 0;
-			(*f)->do_it = &pair;
-			p->buf++;
-			p->offset++;
+			(*f)->fns.do_it.read_with_this = &pair;
 			break;
 		case '[':
 			NEW_PJ(pj);
-			spj = (*pj)->j = json_create(j, NEW, ARRAY);
+			(*pj)->json_err = -2;
+			if((spj = (*pj)->j = json_create(j, NEW, ARRAY)) == NULL){
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				return json_err;
+			}
 			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
-				err(255, "calloc()");
+				json_err = errno;
+				warn("calloc()");
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				return json_err;
 			}
 			(*f)->err = '[';
 			(*f)->offset = p->offset;
 			(*f)->next->prev = *f;
 			*f = (*f)->next;
 			(*f)->c_end = '[';
-			(*f)->do_it = &array;
-			p->buf++;
-			p->offset++;
-			break;
-		case 0:
+			(*f)->fns.do_it.read_with_this = &array;
 			break;
 		default:
-			DESTROY_fn((*f), rf);
-			DESTROY_fn((*pj), lst);
-			errx(255, "Unexpected character at offset %lu.", p->offset);
+			(*f)->fns.do_it.do_errors = &json_errors;
+			return json_err = -1;
 	}
 	*j = spj;
-	return p;
+	return 0;
 }
-void *array(struct json_parser *p, struct json **j, struct json_new_lst **pj, struct fn **f){
-	struct fn *rf;
-	struct json_new_lst *lst;
-	char c_char;
+int array(struct json_parser *p, struct json **j, struct fn **f, struct json_new_lst **pj){
+	static struct fn *rf;
+	static struct json_new_lst *lst;
 	switch(*p->buf){
 		case '"':
 			if((*f)->c_end != '[' &&(*f)->c_end != ','){
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+				(*f)->fns.do_it.do_errors = &json_errors;
+				return json_err = -2;
 			}
+			json_err = -4;
 			(*f)->c_end = 0;
-			p->buf++;
-			p->offset++;
-			if(!getstr(p)){
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				_exit(255);
-			}
-			(*j)->value.name.index = (*f)->index;
-			(*j)->value.value = (p->stock) ? p->stock : "";
-			(*j)->t_val = STRING;
-			p->stock = NULL;
-			p->stock_size = 0;
-			p->buf++;
-			p->offset++;
 			(*f)->offset = p->offset;
-			(*f)->index++;
+			(*j)->t_val = STRING;
+			(*f)->fns.get.get_str = &get_str;
+			(*f)->fns.up.up_from_array = &up_str_from_array;
+			(*f)->fns.structure.up_from_string = &up_structure_from_str;
 			break;
 		case ',':
 			(*f)->offset = p->offset;
 			(*f)->err = ',';
-			json_create(j, NEXT, ARRAY);
 			if((*f)->c_end != 0 && (*f)->c_end != ']' && (*f)->c_end != '}'){
+				(*f)->fns.do_it.do_errors = &json_errors;
+				return json_err = -2;
+			}
+			if(json_create(j, NEXT, ARRAY) == NULL){
 				DESTROY_fn((*pj), lst);
 				DESTROY_fn((*f), rf);
 				DESTROY_ALL(j, p);
-				errx(255, "Unexpected ',' at offset %lu.", p->offset);
+				return json_err;
 			}
 			(*f)->c_end = ',';
-			p->offset++;
-			p->buf++;
 			break;
 		case ']':
 			if((*f)->c_end != 0 && (*f)->c_end != '[' && (*f)->c_end != '}' && (*f)->c_end != ']'){
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+				(*f)->fns.do_it.do_errors = &json_errors;
+				return json_err = -2;
 			}
 			*f = (*f)->prev;
 			free((*f)->next);
@@ -374,241 +523,219 @@ void *array(struct json_parser *p, struct json **j, struct json_new_lst **pj, st
 			(*f)->c_end = ']';
 			*j = (*pj)->j;
 			DEL_PJ(pj);
-			p->offset++;
-			p->buf++;
-			return p;
+			json_err = (*pj) ? (*pj)->json_err : 0;
+			break;
 		case '[':
 			NEW_PJ(pj);
+			(*pj)->json_err = -2;
 			(*f)->offset = p->offset;
 			(*f)->err = '[';
 			(*j)->value.name.index = (*f)->index;
 			(*f)->index++;
-			(*pj)->j = json_create(j, SUB, ARRAY);
 			if((*f)->c_end != '{' && (*f)->c_end != '[' && (*f)->c_end != ','){
+				(*f)->fns.do_it.do_errors = &json_errors;
+				return json_err = -2;
+			}
+			if(((*pj)->j = json_create(j, SUB, ARRAY)) == NULL){
 				DESTROY_fn((*pj), lst);
 				DESTROY_fn((*f), rf);
 				DESTROY_ALL(j, p);
-				errx(255, "Unexpected '[' at offset %lu.", p->offset);
+				return json_err;
 			}
 			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
+				json_err = errno;
+				warn("calloc()");
 				DESTROY_fn((*pj), lst);
 				DESTROY_fn((*f), rf);
 				DESTROY_ALL(j, p);
-				err(255, "calloc()");
+				return json_err;
 			}
 			(*f)->next->prev = *f;
 			*f = (*f)->next;
 			(*f)->c_end = '[';
 			(*f)->offset = p->offset;
-			(*f)->do_it = &array;
-			(*f)->offset = p->offset;
-			p->buf++;
-			p->offset++;
+			(*f)->fns.do_it.read_with_this = &array;
 			break;
 		case '{':
 			(*f)->offset = p->offset;
 			(*f)->err = '{';
 			if((*f)->c_end != '[' && (*f)->c_end != ','){
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				errx(255, "Unexpected '{' at offset %lu.", p->offset);
+				(*f)->fns.do_it.do_errors = &json_errors;
+				return json_err = -2;
 			}
+			p->depth++;
 			NEW_PJ(pj);
+			(*pj)->json_err = -3;
 			(*j)->value.name.index = (*f)->index;
 			(*f)->index++;
-			(*pj)->j = json_create(j, SUB, PAIR);
-			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
+			if(((*pj)->j = json_create(j, SUB, PAIR)) == NULL){
 				DESTROY_fn((*pj), lst);
 				DESTROY_fn((*f), rf);
 				DESTROY_ALL(j, p);
-				err(255, "calloc()");
+				return json_err;
 			}
+			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
+				json_err = errno;
+				warn("calloc()");
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				return json_err;
+			}
+			(*f)->err = '{';
 			(*f)->next->prev = *f;
 			*f = (*f)->next;
 			(*f)->c_end = '{';
-			(*f)->do_it = &pair;
+			(*f)->fns.do_it.read_with_this = &pair;
 			(*f)->key = 1;
 			(*f)->value = 0;
-			p->buf++;
-			p->offset++;
 			break;
 		case '}':
-			warnx("Unexpected '}' at offset %lu.", p->offset);
-			DESTROY_fn((*pj), lst);
-			DESTROY_fn((*f), rf);
-			DESTROY_ALL(j, p);
-			_exit(255);
+			(*f)->err = '}';
+			(*f)->fns.do_it.do_errors = &json_errors;
+			return json_err = -2;
 		case 0:
 			break;
 		default:
 			if((*f)->c_end != '[' && (*f)->c_end != ','){
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+				(*f)->fns.do_it.do_errors = &json_errors;
+				return json_err = -2;
 			}
-			getint(p);
-			if(((c_char = *(p->buf)) < '0' || c_char > '9'  || c_char == '+' || c_char == '-' ) &&
-				(!p->stock || *(p->pstock) != 0)){
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				errx(255, "Unexpected chararcter (bad number) near offset %lu: %c", p->offset, c_char);
-			}
+			(*j)->t_val = INT;
 			(*f)->c_end = 0;
-			c_char = *p->stock;
-			if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.'|| *(p->pstock -1) == '.'){
-				warnx("Invalid number before offset: %lu",p->offset -1);
-				(*j)->t_val = INT | WARN;
-			}else
-				(*j)->t_val = INT;
-			(*j)->value.name.index = (*f)->index;
-			(*j)->value.value = p->stock;
-			(*f)->index++;
-			p->stock = NULL;
-			p->stock_size = 0;
+			(*f)->offset = p->offset;
+			(*f)->fns.get.get_int = &get_int;
+			(*f)->fns.up.up_int = &up_from_int;
+			(*f)->fns.structure.up_int_from_array = &up_structure_from_int_array;
 			break;
 	}
-	return p;
+	return 0;
 }
-void *pair(struct json_parser *p, struct json **j, struct json_new_lst **pj, struct fn **f){
-	struct fn *rf;
-	struct json_new_lst *lst;
-	int c_char;
+int pair(struct json_parser *p, struct json **j, struct fn **f, struct json_new_lst **pj){
+	static struct fn *rf;
+	static struct json_new_lst *lst;
 	switch(*p->buf){
 		case '"':
 			if((*f)->key == 1)
 				(*f)->key = 0;
 			if((*f)->c_end != '{' && (*f)->c_end != ':' && (*f)->c_end != ','){
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+				(*f)->fns.do_it.do_errors = &json_errors;
+				return -3;
 			}
 			if((*f)->value == 0)
 				(*f)->value = 1;
 			else
-				if((*f)->value == 2)
+				if((*f)->value == 2){
+					(*f)->c_end = 0;
 					(*f)->value = 0;
-				else{
-					DESTROY_fn((*pj), lst);
-					DESTROY_fn((*f), rf);
-					DESTROY_ALL(j, p);
-					errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+					(*j)->t_val = STRING;
+				}else{
+					(*f)->fns.do_it.do_errors = &json_errors;
+					return json_err = -3;
 				}
-			(*f)->c_end = 0;
-			p->buf++;
-			p->offset++;
-			if(!getstr(p)){
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				_exit(0);
-			}
-			if((*j)->value.name.key == NULL)
-				(*j)->value.name.key = (p->stock) ? p->stock : "";
-			else{
-				(*j)->value.value = (p->stock) ? p->stock : "";
-				(*j)->t_val = STRING;
-			}
-			p->stock = NULL;
-			p->stock_size = 0;
-			p->buf++;
-			p->offset++;
+			json_err = -4;
 			(*f)->offset = p->offset;
+			(*f)->fns.get.get_str = &get_str;
+			(*f)->fns.up.up_from_pair = &up_str_from_pair;
+			(*f)->fns.structure.up_from_string = &up_structure_from_str;
 			break;
 		case ':':
-			if((*f)->value == 1)
+			if((*f)->value == 1 && (*f)->key == 0)
 				(*f)->value = 2;
 			else{
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+				(*f)->fns.do_it.do_errors = &json_errors;
+				(*f)->err = ':';
+				return json_err = -3;
 			}
 			(*f)->offset = p->offset;
 			(*f)->err = ':';
 			(*f)->c_end = ':';
 			(*f)->key = 0;
-			p->offset++;
-			p->buf++;
 			break;
 		case '{':
-			if((*f)->c_end != '{' && (*f)->c_end != ',' && (*f)->c_end != ':'){
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				errx(255, "Unexpected '{' at offset %lu.", p->offset);
+			if((*f)->c_end != '{' && (*f)->c_end != ':'){
+				(*f)->fns.do_it.do_errors = &json_errors;
+				return json_err = -3;
 			}
 			NEW_PJ(pj);
-			(*pj)->j = json_create(j, SUB, PAIR);
-			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
+			p->depth++;
+			(*pj)->json_err = -3;
+			if(((*pj)->j = json_create(j, SUB, PAIR)) == NULL){
 				DESTROY_fn((*pj), lst);
 				DESTROY_fn((*f), rf);
 				DESTROY_ALL(j, p);
-				err(255, "calloc()");
+				return json_err;
+			}
+			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
+				json_err = errno;
+				warn("calloc()");
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				return json_err;
 			}
 			(*f)->offset = p->offset;
 			(*f)->err = '{';
 			(*f)->next->prev = *f;
 			*f = (*f)->next;
 			(*f)->c_end = '{';
-			(*f)->do_it = &pair;
+			(*f)->fns.do_it.read_with_this = &pair;
 			(*f)->key = 1;
 			(*f)->value = 0;
-			p->buf++;
-			p->offset++;
 			break;
 		case '[':
 			/*pj = *j;*/
 			if((*f)->c_end != ',' && (*f)->c_end != ':'){
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				errx(255, "Unexpected '[' at offset %lu.", p->offset);
+				(*f)->fns.do_it.do_errors = &json_errors;
+				return json_err = -3;
 			}
 			NEW_PJ(pj);
-			(*pj)->j = json_create(j, SUB, ARRAY);
-			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
+			(*pj)->json_err = -2;
+			if(((*pj)->j = json_create(j, SUB, ARRAY)) == NULL){
 				DESTROY_fn((*pj), lst);
 				DESTROY_fn((*f), rf);
 				DESTROY_ALL(j, p);
-				err(255, "calloc()");
+				return json_err;
+			}
+			if(((*f)->next = calloc(1, sizeof(struct fn))) == NULL){
+				json_err = errno;
+				warn("calloc()");
+				DESTROY_fn((*pj), lst);
+				DESTROY_fn((*f), rf);
+				DESTROY_ALL(j, p);
+				return json_err;
 			}
 			(*f)->offset = p->offset;
 			(*f)->err = '[';
 			(*f)->next->prev = *f;
 			*f = (*f)->next;
 			(*f)->c_end = '[';
-			(*f)->do_it = &array;
+			(*f)->fns.do_it.read_with_this = &array;
 			(*f)->key = 1;
 			(*f)->value = 0;
-			p->buf++;
-			p->offset++;
 			break;
 		case ',':
-			json_create(j, NEXT, PAIR);
+			(*f)->err = ',';
 			if((*f)->c_end != 0 && (*f)->c_end != ']' && (*f)->c_end != '}'){
+				(*f)->fns.do_it.do_errors = &json_errors;
+				return json_err = -3;
+			}
+			if(json_create(j, NEXT, PAIR) == NULL){
 				DESTROY_fn((*pj), lst);
 				DESTROY_fn((*f), rf);
 				DESTROY_ALL(j, p);
-				errx(255, "Unexpected ',' at offset %lu.", p->offset);
+				return json_err;
 			}
 			(*f)->offset = p->offset;
-			(*f)->err = ',';
 			(*f)->c_end = ',';
 			(*f)->key = 1;
-			p->offset++;
-			p->buf++;
 			break;
 		case '}':
-			if(((*f)->c_end != 0 && (*f)->c_end != ']' && (*f)->c_end != '{') || (*f)->value){
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+			if(((*f)->c_end != 0 && (*f)->c_end != ']' && (*f)->c_end != '{' && (*f)->c_end != '}') || (*f)->value){
+				(*f)->fns.do_it.do_errors = &json_errors;
+				return json_err = -3;
 			}
+			p->depth--;
 			*f = (*f)->prev;
 			free((*f)->next);
 			(*f)->next = NULL;
@@ -616,201 +743,189 @@ void *pair(struct json_parser *p, struct json **j, struct json_new_lst **pj, str
 			(*f)->value = 0;
 			*j = (*pj)->j;
 			DEL_PJ(pj);
+			json_err = (*pj) ? (*pj)->json_err : 0;
 			(*f)->c_end = '}';
-			p->offset++;
-			p->buf++;
-			return p;
+			break;
 		case ']':
-			warnx("Unexpected ']' at offset %lu.", p->offset);
-			DESTROY_fn((*pj), lst);
-			DESTROY_fn((*f), rf);
-			DESTROY_ALL(j, p);
-			_exit(255);
+			(*f)->fns.do_it.do_errors = &json_errors;
+			(*f)->err = ']';
+			return json_err = -3;
 		case 0:
 			break;
 		default:
 			if((*f)->value != 2 || (*f)->key == 1){
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				errx(255, "Unexpected chararcter at offset %lu.", p->offset);
+				(*f)->fns.do_it.do_errors = &json_errors;
+				return json_err = -3;
 			}
-			getint(p);
-			if(((c_char = *(p->buf)) < '0' || c_char > '9'|| c_char == '+' || c_char == '-') &&
-				(!p->stock || *(p->pstock) != 0)){
-				DESTROY_fn((*pj), lst);
-				DESTROY_fn((*f), rf);
-				DESTROY_ALL(j, p);
-				errx(255, "Unexpected chararcter (bad number) near offset %lu: %c", p->offset, c_char);
-			}
-			(*f)->value = 0;
-			(*f)->key = 1;
-			(*f)->c_end = 0;
-			c_char = *p->stock;
-			if(c_char == '+' || *(p->stock + (c_char == '+' || c_char == '-')) == '.' || *(p->pstock -1) == '.'){
-				warnx("Invalid number before offset: %lu",p->offset -1);
-				(*j)->t_val = INT | WARN;
-			}else
-				(*j)->t_val = INT;
-			(*j)->value.value = p->stock;
-			p->stock = NULL;
-			p->stock_size = 0;
+			p->len = 0;
+			(*j)->t_val = INT;
+			(*f)->fns.get.get_int = &get_int;
+			(*f)->fns.up.up_int = &up_from_int;
+			(*f)->fns.structure.up_int_from_pair = &up_structure_from_int_pair;
 			break;
 	}
-	return p;
+	return 0;
 }
-ssize_t json_sort(struct json *j, char ***order, int sort, int warn_only){
-	struct json *pj;
-	ssize_t idx, i;
-	int ret;
-	for(pj = j, idx = 0; pj;pj = pj->next, idx++){
-		if(*order == NULL){
-			if(((*order) = malloc(idx+1*sizeof(char **))) == NULL)
-				err(255, "malloc()");
+#define TEST(j, pj, ppj, warn) \
+	for(pj = j; pj; pj = pj->next){ \
+		pj->t_val |= SET; \
+		for(ppj = pj->next;ppj; ppj = ppj->next){  \
+			if((ppj->t_val&WARN) == 0 && strcmp(pj->value.name.key, ppj->value.name.key) == 0){ \
+				ppj->t_val |= WARN; \
+				DUP \
+				if(warn >= 0){ \
+					warnx("Duplicate key: \"%s\"", pj->value.name.key); \
+					if(warn == 0){ \
+						json_err = -7; \
+						return 1; \
+					} \
+				} \
+			} \
+		} \
+	}
+int json_sort_asc(struct json **sj, int warn_only){
+	struct json *pj, *ppj, *ppprev, *ppnext, *sub, *j = *sj;
+	int dup = 0;
+	#define DUP dup = 1;
+	TEST(j, pj, ppj, warn_only);
+	#undef DUP
+	for(pj = j; pj;pj = pj->next){
+		for(ppj = j; ppj && strcmp(pj->value.name.key, ppj->value.name.key) >= 0; ppj = ppj->next);
+		if(!ppj || pj == ppj){
+			continue;
+		}
+		ppnext = ppj->next;
+		ppprev = ppj->prev;
+		ppj->next = ppj->prev = NULL;
+		if(ppprev){
+			ppprev->next = ppnext;
+			if(ppprev->next)
+				ppprev->next->prev = ppprev;
 		}else{
-			if(((*order) = realloc((*order), (idx+1)*sizeof(char **))) == NULL)
-				err(255, "realloc()");
+			ppnext->prev = ppnext->prev->next = NULL;
+			j = ppnext;
 		}
-		(*order)[idx] = NULL;
-		for(i = 0, (*order)[idx] = NULL; (*order)[i]; i++){
-			if(sort < 0){
-				if((ret = strcmp((*order)[i], pj->value.name.key)) <= 0){
-					memcpy(&(*order)[i+1], &(*order)[i], (idx-i) * sizeof(char **));
-					(*order)[i] = pj->value.name.key;
-					if(ret != 0 || warn_only < 0)
-						break;
-				}
-				if(ret == 0){
-					warnx("Duplicate key: \"%s\"", pj->value.name.key);
-					if(warn_only == 0)
-						return -1;
-					break;
-				}
-			}else{
-				if(sort > 0){
-					if((ret = strcmp((*order)[i], pj->value.name.key)) >= 0){
-						memcpy(&(*order)[i+1], &(*order)[i], (idx-i) * sizeof(char **));
-						(*order)[i] = pj->value.name.key;
-						if(ret != 0 || warn_only < 0)
-							break;
-					}
-					if(ret == 0){
-						warnx("Duplicate key: \"%s\"", pj->value.name.key);
-						if(warn_only == 0)
-							return -1;
-						break;
-					}
-				}else{
-					if(warn_only != -1 && strcmp((*order)[i], pj->value.name.key) == 0){
-							warnx("Duplicate key: \"%s\"", pj->value.name.key);
-						if(warn_only == 0)
-							return -1;
-						break;
-					}
-				}
-			}
-		}
-		if(!(*order)[idx]){
-			(*order)[idx] = pj->value.name.key;
+		sub = ppj->up;
+		ppj->next = pj->next;
+		pj->next = ppj;
+		if(ppj->next)
+			ppj->next->prev = ppj;
+		else
+			if(dup)
+				pj = j;
+		pj->next->prev = pj;
+		if(sub){
+			sub->sub = pj;
+			sub->sub->up = sub;
+			ppj->up = NULL;
 		}
 	}
-	return idx;
+	*sj = j;
+	return 0;
 }
-int duplicate_keys(struct json *j, int warning_only){
-	struct json *pj = j;
-	char **order = NULL;
+int json_test(struct json **j, int warn_only){
+	struct json *pj, *ppj;
+	#define DUP
+	TEST(*j, pj, ppj, warn_only);
+	#undef DUP
+	return 0;
+}
+int json_sort_dsc(struct json **sj, int warn_only){
+	struct json *pj, *ppj, *ppprev, *ppnext, *j = *sj;
+	#define DUP
+	TEST(j, pj, ppj, warn_only);
+	#undef DUP
 	for(pj = j; pj;pj = pj->next){
-		if(pj->type == ARRAY){
-			if(pj->sub){
-				if(duplicate_keys(pj->sub, warning_only) == 1)
-					return 1;
-			}
-			if(warning_only >= 0 && (pj->t_val&WARN) == WARN){
-				warnx("Mal formed number: %s", pj->value.value);
-				if(warning_only == 0)
-					return 1;
-			}
+		for(	ppj = j;
+			ppj &&
+				strcmp(	pj->value.name.key,
+					ppj->value.name.key
+				) <= 0;
+			ppj = ppj->next
+		);
+		if(!ppj || pj == ppj){
+			continue;
+		}
+		ppnext = ppj->next;
+		ppprev = ppj->prev;
+		ppj->next = ppj->prev = NULL;
+		if(ppprev){
+			ppprev->next = ppnext;
+			if(ppprev->next)
+				ppprev->next->prev = ppprev;
 		}else{
-			if(pj->sub)
-				if(duplicate_keys(pj->sub, warning_only) == 1){
-					free(order);
-					return 1;
-				}
-			if(warning_only >= 0 && (pj->t_val&WARN) == WARN){
-				warnx("Mal formed number: %s", pj->value.value);
-				if(warning_only == 0)
-					return 1;
-			}
-			if(json_sort(pj, &order, 0, warning_only) == -1){
-				free(order);
+			ppnext->prev = ppnext->prev->next = NULL;
+			j = ppnext;
+		}
+		ppj->next = pj->next;
+		pj->next = ppj;
+		if(ppj->next)
+			ppj->next->prev = ppj;
+		pj->next->prev = pj;
+	}
+	*sj = j;
+	return 0;
+}
+int json_test_sort(struct json **j, int (*sorting)(struct json **, int), int warn_only){
+	struct json *pj;
+	for(pj = *j;pj;pj = pj->next){
+		if((pj->type&PAIR) && !(pj->t_val&SET)){
+			if((*sorting)(&pj, warn_only)){
 				return 1;
 			}
-			free(order);
-			order = NULL;
+			*j = pj;
+		}
+		if(pj->sub){
+			if(json_test_sort(&pj->sub, sorting, warn_only)){
+				return 1;
+			}
+		}
+		if(warn_only >= 0 && (((pj->t_val&(INT|WARN_BOOL)) == (INT|WARN_BOOL)) || ((pj->t_val&(INT|WARN_NBR)) == (INT|WARN_NBR)))){
+			warnx("Mal formed %s: %s", ((pj->t_val&(INT|WARN_NBR)) == (INT|WARN_NBR)) ? "number" : "boolean" , pj->value.value);
+			if(warn_only == 0){
+				json_err = -4;
+				return 1;
+			}
 		}
 	}
 	return 0;
 }
-void json_print(struct json *j, int sort, size_t space, char c_sp, size_t count, int warn_only){
+void json_print(struct json *j, size_t space, char *sep, char c_sp, size_t count){
 	struct json *pj = j;
-	ssize_t k, idx;
 	unsigned long int sp, i;
 	int type = j->type;
-	char **order = NULL;
-	if(c_sp)
-		(type == ARRAY) ? puts("[") : puts("{");
-	else
-		(type == ARRAY) ? putchar('[') : putchar('{');
-	if(j->type == PAIR){
-		if(sort){
-			if((idx = json_sort(j, &order, sort, warn_only)) == -1)
-				_exit(255);
-		}else{
-			if(json_sort(j, &order, sort, warn_only) == -1)
-				_exit(255);
-			idx = 1;
-		}
-	}else
-		idx = 1;
-	for(k = 0; k < idx; k++)
-		for(pj = j; pj; pj = pj->next){
-			if((pj->type&PAIR) == PAIR && sort){
-				if(!pj->value.name.key)
-					continue;
-				if(strcmp(pj->value.name.key, order[k]))
-					continue;
-				if((pj->type&SET) == SET)
-					continue;
-				else
-					pj->type |= SET;
-				if(k > 0){
-					if(c_sp)
-						puts(",");
-					else
-						putchar(',');
-				}
-			}else{
-				if(pj->prev){
-					if(c_sp)
-						puts(",");
-					else
-						putchar(',');
-				}
-				pj->type |= SET;
-			}
+	(type == ARRAY) ? putchar('[') : putchar('{');
+	if((j->next || j->sub) || (j->type&ARRAY && j->value.value) || ((j->type&PAIR) == PAIR && j->value.name.key))
+		putchar('\n');
+	for(pj = j; pj; pj = pj->next){
+		if(pj->prev){
 			if(c_sp)
-				for(i = 0; i < count; i++)
-					for(sp = 0; sp <= space; sp++)
-						putchar(c_sp);
-			switch(pj->type^SET){
-				case ARRAY:
-					switch(pj->t_val){
-						case INT: case INT|WARN:
-							if(warn_only >= 0 && (pj->t_val&WARN) == WARN){
-								warnx("Mal formed number: %s", pj->value.value);
-									if(warn_only == 0)
-										_exit(255);
-								}
+				puts(",");
+			else
+				putchar(',');
+		}
+		if(c_sp && ((j->next || j->sub) || (j->type&ARRAY && j->value.value) || ((j->type&PAIR) == PAIR && j->value.name.key)))
+			for(i = 0; i < count; i++)
+				for(sp = 0; sp <= space; sp++)
+					putchar(c_sp);
+		switch(pj->type){
+			case ARRAY:
+				switch(pj->t_val^(pj->t_val&(SET|WARN|WARN_NBR|WARN_BOOL))){
+					case INT:
+						printf("%s", pj->value.value);
+						break;
+					case STRING:
+						printf("\"%s\"", pj->value.value);
+						break;
+					default:
+						break;
+				}
+				break;
+			case PAIR:
+				if(pj->value.name.key){
+					printf("\"%s\"%s", pj->value.name.key, sep);
+					switch(pj->t_val^(pj->t_val&(SET|WARN|WARN_NBR|WARN_BOOL))){
+						case INT: 
 							printf("%s", pj->value.value);
 							break;
 						case STRING:
@@ -819,181 +934,130 @@ void json_print(struct json *j, int sort, size_t space, char c_sp, size_t count,
 						default:
 							break;
 					}
-					break;
-				case PAIR:
-					printf("\"%s\":", pj->value.name.key);
-					switch(pj->t_val){
-						case INT: case INT|WARN:
-							if(warn_only >= 0 && (pj->t_val&WARN) == WARN){
-								warnx("Mal formed number: %s", pj->value.value);
-									if(warn_only == 0)
-										_exit(255);
-								}
-							printf("%s", pj->value.value);
-							break;
-						case STRING:
-							printf("\"%s\"", pj->value.value);
-							break;
-						default:
-							break;
-					}
-					break;
-			}
-			if(pj->sub)
-				json_print(pj->sub, sort, space+1, c_sp, count, warn_only);
-			if(sort && (pj->type&PAIR) == PAIR)
+				}
 				break;
 		}
-	if(order)
-		free(order);
-	if(c_sp)
+		if(pj->sub)
+			json_print(pj->sub, space+1, sep, c_sp, count);
+	}
+	if(c_sp && ((j->next || j->sub) || (j->type&ARRAY && j->value.value) || ((j->type&PAIR) == PAIR && j->value.name.key))){
 		putchar('\n');
-	if(c_sp)
 		for(i = 0; i < count; i++)
 			for(sp = 0; sp < space; sp++)
 				putchar(c_sp);
+	}
 	(type == ARRAY) ? putchar(']') : putchar('}');
 	if(space == 0)
 		putchar('\n');
 }
-void json2txt(struct json *j, int sort, char *string, int warn_only){
+int json2txt(struct json *j, char *string, int empty){
 	struct json *pj = j;
-	ssize_t k, idx;
 	unsigned long int len;
-	char *str, ulong[23], **order = NULL;
-	if(j->type == PAIR){
-		if(sort){
-			if((idx = json_sort(j, &order, sort, warn_only)) == -1)
-				_exit(255);
-		}else{
-			if(json_sort(j, &order, sort, warn_only) == -1)
-				_exit(255);
-			idx = 1;
-		}
-	}else
-		idx = 1;
-
-	for(k = 0; k < idx; k++)
-		for(pj = j; pj; pj = pj->next){
-			if((pj->type&PAIR) == PAIR && sort){
-				if(strcmp(pj->value.name.key, order[k])){
-					continue;
-				}
-				if((pj->type&SET) == SET){
-					continue;
-				}else
-					pj->type |= SET;
-			}else
-				pj->type |= SET;
-			switch(pj->type^SET){
-				case ARRAY:
-					switch(pj->t_val){
-						case INT: case INT|WARN:
-							if(warn_only >= 0 && (pj->t_val&WARN) == WARN){
-								warnx("Mal formed number: %s", pj->value.value);
-									if(warn_only == 0)
-										_exit(255);
-								}
-							if(string)
-								printf("%s[%lu]:%s\n",
+	char *str, ulong[23];
+	for(pj = j; pj; pj = pj->next){
+		switch(pj->type){
+			case ARRAY:
+				switch(pj->t_val^(pj->t_val&(SET|WARN|WARN_NBR|WARN_BOOL))){
+					case INT:
+						if(string)
+							printf("%s[%lu]:%s\n",
+								string, pj->value.name.index, pj->value.value);
+						else
+							printf("[%lu]:%s\n", pj->value.name.index, pj->value.value);
+						break;
+					case STRING:
+						if(string)
+							printf("%s[%lu]:\"%s\"\n",
 									string, pj->value.name.index, pj->value.value);
-							else
-								printf("[%lu]:%s\n", pj->value.name.index, pj->value.value);
-							break;
-						case STRING:
+						else
+							printf("[%lu]:\"%s\"\n", pj->value.name.index, pj->value.value);
+						break;
+					default:
+						if(empty && !pj->next && !pj->sub){
 							if(string)
-								printf("%s[%lu]:\"%s\"\n",
-										string, pj->value.name.index, pj->value.value);
+								printf("%s[%lu]:\n",
+										string, pj->value.name.index);
 							else
-								printf("[%lu]:\"%s\"\n", pj->value.name.index, pj->value.value);
-							break;
-						default:
-							break;
-					}
-					break;
-				case PAIR:
-					switch(pj->t_val){
-						case INT:case INT|WARN:
-							if(warn_only >= 0 && (pj->t_val&WARN) == WARN){
-								warnx("Mal formed number: %s", pj->value.value);
-									if(warn_only == 0)
-										_exit(255);
-								}
-							if(string)
-								printf("%s.%s:", string, pj->value.name.key);
-							else
-								printf("%s:", pj->value.name.key);
-							printf("%s\n", pj->value.value);
-							break;
-						case STRING:
-							if(string)
-								printf("%s.%s:", string, pj->value.name.key);
-							else
-								printf("%s:", pj->value.name.key);
-							printf("\"%s\"\n", pj->value.value);
-							break;
-						default:
-							break;
-					}
-					break;
+								printf("[%lu]:\n", pj->value.name.index);
+						}
+						break;
 				}
-			if(pj->sub){
-				if(string){
-					switch(pj->type^SET){
-						case ARRAY:
-							sprintf(ulong, "[%lu]", pj->value.name.index);
-							len = strlen(string) + strlen(ulong) + 1;
-							if((str = calloc(len, sizeof(char))) == NULL){
-								err(255, "calloc()");
-							}
-							strcpy(str, string);
-							strcat(str, ulong);
-							break;
-						case PAIR:
-							len = strlen(string) + strlen(pj->value.name.key) +2;
-							if((str = calloc(len, sizeof(char))) == NULL){
-								err(255, "calloc()");
-							}
-							strcpy(str, string);
-							strcat(str, ".");
-							strcat(str, pj->value.name.key);
-							break;
-					}
-				}else{
-					switch(pj->type^SET){
-						case ARRAY:
-							sprintf(ulong, "[%lu]", pj->value.name.index);
-							len = strlen(ulong) + 1;
-							if((str = calloc(len, sizeof(char))) == NULL){
-								err(255, "calloc()");
-							}
-							strcpy(str, ulong);
-							break;
-						case PAIR:
-							len = strlen(pj->value.name.key) +1;
-							if((str = calloc(len, sizeof(char))) == NULL){
-								err(255, "calloc()");
-							}
-							strcat(str, pj->value.name.key);
-							break;
-					}
-				}
-				json2txt(pj->sub, sort, str, warn_only);
-				free(str);
-			}
-			if(sort && (pj->type&PAIR) == PAIR)
 				break;
+			case PAIR:
+				switch(pj->t_val^(pj->t_val&(SET|WARN|WARN_NBR|WARN_BOOL))){
+					case INT:
+						if(string)
+							printf("%s.%s:", string, pj->value.name.key);
+						else
+							printf("%s:", pj->value.name.key);
+						printf("%s\n", pj->value.value);
+						break;
+					case STRING:
+						if(string)
+							printf("%s.%s:", string, pj->value.name.key);
+						else
+							printf("%s:", pj->value.name.key);
+						printf("\"%s\"\n", pj->value.value);
+						break;
+					default:
+						break;
+				}
+				break;
+			}
+		if(pj->sub){
+			if(string)
+				switch(pj->type){
+					case ARRAY:
+						sprintf(ulong, "[%lu]", pj->value.name.index);
+						len = strlen(string) + strlen(ulong) + 1;
+						if((str = calloc(len, sizeof(char))) == NULL){
+							json_err = errno;
+							warn("calloc()");
+							return 1;
+						}
+						strcpy(str, string);
+						strcat(str, ulong);
+						break;
+					case PAIR:
+						len = strlen(string) + strlen(pj->value.name.key) +2;
+						if((str = calloc(len, sizeof(char))) == NULL){
+							json_err = errno;
+							warn("calloc()");
+							return 1;
+						}
+						strcpy(str, string);
+						strcat(str, ".");
+						strcat(str, pj->value.name.key);
+						break;
+				}
+			else
+				switch(pj->type){
+					case ARRAY:
+						sprintf(ulong, "[%lu]", pj->value.name.index);
+						len = strlen(ulong) + 1;
+						if((str = calloc(len, sizeof(char))) == NULL){
+							json_err = errno;
+							warn("calloc()");
+							return json_err;
+						}
+						strcpy(str, ulong);
+						break;
+					case PAIR:
+						len = strlen(pj->value.name.key) +1;
+						if((str = calloc(len, sizeof(char))) == NULL){
+							json_err = errno;
+							warn("calloc()");
+							return 1;
+						}
+						strcat(str, pj->value.name.key);
+						break;
+				}
+			if(json2txt(pj->sub, str, empty))
+				return 1;
+			free(str);
 		}
-	free(order);
-}
-void json_reset_flags(struct json *j){
-	struct json *pj = j;
-	for(pj = j; pj;pj = pj->next){
-		if(pj->sub)
-			json_reset_flags(pj->sub);
-		if((pj->type&SET) == SET)
-			pj->type -= SET;
 	}
+	return 0;
 }
 void json_destroy(struct json **j){
 	struct json *pj = *j, *ppj;
@@ -1008,9 +1072,8 @@ void json_destroy(struct json **j){
 			case PAIR:
 				if(pj->value.name.key && strcmp(pj->value.name.key, "") != 0)
 					free(pj->value.name.key);
-				if(pj->value.value && strcmp(pj->value.value, "") != 0){
+				if(pj->value.value && strcmp(pj->value.value, "") != 0)
 					free(pj->value.value);
-				}
 				break;
 			}
 		ppj = pj->next;

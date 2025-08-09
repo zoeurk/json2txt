@@ -423,6 +423,7 @@ int starting(struct json_parser *p, struct json **j, struct fn **f, struct json_
 		case '{':
 			NEW_PJ(pj);
 			(*pj)->json_err = -3;
+			p->depth++;
 			if((spj = (*pj)->j = json_create(j, NEW, PAIR)) == NULL){
 				DESTROY_fn((*pj), lst);
 				DESTROY_fn((*f), rf);
@@ -562,6 +563,7 @@ int array(struct json_parser *p, struct json **j, struct fn **f, struct json_new
 				(*f)->fns.do_it.do_errors = &json_errors;
 				return json_err = -2;
 			}
+			p->depth++;
 			NEW_PJ(pj);
 			(*pj)->json_err = -3;
 			(*j)->value.name.index = (*f)->index;
@@ -656,6 +658,7 @@ int pair(struct json_parser *p, struct json **j, struct fn **f, struct json_new_
 				return json_err = -3;
 			}
 			NEW_PJ(pj);
+			p->depth++;
 			(*pj)->json_err = -3;
 			if(((*pj)->j = json_create(j, SUB, PAIR)) == NULL){
 				DESTROY_fn((*pj), lst);
@@ -732,6 +735,7 @@ int pair(struct json_parser *p, struct json **j, struct fn **f, struct json_new_
 				(*f)->fns.do_it.do_errors = &json_errors;
 				return json_err = -3;
 			}
+			p->depth--;
 			*f = (*f)->prev;
 			free((*f)->next);
 			(*f)->next = NULL;
@@ -946,14 +950,13 @@ void json_print(struct json *j, size_t space, char *sep, char c_sp, size_t count
 	if(space == 0)
 		putchar('\n');
 }
-int json2txt(struct json *j, char *string){
+int json2txt(struct json *j, char *string, int empty){
 	struct json *pj = j;
 	unsigned long int len;
 	char *str, ulong[23];
 	for(pj = j; pj; pj = pj->next){
 		switch(pj->type){
 			case ARRAY:
-
 				switch(pj->t_val^(pj->t_val&(SET|WARN|WARN_NBR|WARN_BOOL))){
 					case INT:
 						if(string)
@@ -970,6 +973,13 @@ int json2txt(struct json *j, char *string){
 							printf("[%lu]:\"%s\"\n", pj->value.name.index, pj->value.value);
 						break;
 					default:
+						if(empty && !pj->next && !pj->sub){
+							if(string)
+								printf("%s[%lu]:\n",
+										string, pj->value.name.index);
+							else
+								printf("[%lu]:\n", pj->value.name.index);
+						}
 						break;
 				}
 				break;
@@ -1042,7 +1052,7 @@ int json2txt(struct json *j, char *string){
 						strcat(str, pj->value.name.key);
 						break;
 				}
-			if(json2txt(pj->sub, str))
+			if(json2txt(pj->sub, str, empty))
 				return 1;
 			free(str);
 		}

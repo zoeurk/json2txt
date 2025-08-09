@@ -217,10 +217,6 @@ CCDEPMODE = depmode=none
 CFLAGS = -g -O2 -fdebug-prefix-map=/home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3~1=. -fstack-protector-strong -Wformat -Werror=format-security
 CPP = gcc -E
 CPPFLAGS = -Wdate-time -D_FORTIFY_SOURCE=2
-CXX = g++
-CXXCPP = g++ -E
-CXXDEPMODE = depmode=none
-CXXFLAGS = -g -O2 -fdebug-prefix-map=/home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3~1=. -fstack-protector-strong -Wformat -Werror=format-security
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
@@ -242,7 +238,7 @@ INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
 LDFLAGS = -Wl,-Bsymbolic-functions -Wl,-z,relro
 LIBOBJS = 
-LIBS = 
+LIBS = -ljson2txt 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
@@ -261,24 +257,23 @@ OTOOL64 =
 PACKAGE = json2txt
 PACKAGE_BUGREPORT = zoeurk@gmail.com
 PACKAGE_NAME = json2txt
-PACKAGE_STRING = json2txt 0.3
+PACKAGE_STRING = json2txt 0.3~1
 PACKAGE_TARNAME = json2txt
 PACKAGE_URL = 
-PACKAGE_VERSION = 0.3
+PACKAGE_VERSION = 0.3~1
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = strip
-VERSION = 0.3
+VERSION = 0.3~1
 abs_builddir = /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3~1
 abs_srcdir = /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3~1
 abs_top_builddir = /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3~1
 abs_top_srcdir = /home/thomas/git/json2txt.bak/v0.3/debian/json2txt-0.3~1
 ac_ct_AR = ar
 ac_ct_CC = gcc
-ac_ct_CXX = g++
 ac_ct_DUMPBIN = 
 am__include = include
 am__leading_dot = .

@@ -11,7 +11,7 @@
 /*malloc, calloc(), realloc()*/
 #include <stdlib.h>
 extern int json_err;
-#define INIT_JSON(BUFSIZE, ALLOC_SIZE, CHARS, buffer) { 0, BUFSIZE, ALLOC_SIZE, CHARS, buffer, NULL, 0, 0, 1, NULL, NULL, 0 }
+#define INIT_JSON(BUFSIZE, ALLOC_SIZE, CHARS, buffer) { 0, BUFSIZE, ALLOC_SIZE, CHARS, buffer, NULL, 0, 0, 1, NULL, NULL, 0, 0, 0 }
 enum TYPE{
 	ARRAY = 1,
 	PAIR = 2
@@ -43,6 +43,8 @@ struct json_parser{
 	char *pstock;
 	char *stock;
 	size_t stock_size;
+	size_t depth;
+	size_t data_size;
 };
 struct json{
 	enum TYPE type;
@@ -132,7 +134,7 @@ int json_test_sort(struct json **j, int (*sorting)(struct json **, int), int war
 int json_test(struct json **j, int warn_only);
 
 void json_print(struct json *j, size_t space, char *sep, char c_sp, size_t count);
-int json2txt(struct json *j, char *string);
+int json2txt(struct json *j, char *string, int empty);
 
 void json_destroy(struct json **j);
 
