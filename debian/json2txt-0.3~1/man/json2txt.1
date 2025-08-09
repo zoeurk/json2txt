@@ -9,16 +9,16 @@ json2txt OPTIONS
 Outil pour convertir un flux json
 .SH OPTIONS
 .TP
-.BR \-J , " \-\-json
+.BR \-J , " \-\-json"
 Inhibit the output of json.
 .TP
-.BR \-T , " \-\-text
+.BR \-T , " \-\-text"
 Inhibit the output of text.
 .TP
 .BR \-s , " \-\-sort "\fIasc|dsc|none\fR
 sort json and text;
 .TP
-.BR \-t , " \-\-test
+.BR \-t , " \-\-test"
 No test
 .TP
 .BR \-w , " \-\-warning "\fItrue|false|none\fR
@@ -29,10 +29,11 @@ false	just emit warning
 none		do nothing
 .EE
 .TP
-.BR
-.TP \-r, --rfc
+.BR \-e , " \-\-empty"
+Print empty array in the text format
+.TP
+.BR \-r , "\-\-rfc"
 Try to be rfc compliant
-.BR
 .TP
 .BR Exit\ Code:
 .EX
