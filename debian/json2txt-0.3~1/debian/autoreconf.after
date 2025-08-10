@@ -6,12 +6,12 @@ d936fd6b2025c9b5322f826117d7f30c  ./m4/ltversion.m4
 8fcc227ef27dfc7a0fecfdde0c4d2de0  ./m4/libtool.m4
 83033bdc5ec203b69a7046b5cb2b4522  ./config.sub
 ae96f5efc30b9094359d5b85a526a779  ./man/json2txt.1
-2c2a073b1af790b7dcde5134b14e6328  ./man/json2txt.3
+3fedba5c2511c21b2aa2ebd51786e50d  ./man/json2txt.3
 d5cc9c5ff5ed67795ed607d9712c8543  ./README.md
 a1e2ac1c7b1a059b3839844edba8e158  ./aclocal.m4
 1e205b469026971c9ca333816ac2c6c3  ./autom4te.cache/output.0
 50344f47b004bc08dca48b1485958415  ./autom4te.cache/traces.1
-d6e4a479110b0da1e38d061f28809a23  ./autom4te.cache/requests
+d3193c0c2a6f37c675fc8aaa4a21a3bf  ./autom4te.cache/requests
 e92d8e533edb1d20bd575617bca209f2  ./autom4te.cache/traces.2
 1e205b469026971c9ca333816ac2c6c3  ./autom4te.cache/output.2
 1e205b469026971c9ca333816ac2c6c3  ./autom4te.cache/output.1
@@ -33,3 +33,4 @@ c9671feb88339208a8c34c54ac7a6eef  ./config.guess
 ff06331c3f16a2d526d6399dfeabf67a  ./missing
 bac3fb7f33d1f10f02f0b6460d2eee12  ./install-sh
 d8457e6735085fc35b750ad05506bdf8  ./configure
+02ac34156b95ad21c5b855b47059d940  ./Makefile.src

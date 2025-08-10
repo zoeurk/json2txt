@@ -291,8 +291,13 @@ char *sep = ":" : at minimal and good.
 .EE
 .BR
 .TP
-\fBint\fR json2txt(\fBstruct json\fR *j, \fBchar\fR *string);
+\fBint\fR json2txt(\fBstruct json\fR *j, \fBchar\fR *string, \fBint\fR empty);
 Print FD in the form text.
+.EX
+empty != 0 => print empty array
+return: 0		=> Success
+	else		=> libc error
+.EE
 .BR
 .TP
 \fBint\fR json_destroy(\fBstruct json\fR **j);
